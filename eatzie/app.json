@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "shopeefood-frontend",
-    "slug": "shopeefood-frontend",
+    "name": "eatzie",
+    "slug": "eatzie",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./src/assets/images/icon.png",
-    "scheme": "shopeefoodfrontend",
+    "scheme": "eatzie",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {

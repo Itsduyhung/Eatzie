@@ -1,13 +1,3 @@
-## Author
-
-@nvminh162
-
-# ShopeeFood Mobile Application
-
-## Overview
-
-This is a mobile application built with React Native, designed to replicate the functionality of a food delivery service similar to ShopeeFood. The project includes both frontend and backend components.
-
 ## Project Structure
 
 - **Frontend**: React Native application with Expo
@@ -33,9 +23,8 @@ This is a mobile application built with React Native, designed to replicate the 
 
 ### Backend (Planned)
 
-- Node.js
+- ASP.NET Core 9
 - Express
-- MongoDB
 - RESTful API
 
 ## Installation
@@ -51,7 +40,7 @@ This is a mobile application built with React Native, designed to replicate the 
 
 ```bash
 # Navigate to the frontend directory
-cd shopeefood-frontend
+cd eatzie
 
 # Install dependencies
 npm install
@@ -63,19 +52,9 @@ npm start
 # or
 yarn start
 ```
-
 ## Development Status
-
-This project is currently in early development stage. The frontend structure has been initialized, and the backend is planned for future implementation.
-
-## Contribution
-
-Contributions are welcome. Please feel free to submit a Pull Request.
-
-## License
 
 [MIT License](LICENSE)
 
 # design figma:
-
-https://www.figma.com/design/HP6zajub0oqkH8qiuzyTv8/React-Native--basic-?node-id=0-1&p=f
+https://www.figma.com/design/9OTqpsbzjiUcqJhSAOdxK1/eatzie?node-id=45-12&p=f&t=zywJRFeJn0X0cOhu-0
