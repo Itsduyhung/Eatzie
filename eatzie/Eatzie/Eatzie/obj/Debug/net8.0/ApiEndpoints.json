@@ -1,0 +1,18 @@
+[
+  {
+    "ContainingType": "Eatzie.Controllers.SignInController",
+    "Method": "SignIn",
+    "RelativePath": "api/SignIn/signin",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "Eatzie.DTOs.Request.SignInRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]
