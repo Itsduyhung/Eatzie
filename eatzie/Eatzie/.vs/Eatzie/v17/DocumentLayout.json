@@ -1,0 +1,335 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|d:\\exe\\eatzie\\eatzie\\eatzie\\eatzie\\repositories\\signinrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|solutionrelative:eatzie\\repositories\\signinrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|d:\\exe\\eatzie\\eatzie\\eatzie\\eatzie\\services\\signinservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|solutionrelative:eatzie\\services\\signinservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|d:\\exe\\eatzie\\eatzie\\eatzie\\eatzie\\controllers\\signincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|solutionrelative:eatzie\\controllers\\signincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|d:\\exe\\eatzie\\eatzie\\eatzie\\eatzie\\interfaces\\iservice\\isigninservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|solutionrelative:eatzie\\interfaces\\iservice\\isigninservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|d:\\exe\\eatzie\\eatzie\\eatzie\\eatzie\\dtos\\response\\signinresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|solutionrelative:eatzie\\dtos\\response\\signinresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|d:\\exe\\eatzie\\eatzie\\eatzie\\eatzie\\helpers\\baseapiresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|solutionrelative:eatzie\\helpers\\baseapiresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|d:\\exe\\eatzie\\eatzie\\eatzie\\eatzie\\helpers\\errorresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|solutionrelative:eatzie\\helpers\\errorresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|d:\\exe\\eatzie\\eatzie\\eatzie\\eatzie\\helpers\\apiresponese.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|solutionrelative:eatzie\\helpers\\apiresponese.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|d:\\exe\\eatzie\\eatzie\\eatzie\\eatzie\\dtos\\request\\signinrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|solutionrelative:eatzie\\dtos\\request\\signinrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|d:\\exe\\eatzie\\eatzie\\eatzie\\eatzie\\data\\configuration\\userconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|solutionrelative:eatzie\\data\\configuration\\userconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|d:\\exe\\eatzie\\eatzie\\eatzie\\eatzie\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|solutionrelative:eatzie\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|d:\\exe\\eatzie\\eatzie\\eatzie\\eatzie\\interfaces\\irepository\\isigninrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|solutionrelative:eatzie\\interfaces\\irepository\\isigninrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|d:\\exe\\eatzie\\eatzie\\eatzie\\eatzie\\models\\userentity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|solutionrelative:eatzie\\models\\userentity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|d:\\exe\\eatzie\\eatzie\\eatzie\\eatzie\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|solutionrelative:eatzie\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|d:\\exe\\eatzie\\eatzie\\eatzie\\eatzie\\eatzie.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|solutionrelative:eatzie\\eatzie.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|d:\\exe\\eatzie\\eatzie\\eatzie\\eatzie\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|solutionrelative:eatzie\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|d:\\exe\\eatzie\\eatzie\\eatzie\\eatzie\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{148B2F31-5ACE-4362-BE40-16CE746A7CFD}|Eatzie\\Eatzie.csproj|solutionrelative:eatzie\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 8,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{e1b7d1f8-9b3c-49b1-8f4f-bfc63a88835d}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "UserConfiguration.cs",
+              "DocumentMoniker": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Data\\Configuration\\UserConfiguration.cs",
+              "RelativeDocumentMoniker": "Eatzie\\Data\\Configuration\\UserConfiguration.cs",
+              "ToolTip": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Data\\Configuration\\UserConfiguration.cs",
+              "RelativeToolTip": "Eatzie\\Data\\Configuration\\UserConfiguration.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-18T07:43:11.471Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "SignInController.cs",
+              "DocumentMoniker": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Controllers\\SignInController.cs",
+              "RelativeDocumentMoniker": "Eatzie\\Controllers\\SignInController.cs",
+              "ToolTip": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Controllers\\SignInController.cs",
+              "RelativeToolTip": "Eatzie\\Controllers\\SignInController.cs",
+              "ViewState": "AgIAAC0AAAAAAAAAAAAAABgAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-18T06:51:18.678Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "SignInService.cs",
+              "DocumentMoniker": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Services\\SignInService.cs",
+              "RelativeDocumentMoniker": "Eatzie\\Services\\SignInService.cs",
+              "ToolTip": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Services\\SignInService.cs",
+              "RelativeToolTip": "Eatzie\\Services\\SignInService.cs",
+              "ViewState": "AgIAAB8AAAAAAAAAAAAQwA8AAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-18T07:47:01.807Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "SignInResponse.cs",
+              "DocumentMoniker": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\DTOs\\Response\\SignInResponse.cs",
+              "RelativeDocumentMoniker": "Eatzie\\DTOs\\Response\\SignInResponse.cs",
+              "ToolTip": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\DTOs\\Response\\SignInResponse.cs",
+              "RelativeToolTip": "Eatzie\\DTOs\\Response\\SignInResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAkAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-18T07:39:05.006Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "SignInRepository.cs",
+              "DocumentMoniker": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Repositories\\SignInRepository.cs",
+              "RelativeDocumentMoniker": "Eatzie\\Repositories\\SignInRepository.cs",
+              "ToolTip": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Repositories\\SignInRepository.cs",
+              "RelativeToolTip": "Eatzie\\Repositories\\SignInRepository.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAxwAwAAAA9AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-18T07:45:46.344Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ISignInService.cs",
+              "DocumentMoniker": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Interfaces\\IService\\ISignInService.cs",
+              "RelativeDocumentMoniker": "Eatzie\\Interfaces\\IService\\ISignInService.cs",
+              "ToolTip": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Interfaces\\IService\\ISignInService.cs",
+              "RelativeToolTip": "Eatzie\\Interfaces\\IService\\ISignInService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAoAAABBAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-18T07:46:33.371Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "BaseAPIResponse.cs",
+              "DocumentMoniker": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Helpers\\BaseAPIResponse.cs",
+              "RelativeDocumentMoniker": "Eatzie\\Helpers\\BaseAPIResponse.cs",
+              "ToolTip": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Helpers\\BaseAPIResponse.cs",
+              "RelativeToolTip": "Eatzie\\Helpers\\BaseAPIResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAwwAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-18T09:14:31.806Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "ApiResponese.cs",
+              "DocumentMoniker": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Helpers\\ApiResponese.cs",
+              "RelativeDocumentMoniker": "Eatzie\\Helpers\\ApiResponese.cs",
+              "ToolTip": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Helpers\\ApiResponese.cs",
+              "RelativeToolTip": "Eatzie\\Helpers\\ApiResponese.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-18T08:52:39.518Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "ErrorResponse.cs",
+              "DocumentMoniker": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Helpers\\ErrorResponse.cs",
+              "RelativeDocumentMoniker": "Eatzie\\Helpers\\ErrorResponse.cs",
+              "ToolTip": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Helpers\\ErrorResponse.cs",
+              "RelativeToolTip": "Eatzie\\Helpers\\ErrorResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-18T08:53:30.88Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "ApplicationDbContext.cs",
+              "DocumentMoniker": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Data\\ApplicationDbContext.cs",
+              "RelativeDocumentMoniker": "Eatzie\\Data\\ApplicationDbContext.cs",
+              "ToolTip": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Data\\ApplicationDbContext.cs",
+              "RelativeToolTip": "Eatzie\\Data\\ApplicationDbContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-18T07:42:07.916Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "SignInRequest.cs",
+              "DocumentMoniker": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\DTOs\\Request\\SignInRequest.cs",
+              "RelativeDocumentMoniker": "Eatzie\\DTOs\\Request\\SignInRequest.cs",
+              "ToolTip": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\DTOs\\Request\\SignInRequest.cs",
+              "RelativeToolTip": "Eatzie\\DTOs\\Request\\SignInRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-18T07:36:56.761Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "ISignInRepository.cs",
+              "DocumentMoniker": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Interfaces\\IRepository\\ISignInRepository.cs",
+              "RelativeDocumentMoniker": "Eatzie\\Interfaces\\IRepository\\ISignInRepository.cs",
+              "ToolTip": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Interfaces\\IRepository\\ISignInRepository.cs",
+              "RelativeToolTip": "Eatzie\\Interfaces\\IRepository\\ISignInRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-18T07:45:07.065Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "UserEntity.cs",
+              "DocumentMoniker": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Models\\UserEntity.cs",
+              "RelativeDocumentMoniker": "Eatzie\\Models\\UserEntity.cs",
+              "ToolTip": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Models\\UserEntity.cs",
+              "RelativeToolTip": "Eatzie\\Models\\UserEntity.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACQAAABCAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-18T07:35:46.751Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Program.cs",
+              "RelativeDocumentMoniker": "Eatzie\\Program.cs",
+              "ToolTip": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Program.cs",
+              "RelativeToolTip": "Eatzie\\Program.cs",
+              "ViewState": "AgIAABoAAAAAAAAAAAAAACIAAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-18T07:48:01.088Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "Eatzie",
+              "DocumentMoniker": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Eatzie.csproj",
+              "RelativeDocumentMoniker": "Eatzie\\Eatzie.csproj",
+              "ToolTip": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Eatzie.csproj",
+              "RelativeToolTip": "Eatzie\\Eatzie.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-06-18T08:30:41.662Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\appsettings.json",
+              "RelativeDocumentMoniker": "Eatzie\\appsettings.json",
+              "ToolTip": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\appsettings.json",
+              "RelativeToolTip": "Eatzie\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAABiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-06-17T16:00:45.842Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "appsettings.Development.json",
+              "DocumentMoniker": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\appsettings.Development.json",
+              "RelativeDocumentMoniker": "Eatzie\\appsettings.Development.json",
+              "ToolTip": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\appsettings.Development.json",
+              "RelativeToolTip": "Eatzie\\appsettings.Development.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-06-17T16:00:44.947Z",
+              "EditorCaption": ""
+            }
+          ]
+        },
+        {
+          "DockedWidth": 245,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
