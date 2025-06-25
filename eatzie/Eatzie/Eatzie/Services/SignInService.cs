@@ -22,23 +22,22 @@ namespace Eatzie.Services
                 {
                     StatusCode = (int)HttpStatusCode.Unauthorized,
                     IsSuccess = false,
-                    Message = "User doesn't exist."
+                    Message = "Người dùng không tồn tại."
                 };
             }
 
-            bool isPasswordValid = (request.Password == user.Password);
-
+            bool isPasswordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.Password);
             if (!isPasswordValid)
             {
                 return new BaseAPIResponse
                 {
                     StatusCode = (int)HttpStatusCode.Unauthorized,
                     IsSuccess = false,
-                    Message = "Email or PassWord is invalid."
+                    Message = "Email hoặc PassWord đang không đúng."
                 };
             }
             return new BaseAPIResponse(
-                message: "Sign In successful!",
+                message: "Đăng nhập thành công!",
                 statusCode: (int)HttpStatusCode.OK,
                 isSuccess: true
             );

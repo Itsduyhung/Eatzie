@@ -6,7 +6,7 @@ using Eatzie.Data;
 
 namespace Eatzie.Repositories
 {
-    public class UserRepository(ApplicationDbContext context) : ISignUpRepository
+    public class SignUpRepository(ApplicationDbContext context) : ISignUpRepository
     {
         private readonly ApplicationDbContext _context = context;
 
