@@ -1,4 +1,4 @@
-﻿using Eatzie.Data; // Đảm bảo namespace này đúng với nơi bạn đặt ApplicationDbContext
+﻿using Eatzie.Data;
 using Eatzie.Interfaces.IRepository;
 using Eatzie.Interfaces.IService;
 using Eatzie.Repositories;
@@ -23,6 +23,8 @@ namespace Eatzie
             // Đăng ký Repository và Service vào Dependency Injection
             builder.Services.AddScoped<ISignInRepository, SignInRepository>();
             builder.Services.AddScoped<ISignInService, SignInService>();
+            builder.Services.AddScoped<ISignUpRepository, UserRepository>();
+            builder.Services.AddScoped<ISignUpService, SignUpService>();
 
 
             builder.Services.AddControllers()
