@@ -27,7 +27,6 @@ namespace Eatzie.Models
         [Column("created_at")]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        // --- Khóa ngoại trỏ đến bảng users ---
         [Required]
         [Column("user_id")]
         public int UserId { get; set; }

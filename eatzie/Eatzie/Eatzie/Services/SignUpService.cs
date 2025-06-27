@@ -5,14 +5,9 @@ using Eatzie.Models;
 
 namespace Eatzie.Services
 {
-    public class SignUpService : ISignUpService
+    public class SignUpService(ISignUpRepository userRepository) : ISignUpService
     {
-        private readonly ISignUpRepository _userRepository;
-
-        public SignUpService(ISignUpRepository userRepository)
-        {
-            _userRepository = userRepository;
-        }
+        private readonly ISignUpRepository _userRepository = userRepository;
 
         public async Task<(bool Succeeded, string? ErrorMessage)> SignUpAsync(SignUpRequest request)
         {

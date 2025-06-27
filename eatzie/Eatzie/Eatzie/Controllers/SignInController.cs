@@ -11,14 +11,9 @@ namespace Eatzie.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class SignInController : ControllerBase
+    public class SignInController(ISignInService signinService) : ControllerBase
     {
-        private readonly ISignInService _signinService;
-
-        public SignInController(ISignInService signinService)
-        {
-            _signinService = signinService;
-        }
+        private readonly ISignInService _signinService = signinService;
 
         /// <summary>
         /// API Post for Login Screen
