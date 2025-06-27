@@ -8,21 +8,14 @@ using System.Threading.Tasks;
 
 namespace Eatzie.Services
 {
-    public class ForgotPasswordService : IForgotPasswordService
+    public class ForgotPasswordService(
+        IForgotPasswordRepository userRepository,
+        IPasswordResetTokenRepository tokenRepository,
+        IEmailService emailService) : IForgotPasswordService
     {
-        private readonly IForgotPasswordRepository _userRepository;
-        private readonly IPasswordResetTokenRepository _tokenRepository;
-        private readonly IEmailService _emailService;
-
-        public ForgotPasswordService(
-            IForgotPasswordRepository userRepository,
-            IPasswordResetTokenRepository tokenRepository,
-            IEmailService emailService)
-        {
-            _userRepository = userRepository;
-            _tokenRepository = tokenRepository;
-            _emailService = emailService;
-        }
+        private readonly IForgotPasswordRepository _userRepository = userRepository;
+        private readonly IPasswordResetTokenRepository _tokenRepository = tokenRepository;
+        private readonly IEmailService _emailService = emailService;
 
         public async Task ForgotPasswordAsync(string email)
         {

@@ -29,6 +29,9 @@ builder.Services.AddScoped<IForgotPasswordService, ForgotPasswordService>();
 builder.Services.AddScoped<IForgotPasswordRepository, ForgotPasswordRepository>();
 builder.Services.AddScoped<IPasswordResetTokenRepository, PasswordResetTokenRepository>();
 
+builder.Services.AddScoped<IUserDietRepository, UserDietRepository>();
+builder.Services.AddScoped<IUserDietService, UserDietService>();
+
 builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddControllers()

@@ -6,18 +6,13 @@ using Eatzie.Interfaces.IRepository;
 
 namespace Eatzie.Repositories
 {
-    public class SignInRepository : ISignInRepository
+    public class SignInRepository(ApplicationDbContext context) : ISignInRepository
     {
-        private readonly ApplicationDbContext _context;
-
-        public SignInRepository(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+        private readonly ApplicationDbContext _context = context;
 
         public async Task<User> GetUserByEmailAsync(string email)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            return await _context.UserEntitys.FirstOrDefaultAsync(u => u.Email == email);
         }
     }
 }

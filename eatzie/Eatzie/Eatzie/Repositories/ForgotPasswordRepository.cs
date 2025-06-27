@@ -6,28 +6,23 @@ using System.Threading.Tasks;
 
 namespace Eatzie.Repositories
 {
-    public class ForgotPasswordRepository : IForgotPasswordRepository
+    public class ForgotPasswordRepository(ApplicationDbContext context) : IForgotPasswordRepository
     {
-        private readonly ApplicationDbContext _context;
-
-        public ForgotPasswordRepository(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+        private readonly ApplicationDbContext _context = context;
 
         public async Task<User?> GetByEmailAsync(string email)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            return await _context.UserEntitys.FirstOrDefaultAsync(u => u.Email == email);
         }
 
         public async Task<User?> GetByIdAsync(int id)
         {
-            return await _context.Users.FindAsync(id);
+            return await _context.UserEntitys.FindAsync(id);
         }
 
         public async Task UpdateAsync(User user)
         {
-            _context.Users.Update(user);
+            _context.UserEntitys.Update(user);
             await _context.SaveChangesAsync();
         }
     }

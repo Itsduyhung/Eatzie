@@ -35,6 +35,7 @@ namespace Eatzie.Models
 
         [Column("created_at")]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public virtual ICollection<PasswordResetToken> PasswordResetTokens { get; set; } = new List<PasswordResetToken>();
+        public virtual ICollection<PasswordResetToken> PasswordResetTokens { get; set; } = [];
+        public ICollection<UserDietEntity>? UserDiets { get; set; }
     }
 }

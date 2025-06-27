@@ -28,16 +28,14 @@ namespace Eatzie.Services
                     Credentials = new NetworkCredential(fromAddress.Address, _emailSettings.SmtpPass)
                 };
 
-                using (var message = new MailMessage(fromAddress, toAddress)
+                using var message = new MailMessage(fromAddress, toAddress)
                 {
                     Subject = subject,
                     Body = htmlContent,
                     IsBodyHtml = true
-                })
-                {
-                    await smtp.SendMailAsync(message);
-                    _logger.LogInformation("Email đã gửi thành công đến {ToEmail} qua Gmail SMTP.", toEmail);
-                }
+                };
+                await smtp.SendMailAsync(message);
+                _logger.LogInformation("Email đã gửi thành công đến {ToEmail} qua Gmail SMTP.", toEmail);
             }
             catch (Exception ex)
             {

@@ -9,23 +9,17 @@ namespace Eatzie.Controllers
 {
     [ApiController]
     [Route("api/password")]
-    public class ForgotPasswordController : ControllerBase
+    public class ForgotPasswordController(IForgotPasswordService forgotPasswordService, ILogger<ForgotPasswordController> logger) : ControllerBase
     {
-        private readonly IForgotPasswordService _forgotPasswordService;
-        private readonly ILogger<ForgotPasswordController> _logger;
-
-        public ForgotPasswordController(IForgotPasswordService forgotPasswordService, ILogger<ForgotPasswordController> logger)
-        {
-            _forgotPasswordService = forgotPasswordService;
-            _logger = logger;
-        }
+        private readonly IForgotPasswordService _forgotPasswordService = forgotPasswordService;
+        private readonly ILogger<ForgotPasswordController> _logger = logger;
 
         [HttpPost("forgot")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestDto request)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new ErrorResponse(400, "Dữ liệu không hợp lệ.", ModelState.SelectMany(x => x.Value.Errors).Select(e => new ErrorField { ErrorMessage = e.ErrorMessage }).ToList()));
+                return BadRequest(new ErrorResponse(400, "Dữ liệu không hợp lệ.", [.. ModelState.SelectMany(x => x.Value.Errors).Select(e => new ErrorField { ErrorMessage = e.ErrorMessage })]));
             }
 
             try
@@ -51,7 +45,7 @@ namespace Eatzie.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new ErrorResponse(400, "Dữ liệu không hợp lệ.", ModelState.SelectMany(x => x.Value.Errors).Select(e => new ErrorField { ErrorMessage = e.ErrorMessage }).ToList()));
+                return BadRequest(new ErrorResponse(400, "Dữ liệu không hợp lệ.", [.. ModelState.SelectMany(x => x.Value.Errors).Select(e => new ErrorField { ErrorMessage = e.ErrorMessage })]));
             }
 
             try
@@ -77,7 +71,7 @@ namespace Eatzie.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new ErrorResponse(400, "Dữ liệu không hợp lệ.", ModelState.SelectMany(x => x.Value.Errors).Select(e => new ErrorField { ErrorMessage = e.ErrorMessage }).ToList()));
+                return BadRequest(new ErrorResponse(400, "Dữ liệu không hợp lệ.", [.. ModelState.SelectMany(x => x.Value.Errors).Select(e => new ErrorField { ErrorMessage = e.ErrorMessage })]));
             }
 
             try
