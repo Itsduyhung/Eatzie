@@ -1,10 +1,17 @@
-﻿namespace Eatzie.DTOs.Response
+﻿using Eatzie.Helpers;
+
+namespace Eatzie.DTOs.Response
 {
-    public class SignInResponse
+    public class SignInResponse : BaseAPIResponse
     {
         public int UserId { get; set; }
-        public string? Fullname { get; set; }
-        public string? Email { get; set; }
-        public string Message { get; set; } = "Đăng nhập thành công!";
+
+        public SignInResponse() { }
+
+        public SignInResponse(string message, int statusCode, bool isSuccess, int userId)
+            : base(message, statusCode, isSuccess)
+        {
+            UserId = userId;
+        }
     }
 }

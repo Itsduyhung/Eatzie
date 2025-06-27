@@ -1,15 +1,19 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Eatzie.Enum;
+﻿using Eatzie.Enum;
 
 namespace Eatzie.DTOs.Request
 {
     public class UserDietRequest
     {
-        [Required]
         public int UserId { get; set; }
 
-        [Required]
-        [EnumDataType(typeof(DietTypeEnum))]
-        public DietTypeEnum DietType { get; set; }
+        public string? AllergicFood { get; set; }
+
+        public string? FavoriteFood { get; set; }
+
+        public decimal? MinSpending { get; set; }
+
+        public decimal? MaxSpending { get; set; }
+
+        public DietTypeEnum? DietType { get; set; }
     }
 }
