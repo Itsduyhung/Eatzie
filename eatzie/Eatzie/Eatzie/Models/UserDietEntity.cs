@@ -15,9 +15,8 @@ namespace Eatzie.Models
         public string? Allergic_food { get; set; }
 
         public string? Favorite_food { get; set; }
-
-        public decimal? Average_spending { get; set; }
-
+        public decimal? Min_spending { get; set; }
+        public decimal? Max_spending { get; set; }
         public DietTypeEnum Diet_type { get; set; }
 
         // Navigation

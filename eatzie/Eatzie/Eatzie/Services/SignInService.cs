@@ -36,10 +36,12 @@ namespace Eatzie.Services
                     Message = "Email hoặc PassWord đang không đúng."
                 };
             }
-            return new BaseAPIResponse(
+
+            return new SignInResponse(
                 message: "Đăng nhập thành công!",
                 statusCode: (int)HttpStatusCode.OK,
-                isSuccess: true
+                isSuccess: true,
+                userId: user.Id
             );
         }
     }
