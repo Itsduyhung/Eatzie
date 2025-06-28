@@ -3,11 +3,33 @@
   "compilerOptions": {
     "strict": true,
     "baseUrl": ".",
+    "jsx": "react-native",
     "paths": {
-      "@/*": ["src/*"],
-      "components/*": ["src/components/*"],
-      "utils/*": ["src/utils/*"]
-    }
+      "@/*": [
+        "src/*"
+      ],
+      "components/*": [
+        "src/components/*"
+      ],
+      "utils/*": [
+        "src/utils/*"
+      ],
+      "tamagui.config": [
+        "./tamagui.config.ts"
+      ]
+    },
+    "types": [
+      "expo-router",
+      "tamagui"
+    ]
   },
-  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
+  "include": [
+    "app/**/*.tsx",
+    "app/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.ts",
+    ".expo/types/**/*.d.ts",
+    "expo-env.d.ts",
+    ".expo/types/**/*.ts"
+  ]
 }

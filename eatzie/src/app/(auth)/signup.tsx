@@ -1,22 +1,19 @@
+import { router } from "expo-router";
+import { Formik } from "formik";
+import { useState } from "react";
+import Toast from "react-native-root-toast";
+
+import { Button, Input, SizableText, YStack, useTheme } from "tamagui";
+
 import QuestionButton from "@/components/button/question.button";
-import ShareButton from "@/components/button/share.button";
 import SocialButton from "@/components/button/social.button";
-import ShareInput from "@/components/input/share.input";
 import { registerAPI } from "@/utils/api";
 import { APP_COLOR } from "@/utils/constants";
-import { Link, router } from "expo-router";
-import { useState } from "react";
-import { Button, StyleSheet, Text, TextInput, View } from "react-native";
-import Toast from "react-native-root-toast";
-import { Formik } from "formik";
 import { RegisterSchema } from "@/utils/validate.schema";
 
-const styles = StyleSheet.create({
-  container: { flex: 1, marginHorizontal: 20, gap: 10 },
-});
-
 const SignUpPage = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const theme = useTheme();
 
   const handleSignUp = async (
     fullName: string,
@@ -29,11 +26,11 @@ const SignUpPage = () => {
       if (res.data) {
         router.replace({
           pathname: "/(auth)/verify",
-          params: { email: email }, //Send data by navigate
+          params: { email },
         });
       } else {
-        const m = Array.isArray(res.message) ? res.message[0] : res.message;
-        Toast.show(m, {
+        const msg = Array.isArray(res.message) ? res.message[0] : res.message;
+        Toast.show(msg, {
           duration: Toast.durations.LONG,
           textColor: "white",
           backgroundColor: APP_COLOR.ORANGE,
@@ -41,54 +38,18 @@ const SignUpPage = () => {
         });
       }
     } catch (err) {
-      console.log(err);
+      console.error(err);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <View>
-        <Text
-          style={{
-            fontSize: 25,
-            fontWeight: "bold",
-            marginVertical: 30,
-          }}
-        >
-          Register Now
-        </Text>
-      </View>
+    <YStack flex={1} padding="$4" gap="$4">
+      <SizableText fontSize="$8" fontWeight="700" marginVertical="$6">
+        Register Now
+      </SizableText>
 
-      {/* Method 1: Controlled component */}
-      {/* <ShareInput title="Fullname" value={name} setValue={setName} />
-      <ShareInput
-        title="Email"
-        keyboardType="email-address"
-        value={email}
-        setValue={setEmail}
-      />
-      <ShareInput
-        title="Password"
-        secureTextEntry={true}
-        value={password}
-        setValue={setPassword}
-      />
-      <ShareButton
-        title="Sign Up"
-        onPress={handleSignUp}
-        textStyle={{ color: "#fff", fontSize: 19 }}
-        buttonStyle={{
-          justifyContent: "center",
-          borderRadius: 30,
-          backgroundColor: APP_COLOR.ORANGE,
-          paddingVertical: 15,
-        }}
-        pressStyle={{ alignSelf: "stretch" }}
-      /> */}
-
-      {/* Method 2: uncontrolled component (Formik) */}
       <Formik
         validationSchema={RegisterSchema}
         initialValues={{ fullName: "", email: "", password: "" }}
@@ -97,44 +58,50 @@ const SignUpPage = () => {
         }
       >
         {({ handleChange, handleBlur, handleSubmit, values, errors }) => (
-          <>
-            <ShareInput
-              title="Fullname"
-              onTextChange={handleChange("fullName")}
+          <YStack gap="$3">
+            <Input
+              placeholder="Full Name"
+              onChangeText={handleChange("fullName")}
               onBlur={handleBlur("fullName")}
               value={values.fullName}
-              error={errors.fullName}
             />
-            <ShareInput
-              title="Email"
-              onTextChange={handleChange("email")}
+            {errors.fullName && (
+              <SizableText color="red">{errors.fullName}</SizableText>
+            )}
+
+            <Input
+              placeholder="Email"
+              keyboardType="email-address"
+              onChangeText={handleChange("email")}
               onBlur={handleBlur("email")}
               value={values.email}
-              error={errors.email}
-              keyboardType="email-address"
             />
-            <ShareInput
-              title="Password"
-              onTextChange={handleChange("password")}
+            {errors.email && (
+              <SizableText color="red">{errors.email}</SizableText>
+            )}
+
+            <Input
+              placeholder="Password"
+              secureTextEntry
+              onChangeText={handleChange("password")}
               onBlur={handleBlur("password")}
               value={values.password}
-              error={errors.password}
             />
-            <View style={{ marginVertical: 5 }} />
-            <ShareButton
-              title="Sign Up"
-              onPress={handleSubmit}
-              textStyle={{ color: "#fff", fontSize: 19 }}
-              buttonStyle={{
-                justifyContent: "center",
-                borderRadius: 30,
-                backgroundColor: APP_COLOR.ORANGE,
-                paddingVertical: 15,
-              }}
-              pressStyle={{ alignSelf: "stretch" }}
-              isLoading={isLoading}
-            />
-          </>
+            {errors.password && (
+              <SizableText color="red">{errors.password}</SizableText>
+            )}
+
+            <Button
+              size="$5"
+              backgroundColor={APP_COLOR.ORANGE}
+              color="white"
+              borderRadius="$10"
+              onPress={handleSubmit as any}
+              disabled={isLoading}
+            >
+              {isLoading ? "Loading..." : "Sign Up"}
+            </Button>
+          </YStack>
         )}
       </Formik>
 
@@ -143,8 +110,9 @@ const SignUpPage = () => {
         questionBtnName="Sign in"
         path="/(auth)/login"
       />
+
       <SocialButton title="Sign up with" textColor="black" />
-    </View>
+    </YStack>
   );
 };
 
