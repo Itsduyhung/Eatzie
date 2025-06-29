@@ -1442,31 +1442,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\duyhu\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\HIEU\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Eatzie.csproj",
+      "projectUniqueName": "C:\\hunggg\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Eatzie.csproj",
       "projectName": "Eatzie",
-      "projectPath": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Eatzie.csproj",
-      "packagesPath": "C:\\Users\\duyhu\\.nuget\\packages\\",
-      "outputPath": "D:\\EXE\\Eatzie\\eatzie\\Eatzie\\Eatzie\\obj\\",
+      "projectPath": "C:\\hunggg\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Eatzie.csproj",
+      "packagesPath": "C:\\Users\\HIEU\\.nuget\\packages\\",
+      "outputPath": "C:\\hunggg\\Eatzie\\eatzie\\Eatzie\\Eatzie\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\duyhu\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\HIEU\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {

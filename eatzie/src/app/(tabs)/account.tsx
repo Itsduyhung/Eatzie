@@ -1,10 +1,10 @@
-import { APP_COLOR } from "@/utils/constants";
-import { StatusBar, Text, View } from "react-native";
+import { Header } from "@/components/Header";
+import { View } from "react-native";
 
 const AccountTab = () => {
   return (
     <View>
-      <Text>AccountTab</Text>
+      <Header></Header>
     </View>
   );
 };

@@ -1,162 +1,97 @@
-import QuestionButton from "@/components/button/question.button";
-import ShareButton from "@/components/button/share.button";
-import SocialButton from "@/components/button/social.button";
-import ShareInput from "@/components/input/share.input";
-import { loginAPI } from "@/utils/api";
-import { APP_COLOR } from "@/utils/constants";
-import { LoginSchema } from "@/utils/validate.schema";
-import { Link, router } from "expo-router";
 import { Formik } from "formik";
 import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
 import Toast from "react-native-root-toast";
+import { Spinner, YStack } from "tamagui";
+import * as Yup from "yup";
 
-const styles = StyleSheet.create({
-  container: { flex: 1, marginHorizontal: 20, gap: 10 },
-});
+import { FormErrorContext } from "@/app/hooks/FormErrorContext";
+import {
+  FormikInput,
+  FormikPasswordInput,
+} from "@/components/formik/FormikFields";
+import { ThemedScreen } from "@/components/layout/ThemedScreen";
+import { CustomButton } from "@/components/ui/CustomButton";
+import { CustomText } from "@/components/ui/CustomText";
 
-const Login = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+import { useAuth } from "@/applicaton/hooks/useAuth";
+import { useRouter } from "expo-router";
 
-  const handleLogin = async (email: string, password: string) => {
+export default function LoginScreen() {
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+  const router = useRouter();
+
+  const initialValues = { email: "", password: "" };
+
+  const validationSchema = Yup.object({
+    email: Yup.string()
+      .email("Email không hợp lệ")
+      .required("Vui lòng nhập email"),
+    password: Yup.string()
+      .min(6, "Tối thiểu 6 ký tự")
+      .required("Vui lòng nhập mật khẩu"),
+  });
+
+  const handleSubmit = async (values: typeof initialValues) => {
+    setLoading(true);
+    console.log("🟡 Submitting form with:", values);
+
     try {
-      setIsLoading(true);
-      const res = await loginAPI(email, password);
-      if (res.data) {
-        router.replace({ pathname: "/(tabs)" });
-      } else {
-        const m = Array.isArray(res.message) ? res.message[0] : res.message;
-        Toast.show(m, {
-          duration: Toast.durations.LONG,
-          textColor: "white",
-          backgroundColor: APP_COLOR.ORANGE,
-          opacity: 1,
-        });
+      const result = await login(values);
+      console.log(" Login success:", result);
 
-        if (res.statusCode === 400) {
-          router.replace({
-            pathname: "/(auth)/verify",
-            params: { email: email, isLogin: 1 },
-          });
-        }
-      }
-    } catch (err) {
-      console.log(err);
+      Toast.show("Đăng nhập thành công", { duration: 2000 });
+
+      router.replace("/");
+    } catch (err: any) {
+      console.error("❌ Login failed:", err);
+      Toast.show(err?.message ?? "Đăng nhập thất bại", { duration: 2000 });
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <View>
-        <Text
-          style={{
-            fontSize: 25,
-            fontWeight: "bold",
-            marginVertical: 30,
-          }}
-        >
-          Login
-        </Text>
-      </View>
-
-      {/* <ShareInput
-        title="Email"
-        keyboardType="email-address"
-        value={email}
-        setValue={setEmail}
-      />
-      <ShareInput
-        title="Password"
-        secureTextEntry={true}
-        value={password}
-        setValue={setPassword}
-      />
-
-      <View
-        style={{ marginVertical: 15, flexDirection: "row", justifyContent: "center" }} >
-        <Link href={"/"}>
-          <Text style={{ fontWeight: "700", color: APP_COLOR.ORANGE }} >
-            Forgot password?
-          </Text>
-        </Link>
-      </View>
-
-      <ShareButton
-        title="Login"
-        onPress={handleLogin}
-        textStyle={{ color: "#fff", fontSize: 19 }}
-        buttonStyle={{
-          justifyContent: "center",
-          borderRadius: 30,
-          backgroundColor: APP_COLOR.ORANGE,
-          paddingVertical: 15,
-        }}
-        pressStyle={{ alignSelf: "stretch" }}
-        isLoading={isLoading}
-      /> */}
-
+    <ThemedScreen backgroundColor="#ffffff">
       <Formik
-        validationSchema={LoginSchema}
-        initialValues={{ email: "", password: "" }}
-        onSubmit={(values) => handleLogin(values.email, values.password)}
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+        validationSchema={validationSchema}
       >
-        {({ handleChange, handleBlur, handleSubmit, values, errors }) => (
-          <>
-            <ShareInput
-              title="Email"
-              onTextChange={handleChange("email")}
-              onBlur={handleBlur("email")}
-              value={values.email}
-              error={errors.email}
-              keyboardType="email-address"
-            />
-            <ShareInput
-              title="Password"
-              onTextChange={handleChange("password")}
-              onBlur={handleBlur("password")}
-              value={values.password}
-              error={errors.password}
-            />
-            <View
-              style={{
-                marginVertical: 15,
-                flexDirection: "row",
-                justifyContent: "center",
-              }}
-            >
-              <Link href={"/"}>
-                <Text style={{ fontWeight: "700", color: APP_COLOR.ORANGE }}>
-                  Forgot password?
-                </Text>
-              </Link>
-            </View>
-            <ShareButton
-              title="Login"
-              onPress={handleSubmit}
-              textStyle={{ color: "#fff", fontSize: 19 }}
-              buttonStyle={{
-                justifyContent: "center",
-                borderRadius: 30,
-                backgroundColor: APP_COLOR.ORANGE,
-                paddingVertical: 15,
-              }}
-              pressStyle={{ alignSelf: "stretch" }}
-              isLoading={isLoading}
-            />
-          </>
+        {(formik) => (
+          <FormErrorContext.Provider
+            value={{ showError: formik.submitCount > 0 }}
+          >
+            <YStack f={1} p="$4" gap="$4" justifyContent="center">
+              <FormikInput
+                name="email"
+                placeholder="Số điện thoại hoặc email"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                backgroundColor="white"
+              />
+
+              <FormikPasswordInput
+                name="password"
+                placeholder="Mật khẩu"
+                autoCapitalize="none"
+                backgroundColor="white"
+              />
+
+              <CustomButton
+                backgroundColor="black"
+                onPress={() => formik.handleSubmit()}
+              >
+                {loading ? <Spinner color="white" /> : "Đăng nhập"}
+              </CustomButton>
+
+              <CustomText size="$2" textAlign="center">
+                Bạn quên mật khẩu ư?
+              </CustomText>
+            </YStack>
+          </FormErrorContext.Provider>
         )}
       </Formik>
-
-      <QuestionButton
-        questionText="Don't have an account?"
-        questionBtnName="Sign up"
-        path="/(auth)/signup"
-      />
-      <SocialButton title="Sign in with" textColor="black" />
-    </View>
+    </ThemedScreen>
   );
-};
-
-export default Login;
+}
