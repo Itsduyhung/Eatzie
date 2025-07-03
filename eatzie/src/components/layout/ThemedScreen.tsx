@@ -7,7 +7,7 @@ import { useTheme, YStack } from "tamagui";
 export function ThemedScreen({
   children,
   backgroundColor = "$background",
-  padding = "$6",
+  padding = "$0",
 }: ThemedScreenProps) {
   const theme = useTheme();
 

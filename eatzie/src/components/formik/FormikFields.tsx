@@ -1,3 +1,4 @@
+import { BlackWithShadowFocusStyle } from "@/app/constant/inputStyles";
 import { CustomInput } from "@/components/ui/CustomInput";
 import { CustomPasswordInput } from "@/components/ui/CustomPasswordInput";
 import { CustomInputProps } from "@/types/input/CustomInputProps";
@@ -8,12 +9,26 @@ export function FormikInput(
   props: { name: string } & Omit<CustomInputProps, "field" | "meta">
 ) {
   const [field, meta] = useField(props.name);
-  return <CustomInput {...props} field={field} meta={meta} />;
+  return (
+    <CustomInput
+      {...props}
+      field={field}
+      meta={meta}
+      focusStyle={BlackWithShadowFocusStyle}
+    />
+  );
 }
 
 export function FormikPasswordInput(
   props: { name: string } & Omit<PasswordInputProps, "field" | "meta">
 ) {
   const [field, meta] = useField(props.name);
-  return <CustomPasswordInput {...props} field={field} meta={meta} />;
+  return (
+    <CustomPasswordInput
+      {...props}
+      field={field}
+      meta={meta}
+      focusStyle={BlackWithShadowFocusStyle}
+    />
+  );
 }

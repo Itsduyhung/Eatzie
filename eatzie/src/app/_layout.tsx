@@ -2,11 +2,10 @@ import { Stack } from "expo-router";
 import { useColorScheme } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { RootSiblingParent } from "react-native-root-siblings";
-import { SafeAreaView } from "react-native-safe-area-context";
-
-import { TamaguiProvider, Theme } from "tamagui";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
+import { TamaguiProvider, Theme } from "tamagui";
 import config from "tamagui.config";
 
 const RootLayout = () => {
@@ -23,7 +22,8 @@ const RootLayout = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <RootSiblingParent>
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaProvider>
+          {" "}
           <TamaguiProvider config={config}>
             <Theme name={colorScheme === "dark" ? "dark" : "light"}>
               <ThemeProvider value={navTheme}>
@@ -59,7 +59,6 @@ const RootLayout = () => {
                     name="(auth)/login1"
                     options={{ headerTitle: "Đăng nhập 1", headerShown: false }}
                   />
-
                   <Stack.Screen
                     name="(auth)/login"
                     options={{ headerTitle: "Đăng nhập", headerShown: false }}
@@ -68,7 +67,7 @@ const RootLayout = () => {
               </ThemeProvider>
             </Theme>
           </TamaguiProvider>
-        </SafeAreaView>
+        </SafeAreaProvider>
       </RootSiblingParent>
     </GestureHandlerRootView>
   );

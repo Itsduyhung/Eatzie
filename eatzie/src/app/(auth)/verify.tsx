@@ -1,4 +1,3 @@
-import LoadingOverlay from "@/components/loading/overlay";
 import { resendCodeAPI, verifyCodeAPI } from "@/utils/api";
 import { APP_COLOR } from "@/utils/constants";
 import { router, useLocalSearchParams } from "expo-router";
@@ -109,7 +108,6 @@ const VerifyPage = () => {
             justifyContent: "center",
           }}
         >
-          <Text>Can't get OTP,</Text>
           <Text
             onPress={handleResendOTPCode}
             style={{ textDecorationLine: "underline", fontWeight: "bold" }}
@@ -118,7 +116,7 @@ const VerifyPage = () => {
           </Text>
         </View>
       </View>
-      {isSubmit && <LoadingOverlay />}
+      {isSubmit}
     </>
   );
 };

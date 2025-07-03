@@ -2,6 +2,7 @@
 
 import { RefObject } from "react";
 import { TextInput } from "react-native";
+import { InputProps } from "tamagui";
 import { FormikFieldBaseProps } from "../baseInput.types";
 
 export type CustomInputProps = FormikFieldBaseProps<string> & {
@@ -15,4 +16,12 @@ export type CustomInputProps = FormikFieldBaseProps<string> & {
   suffixIcon?: React.ReactNode;
   secureTextEntry?: boolean;
   inputRef?: RefObject<TextInput>;
+
+  value?: string;
+  onChangeText?: (text: string) => void;
+  paddingLeft?: number;
+  onBlur?: () => void;
+  height?: number;
+
+  focusStyle?: InputProps["focusStyle"] | "none";
 };

@@ -1,4 +1,3 @@
-// components/ui/CustomPasswordInput.tsx
 import { Eye, EyeOff } from "@tamagui/lucide-icons";
 import { useEffect, useRef, useState } from "react";
 import { TextInput, TouchableOpacity } from "react-native";
@@ -10,17 +9,38 @@ import { CustomInput } from "./CustomInput";
 
 export function CustomPasswordInput(props: PasswordInputProps) {
   const [secure, setSecure] = useState(true);
-  const { textColor } = useThemedTextColor();
+  const [displayValue, setDisplayValue] = useState("");
   const inputRef = useRef<TextInput>(null);
+  const { textColor } = useThemedTextColor();
 
-  const toggleSecure = () => setSecure((prev) => !prev);
+  const realValue = props.field?.value ?? "";
 
   useEffect(() => {
-    // Focus lại sau khi remount
+    setDisplayValue(secure ? "•".repeat(realValue.length) : realValue);
+  }, [secure, realValue]);
+
+  const handleChange = (text: string) => {
+    const oldValue = realValue;
+    const isDeleting = text.length < oldValue.length;
+
+    let newValue = "";
+
+    if (isDeleting) {
+      newValue = oldValue.slice(0, text.length);
+    } else {
+      const addedChar = text[text.length - 1] ?? "";
+      newValue = oldValue + addedChar;
+    }
+
+    props.field.onChange(props.field.name)(newValue);
+  };
+
+  const toggleSecure = () => {
+    setSecure((prev) => !prev);
     requestAnimationFrame(() => {
-      inputRef.current?.focus?.();
+      inputRef.current?.focus();
     });
-  }, [secure]);
+  };
 
   const EyeIconComponent = secure ? EyeOff : Eye;
 
@@ -28,8 +48,9 @@ export function CustomPasswordInput(props: PasswordInputProps) {
     <CustomInput
       {...props}
       ref={inputRef}
-      secureTextEntry={secure}
-      key={`password-${secure}`} // Force re-render Input
+      secureTextEntry={false}
+      value={displayValue}
+      onChangeText={handleChange}
       suffixIcon={
         <TouchableOpacity
           onPress={toggleSecure}

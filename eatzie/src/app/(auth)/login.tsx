@@ -62,20 +62,27 @@ export default function LoginScreen() {
           <FormErrorContext.Provider
             value={{ showError: formik.submitCount > 0 }}
           >
-            <YStack f={1} p="$4" gap="$4" justifyContent="center">
+            <YStack
+              f={1}
+              p="$4"
+              paddingBottom="$10"
+              gap="$4"
+              justifyContent="center"
+              backgroundColor="white"
+            >
               <FormikInput
                 name="email"
                 placeholder="Số điện thoại hoặc email"
                 keyboardType="email-address"
                 autoCapitalize="none"
-                backgroundColor="white"
+                backgroundColor="transparent"
               />
 
               <FormikPasswordInput
                 name="password"
                 placeholder="Mật khẩu"
                 autoCapitalize="none"
-                backgroundColor="white"
+                backgroundColor="transparent"
               />
 
               <CustomButton

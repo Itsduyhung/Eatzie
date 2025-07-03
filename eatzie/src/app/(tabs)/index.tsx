@@ -1,59 +1,64 @@
-import { useState, useRef } from "react";
-import { View, StyleSheet, Animated, StatusBar } from "react-native";
+import React, { useRef } from "react";
+import { Animated, Dimensions, StyleSheet } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+import { HeaderGradientBackground } from "@/app/untils/GradientBackground";
+
+import { BannerCarousel } from "@/components/anima/BannerRender";
+import { IconInlineList } from "@/components/anima/LoadingAnimation";
 import HeaderHome from "@/components/home/header.home";
-import TopList from "@/components/home/top.list";
-import BannerHome from "@/components/home/banner.home";
-import CollectionHome from "@/components/home/collection.home";
-import { APP_COLOR } from "@/utils/constants";
+import { ThemedScreen } from "@/components/layout/ThemedScreen";
+import { YStack } from "tamagui";
 
-const HEADER_MAX_HEIGHT = 100; //distance from HeaderHome to Body
-
-const data = [
-  { key: 1, name: "Top Quán Rating 5* tuần này", ref: "" },
-  { key: 2, name: "Quán Mới Lên Sàn", ref: "" },
-  { key: 3, name: "Ăn Thỏa Thích, Freeship 0Đ", ref: "" },
-];
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const HomeTab = () => {
   const scrollY = useRef(new Animated.Value(0)).current;
-  const [searchValue, setSearchValue] = useState(
-    "@nvminh162 got the bang no cap"
-  );
+  const insets = useSafeAreaInsets();
 
   return (
-    <View style={styles.container}>
-      {/* Sticky Header */}
-      <HeaderHome
-        scrollY={scrollY}
-        searchValue={searchValue}
-        setSearchValue={setSearchValue}
-      />
-
-      {/* Home Body */}
+    <ThemedScreen backgroundColor="#F5F5F5" padding="$0">
       <Animated.ScrollView
-        contentContainerStyle={styles.scrollViewContent}
+        style={styles.scrollView}
         scrollEventThrottle={16}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: false }
+          { useNativeDriver: true }
         )}
+        contentContainerStyle={{}}
       >
-        <BannerHome />
-        <TopList />
-        {data.map((item) => (
-          <CollectionHome key={item.key} name={item.name} />
-        ))}
+        <HeaderGradientBackground>
+          <HeaderHome />
+        </HeaderGradientBackground>
+
+        <YStack backgroundColor="#F5F5F5">
+          <BannerCarousel />
+        </YStack>
+
+        <ThemedScreen backgroundColor="#F5F5F5">
+          <YStack width="100%" paddingHorizontal="$2" marginTop="$3">
+            <YStack width="100%" backgroundColor="#FFFFFF" borderRadius={14}>
+              <IconInlineList />
+            </YStack>
+          </YStack>
+        </ThemedScreen>
       </Animated.ScrollView>
-    </View>
+    </ThemedScreen>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  scrollView: {
     flex: 1,
   },
-  scrollViewContent: {
-    paddingTop: HEADER_MAX_HEIGHT + 10,
+  section: {
+    height: SCREEN_HEIGHT * 0.3,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#eee",
+    marginBottom: 2,
+    borderRadius: 8,
+    marginHorizontal: 4,
   },
 });
 
