@@ -2,10 +2,10 @@
 {
     public class UserDietFoodEntity
     {
-        public int UserDietId { get; set; }
+        public int UserDiet_id { get; set; }
         public UserDietEntity UserDiet { get; set; }
 
-        public int FoodId { get; set; }
+        public int Food_id { get; set; }
         public FoodEntity? Food { get; set; }
     }
 }

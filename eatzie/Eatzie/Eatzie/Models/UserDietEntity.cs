@@ -7,8 +7,8 @@ namespace Eatzie.Models
     public class UserDietEntity
     {
         [Key]
-        [Column("UserDietId")]
-        public int UserDietId { get; set; }
+        [Column("Id")]
+        public int Id { get; set; }
 
         public int UserId { get; set; }
 
@@ -22,7 +22,7 @@ namespace Eatzie.Models
         // Navigation
         public ICollection<UserDietFoodEntity>? UserDietFoods { get; set; }
         [ForeignKey("UserId")]
-        public User? User { get; set; }
-        public ICollection<UserDietFoodEntity>? UserDietFoodEntitys { get; set; }
+        [InverseProperty("UserDiets")]
+        public UserEntity? User { get; set; }
     }
 }

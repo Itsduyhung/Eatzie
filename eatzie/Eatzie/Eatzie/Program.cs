@@ -16,6 +16,10 @@ var builder = WebApplication.CreateBuilder(args);
 // 1.Email
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 
+// Cloudinary
+builder.Services.Configure<CloudinarySettings>(
+    builder.Configuration.GetSection("CloudinarySettings"));
+
 // 2.PostgreSQL
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
@@ -37,6 +41,11 @@ builder.Services.AddScoped<IUserDietRepository, UserDietRepository>();
 builder.Services.AddScoped<IUserDietService, UserDietService>();
 
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IFoodRepository, FoodRepository>();
+builder.Services.AddScoped<IFoodService, FoodService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IPhotoService, PhotoService>();
 
 builder.Services.AddControllers()
                  .AddNewtonsoftJson();

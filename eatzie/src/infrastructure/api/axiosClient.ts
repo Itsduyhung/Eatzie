@@ -3,7 +3,7 @@ import axios from "axios";
 import { storage } from "../storage/tokenStorage";
 
 export const api = axios.create({
-  baseURL: process.env.EXPO_PUBLIC_API_URL || "http://192.168.0.191:5237/api",
+baseURL: "http://192.168.1.11:5237/api",
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",

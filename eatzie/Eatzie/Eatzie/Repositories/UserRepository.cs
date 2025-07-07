@@ -2,17 +2,16 @@
 using Eatzie.Interfaces.IRepository;
 using Eatzie.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 
 namespace Eatzie.Repositories
 {
-    public class ForgotPasswordRepository(ApplicationDbContext context) : IForgotPasswordRepository
+    public class UserRepository : IUserRepository
     {
-        private readonly ApplicationDbContext _context = context;
+        private readonly ApplicationDbContext _context;
 
-        public async Task<UserEntity?> GetByEmailAsync(string email)
+        public UserRepository(ApplicationDbContext context)
         {
-            return await _context.UserEntitys.FirstOrDefaultAsync(u => u.Email == email);
+            _context = context;
         }
 
         public async Task<UserEntity?> GetByIdAsync(int id)

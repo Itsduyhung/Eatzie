@@ -10,15 +10,15 @@ namespace Eatzie.Data.Configuration
         {
             builder.ToTable("userdiet_foods");
 
-            builder.HasKey(udf => new { udf.UserDietId, udf.FoodId });
+            builder.HasKey(udf => new { udf.UserDiet_id, udf.Food_id });
 
             builder.HasOne(udf => udf.UserDiet)
                    .WithMany(ud => ud.UserDietFoods)
-                   .HasForeignKey(udf => udf.UserDietId);
+                   .HasForeignKey(udf => udf.UserDiet_id);
 
             builder.HasOne(udf => udf.Food)
                    .WithMany(f => f.UserDietFoods)
-                   .HasForeignKey(udf => udf.FoodId);
+                   .HasForeignKey(udf => udf.Food_id);
         }
     }
 }

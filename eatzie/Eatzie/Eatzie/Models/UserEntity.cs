@@ -5,15 +5,19 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Eatzie.Models
 {
     [Table("users")]
-    public class User
+    public class UserEntity
     {
         [Key]
-        [Column("id")]
+        [Column("Id")]
         public int Id { get; set; }
 
         [Column("fullname")]
         [MaxLength(255)]
         public string? Fullname { get; set; }
+
+        [Column("avatar")]
+        [MaxLength(1000)]
+        public string? Avatar { get; set; }
 
         [Required]
         [Column("email")]
@@ -25,7 +29,7 @@ namespace Eatzie.Models
         [MaxLength(255)]
         public required string Password { get; set; }
 
-        [Column("phone")]
+        [Column("phone")] 
         [MaxLength(20)]
         public string? Phone { get; set; }
 
@@ -36,6 +40,10 @@ namespace Eatzie.Models
         [Column("created_at")]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public virtual ICollection<PasswordResetToken> PasswordResetTokens { get; set; } = [];
+        [InverseProperty("User")]
         public ICollection<UserDietEntity>? UserDiets { get; set; }
+        public ICollection<HistoryFoodEntity> HistoryFoods { get; set; }
+        public ICollection<FeedbackEntity> Feedbacks { get; set; }
+        public ICollection<FoodViewEntity> FoodViews { get; set; }
     }
 }

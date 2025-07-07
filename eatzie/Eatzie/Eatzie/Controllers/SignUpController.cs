@@ -50,7 +50,20 @@ namespace Eatzie.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Đã xảy ra lỗi trong quá trình đăng ký.");
-                var serverErrorResponse = new BaseAPIResponse("Đã xảy ra lỗi hệ thống. Vui lòng thử lại sau.", StatusCodes.Status500InternalServerError, false);
+
+                // Ghi thêm chi tiết InnerException nếu có
+                if (ex.InnerException != null)
+                {
+                    _logger.LogError("Chi tiết lỗi bên trong (InnerException): {Message}", ex.InnerException.Message);
+                    _logger.LogError("StackTrace nội bộ: {StackTrace}", ex.InnerException.StackTrace);
+                }
+
+                var serverErrorResponse = new BaseAPIResponse(
+                    message: "Đã xảy ra lỗi hệ thống. Vui lòng thử lại sau.",
+                    statusCode: StatusCodes.Status500InternalServerError,
+                    isSuccess: false
+                );
+
                 return StatusCode(StatusCodes.Status500InternalServerError, serverErrorResponse);
             }
         }

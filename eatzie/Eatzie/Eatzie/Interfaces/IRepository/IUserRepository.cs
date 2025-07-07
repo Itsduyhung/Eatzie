@@ -1,11 +1,9 @@
 ﻿using Eatzie.Models;
-using System.Threading.Tasks;
 
 namespace Eatzie.Interfaces.IRepository
 {
-    public interface IForgotPasswordRepository
+    public interface IUserRepository
     {
-        Task<UserEntity?> GetByEmailAsync(string email);
         Task<UserEntity?> GetByIdAsync(int id);
         Task UpdateAsync(UserEntity user);
     }

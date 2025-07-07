@@ -122,7 +122,7 @@ namespace Eatzie.Services
 
             return new UserDietResponse
             {
-                UserDietId = entity.UserDietId,
+                UserDietId = entity.Id,
                 UserId = entity.UserId,
                 Allergic_food = entity.Allergic_food,
                 Favorite_food = entity.Favorite_food,

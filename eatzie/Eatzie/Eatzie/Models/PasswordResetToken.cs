@@ -32,6 +32,6 @@ namespace Eatzie.Models
         public int UserId { get; set; }
 
         [ForeignKey("UserId")]
-        public virtual User User { get; set; }
+        public virtual UserEntity User { get; set; }
     }
 }

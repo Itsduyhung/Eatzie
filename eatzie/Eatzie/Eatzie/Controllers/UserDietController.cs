@@ -38,7 +38,7 @@ namespace Eatzie.Controllers
                     IsSuccess = true,
                     Data = new
                     {
-                        result.UserDietId,
+                        result.Id,
                         result.UserId,
                         DietType = result.Diet_type.ToString()
                     }

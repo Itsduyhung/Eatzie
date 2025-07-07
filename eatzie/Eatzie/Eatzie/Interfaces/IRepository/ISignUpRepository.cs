@@ -4,7 +4,7 @@ namespace Eatzie.Interfaces.IRepository
 {
     public interface ISignUpRepository
     {
-        Task<User?> GetByEmailAsync(string email);
-        Task<User> CreateAsync(User user);
+        Task<UserEntity?> GetByEmailAsync(string email);
+        Task<UserEntity> CreateAsync(UserEntity user);
     }
 }
