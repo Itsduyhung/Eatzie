@@ -14,6 +14,15 @@ namespace Eatzie.Services
 
         public async Task<BaseAPIResponse> SignInAsync(SignInRequest request)
         {
+            if (string.IsNullOrWhiteSpace(request.Email))
+            {
+                return new BaseAPIResponse
+                {
+                    StatusCode = (int)HttpStatusCode.BadRequest,
+                    IsSuccess = false,
+                    Message = "Email không được để trống."
+                };
+            }
             var user = await _signinRepository.GetUserByEmailAsync(request.Email);
 
             if (user == null)

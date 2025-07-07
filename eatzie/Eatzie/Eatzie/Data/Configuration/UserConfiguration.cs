@@ -4,16 +4,16 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Eatzie.Data.Configuration
 {
-    public class UserConfiguration : IEntityTypeConfiguration<User>
+    public class UserConfiguration : IEntityTypeConfiguration<UserEntity>
     {
-        public void Configure(EntityTypeBuilder<User> builder)
+        public void Configure(EntityTypeBuilder<UserEntity> builder)
         {
             builder.ToTable("users");
 
             builder.HasKey(u => u.Id);
 
             builder.Property(u => u.Id)
-                   .HasColumnName("id")
+                   .HasColumnName("Id")
                    .ValueGeneratedOnAdd();
 
             builder.Property(u => u.Fullname)

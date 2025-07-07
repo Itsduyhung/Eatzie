@@ -10,12 +10,12 @@ namespace Eatzie.Repositories
     {
         private readonly ApplicationDbContext _context = context;
 
-        public async Task<User?> GetByEmailAsync(string email)
+        public async Task<UserEntity?> GetByEmailAsync(string email)
         {
             return await _context.UserEntitys.FirstOrDefaultAsync(u => u.Email == email);
         }
 
-        public async Task<User> CreateAsync(User user)
+        public async Task<UserEntity> CreateAsync(UserEntity user)
         {
             await _context.UserEntitys.AddAsync(user);
             await _context.SaveChangesAsync();

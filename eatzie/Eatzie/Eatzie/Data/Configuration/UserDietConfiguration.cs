@@ -10,7 +10,7 @@ namespace Eatzie.Data.Configuration
         {
             builder.ToTable("userdiet");
 
-            builder.HasKey(ud => ud.UserDietId);
+            builder.HasKey(ud => ud.Id);
 
             builder.Property(ud => ud.Diet_type)
                    .HasConversion<string>()
@@ -18,7 +18,7 @@ namespace Eatzie.Data.Configuration
 
             builder.HasMany(ud => ud.UserDietFoods)
                    .WithOne(udf => udf.UserDiet)
-                   .HasForeignKey(udf => udf.UserDietId);
+                   .HasForeignKey(udf => udf.UserDiet_id);
         }
     }
 }

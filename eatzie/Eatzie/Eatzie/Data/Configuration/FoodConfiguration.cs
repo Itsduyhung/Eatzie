@@ -9,20 +9,13 @@ namespace Eatzie.Data.Configuration
         public void Configure(EntityTypeBuilder<FoodEntity> builder)
         {
             builder.ToTable("foods");
+            builder.HasKey(f => f.Id);
 
-            builder.Property(f => f.Content)
-                   .IsRequired();
-
-            builder.Property(f => f.IsVegetarian)
-                   .IsRequired();
-
-            builder.HasMany(f => f.UserDietFoods)
-                   .WithOne(udf => udf.Food)
-                   .HasForeignKey(udf => udf.FoodId);
-
-            builder.HasMany(f => f.HistoryFoods)
-                   .WithOne(h => h.Food)
-                   .HasForeignKey(h => h.FoodId);
+            builder.Property(f => f.Content).IsRequired();
+            builder.Property(f => f.Description);
+            builder.Property(f => f.ImageUrl);
+            builder.Property(f => f.IsVegetarian).HasDefaultValue(false);
+            builder.Property(f => f.CreatedAt).HasDefaultValueSql("NOW()");
         }
     }
 }

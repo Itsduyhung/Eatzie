@@ -1,23 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Eatzie.Models;
 
 namespace Eatzie.Models
 {
     public class HistoryFoodEntity
     {
-        [Key]
         public int Id { get; set; }
-
-        [Required]
         public int UserId { get; set; }
-
-        [Required]
-        public int FoodId { get; set; }
-
-        public DateTime SuggestedAt { get; set; } = DateTime.UtcNow;
-
-        public bool IsSelected { get; set; } = false;
-
-        // Navigation
+        public int Food_id { get; set; }
+        public DateTime SuggestedAt { get; set; }
+        public bool IsSelected { get; set; }
+        public UserEntity User { get; set; }
         public FoodEntity Food { get; set; }
     }
 }

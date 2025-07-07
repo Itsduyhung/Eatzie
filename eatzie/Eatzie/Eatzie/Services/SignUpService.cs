@@ -19,7 +19,7 @@ namespace Eatzie.Services
 
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password, 12);
 
-            var newUser = new User
+            var newUser = new UserEntity
             {
                 Fullname = request.Fullname,
                 Email = request.Email,

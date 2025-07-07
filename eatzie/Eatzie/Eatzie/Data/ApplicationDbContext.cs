@@ -6,13 +6,14 @@ namespace Eatzie.Data
 {
     public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
     {
-        public DbSet<User> UserEntitys { get; set; }
+        public DbSet<UserEntity> UserEntitys { get; set; }
         public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
         public DbSet<FoodEntity> Foods { get; set; }
         public DbSet<HistoryFoodEntity> HistoryFoodEntitys { get; set; }
         public DbSet<UserDietEntity> UserDietEntitys { get; set; }
         public DbSet<UserDietFoodEntity> UserDietFoodEntitys { get; set; }
-
+        public DbSet<FeedbackEntity> FeedbackEntitys { get; set; }
+        public DbSet<FoodViewEntity> FoodViewEntitys { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -23,6 +24,8 @@ namespace Eatzie.Data
             modelBuilder.ApplyConfiguration(new UserDietConfiguration());
             modelBuilder.ApplyConfiguration(new UserDietFoodConfiguration());
             modelBuilder.ApplyConfiguration(new HistoryFoodConfiguration());
+            modelBuilder.ApplyConfiguration(new FeedbackConfiguration());
+            modelBuilder.ApplyConfiguration(new FoodViewConfiguration());
         }
     }
 }
