@@ -11,6 +11,7 @@ namespace Eatzie.Models
         public string ImageUrl { get; set; }
         public bool IsVegetarian { get; set; }
         public DateTime CreatedAt { get; set; }
+        public string? Address { get; set; }
 
         // Navigation
         public ICollection<HistoryFoodEntity> HistoryFoods { get; set; }
