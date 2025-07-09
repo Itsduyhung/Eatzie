@@ -9,5 +9,6 @@
         public bool IsVegetarian { get; set; }
         public int TotalViews { get; set; }
         public double AverageRating { get; set; }
+        public string? Address { get; set; }
     }
 }

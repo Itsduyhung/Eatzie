@@ -73,7 +73,6 @@ namespace Eatzie.Services
             var suggestions = filteredFoods.Take(count).ToList();
             var foodIds = suggestions.Select(f => f.Id).ToList();
 
-            // Lượt xem
             var views = await _context.Set<FoodViewEntity>()
                 .Where(v => foodIds.Contains(v.Food_id))
                 .GroupBy(v => v.Food_id)
@@ -101,6 +100,54 @@ namespace Eatzie.Services
 
             await _foodRepository.SaveHistoryAsync(userId, suggestions);
             return result;
+        }
+
+    public async Task<List<FoodResponse>> GetAllHistoryFoodsAsync(int userId)
+        {
+            var histories = await _foodRepository.GetAllHistoryFoodsAsync(userId);
+
+            var result = histories.Select(h => new FoodResponse
+            {
+                Id = h.Food.Id,
+                Content = h.Food.Content,
+                Description = h.Food.Description,
+                ImageUrl = h.Food.ImageUrl,
+                IsVegetarian = h.Food.IsVegetarian,
+                Address = h.Food.Address,
+                TotalViews = _context.FoodViewEntitys.Count(v => v.Food_id == h.Food.Id),
+                AverageRating = Math.Round(
+                    _context.FeedbackEntitys
+                        .Where(f => f.Food_id == h.Food.Id)
+                        .Average(f => (double?)f.Rating) ?? 0, 2)
+            }).ToList();
+
+            return result;
+        }
+
+        public async Task<FoodResponse?> GetFoodDetailAsync(int foodId)
+        {
+            var food = await _foodRepository.GetFoodDetailByIdAsync(foodId);
+            if (food == null) return null;
+
+            var views = await _context.FoodViewEntitys
+                .Where(v => v.Food_id == foodId)
+                .CountAsync();
+
+            var avgRating = await _context.FeedbackEntitys
+                .Where(f => f.Food_id == foodId)
+                .AverageAsync(f => (double?)f.Rating) ?? 0;
+
+            return new FoodResponse
+            {
+                Id = food.Id,
+                Content = food.Content,
+                Description = food.Description,
+                ImageUrl = food.ImageUrl,
+                IsVegetarian = food.IsVegetarian,
+                Address = food.Address,
+                TotalViews = views,
+                AverageRating = Math.Round(avgRating, 2)
+            };
         }
     }
 }

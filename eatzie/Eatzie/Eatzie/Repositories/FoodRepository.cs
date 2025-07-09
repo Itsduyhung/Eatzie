@@ -51,5 +51,23 @@ namespace Eatzie.Repositories
 
             await _context.SaveChangesAsync();
         }
+        public async Task<List<HistoryFoodEntity>> GetAllHistoryFoodsAsync(int userId)
+        {
+            return await _context.HistoryFoodEntitys
+                .Include(h => h.Food)
+                .Where(h => h.UserId == userId)
+                .ToListAsync();
+        }
+        /// <summary>
+        /// Food History Detail
+        /// </summary>
+        /// <param name="foodId"></param>
+        /// <returns></returns>
+        public async Task<FoodEntity?> GetFoodDetailByIdAsync(int foodId)
+        {
+            return await _context.Foods
+                .Where(f => f.Id == foodId)
+                .FirstOrDefaultAsync();
+        }
     }
 }
