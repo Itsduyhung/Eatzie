@@ -46,6 +46,8 @@ builder.Services.AddScoped<IFoodService, FoodService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPhotoService, PhotoService>();
+builder.Services.AddScoped<IFoodViewRepository, FoodViewRepository>();
+builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
 
 builder.Services.AddControllers()
                  .AddNewtonsoftJson();
