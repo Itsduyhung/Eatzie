@@ -61,5 +61,33 @@ namespace Eatzie.Controllers
             await _service.CreateFeedbackAsync(request);
             return Ok(new { message = "Feedback submitted successfully." });
         }
+        [HttpGet("{foodId}/feedbacks")]
+        public async Task<IActionResult> GetFeedbacks(int foodId)
+        {
+            var feedbacks = await _service.GetFeedbacksByFoodIdAsync(foodId);
+            return Ok(feedbacks);
+        }
+        [HttpPut("feedback/{feedbackId}")]
+        public async Task<IActionResult> UpdateFeedback(int feedbackId, [FromBody] FeedbackRequest request)
+        {
+            var userId = GetUserIdFromToken.ExtractUserId(HttpContext);
+            if (userId == null) return Unauthorized("Token không hợp lệ.");
+
+            var result = await _service.UpdateFeedbackAsync(feedbackId, userId.Value, request);
+            if (!result) return Forbid("Bạn không được phép sửa feedback này.");
+
+            return Ok(new { message = "Feedback updated successfully." });
+        }
+        [HttpDelete("feedback/{feedbackId}")]
+        public async Task<IActionResult> DeleteFeedback(int feedbackId)
+        {
+            var userId = GetUserIdFromToken.ExtractUserId(HttpContext);
+            if (userId == null) return Unauthorized("Token không hợp lệ.");
+
+            var result = await _service.DeleteFeedbackAsync(feedbackId, userId.Value);
+            if (!result) return Forbid("Bạn không được phép xóa feedback này.");
+
+            return Ok(new { message = "Feedback deleted successfully." });
+        }
     }
 }
