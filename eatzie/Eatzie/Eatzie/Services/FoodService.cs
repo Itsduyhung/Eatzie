@@ -181,4 +181,43 @@ public class FoodService(
         };
         await _feedbackRepo.AddAsync(feedback);
     }
+    public async Task<List<FeedbackResponse>> GetFeedbacksByFoodIdAsync(int foodId)
+    {
+        var feedbacks = await _context.FeedbackEntitys
+            .Where(f => f.Food_id == foodId)
+            .OrderByDescending(f => f.CreatedAt)
+            .Select(f => new FeedbackResponse
+            {
+                Id = f.Id,
+                Food_id = f.Food_id,
+                UserId = f.UserId,
+                Content = f.Content,
+                Rating = f.Rating,
+                CreatedAt = f.CreatedAt,
+                IsResolved = f.IsResolved
+            }).ToListAsync();
+
+        return feedbacks;
+    }
+    public async Task<bool> UpdateFeedbackAsync(int feedbackId, int userId, FeedbackRequest request)
+    {
+        var feedback = await _context.FeedbackEntitys.FirstOrDefaultAsync(f => f.Id == feedbackId);
+        if (feedback == null || feedback.UserId != userId) return false;
+
+        feedback.Content = request.Content;
+        feedback.Rating = request.Rating;
+        //feedback.IsResolved = request.IsResolved;
+        await _context.SaveChangesAsync();
+        return true;
+    }
+    public async Task<bool> DeleteFeedbackAsync(int feedbackId, int userId)
+    {
+        var feedback = await _context.FeedbackEntitys.FirstOrDefaultAsync(f => f.Id == feedbackId);
+        if (feedback == null || feedback.UserId != userId) return false;
+
+        _context.FeedbackEntitys.Remove(feedback);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
 }
