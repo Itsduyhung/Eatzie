@@ -13,7 +13,7 @@ namespace Eatzie.Data
         public DbSet<UserDietEntity> UserDietEntitys { get; set; }
         public DbSet<UserDietFoodEntity> UserDietFoodEntitys { get; set; }
         public DbSet<FeedbackEntity> FeedbackEntitys { get; set; }
-        public DbSet<FoodViewEntity> FoodViewEntitys { get; set; }
+        public DbSet<FoodViewEntity> FoodViews { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
