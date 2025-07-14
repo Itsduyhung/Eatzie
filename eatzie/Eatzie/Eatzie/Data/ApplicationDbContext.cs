@@ -14,6 +14,7 @@ namespace Eatzie.Data
         public DbSet<UserDietFoodEntity> UserDietFoodEntitys { get; set; }
         public DbSet<FeedbackEntity> FeedbackEntitys { get; set; }
         public DbSet<FoodViewEntity> FoodViews { get; set; }
+        public DbSet<SavedFoodEntity> SavedFoods { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -26,6 +27,7 @@ namespace Eatzie.Data
             modelBuilder.ApplyConfiguration(new HistoryFoodConfiguration());
             modelBuilder.ApplyConfiguration(new FeedbackConfiguration());
             modelBuilder.ApplyConfiguration(new FoodViewConfiguration());
+            modelBuilder.ApplyConfiguration(new SavedFoodConfiguration());
         }
     }
 }

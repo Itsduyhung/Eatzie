@@ -39,7 +39,8 @@ builder.Services.AddScoped<IPasswordResetTokenRepository, PasswordResetTokenRepo
 
 builder.Services.AddScoped<IUserDietRepository, UserDietRepository>();
 builder.Services.AddScoped<IUserDietService, UserDietService>();
-
+builder.Services.AddScoped<ISavedFoodRepository, SavedFoodRepository>();
+builder.Services.AddScoped<ISavedFoodService,SavedFoodService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IFoodRepository, FoodRepository>();
 builder.Services.AddScoped<IFoodService, FoodService>();
