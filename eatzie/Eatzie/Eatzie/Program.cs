@@ -36,7 +36,8 @@ builder.Services.AddScoped<ISignUpRepository, SignUpRepository>();
 builder.Services.AddScoped<IForgotPasswordService, ForgotPasswordService>();
 builder.Services.AddScoped<IForgotPasswordRepository, ForgotPasswordRepository>();
 builder.Services.AddScoped<IPasswordResetTokenRepository, PasswordResetTokenRepository>();
-
+builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<IUserDietRepository, UserDietRepository>();
 builder.Services.AddScoped<IUserDietService, UserDietService>();
 builder.Services.AddScoped<ISavedFoodRepository, SavedFoodRepository>();

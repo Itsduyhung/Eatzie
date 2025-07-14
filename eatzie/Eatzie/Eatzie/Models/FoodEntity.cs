@@ -19,5 +19,7 @@ namespace Eatzie.Models
         public ICollection<FeedbackEntity> Feedbacks { get; set; }
         public ICollection<FoodViewEntity> FoodViews { get; set; }
         public ICollection<UserDietFoodEntity> UserDietFoods { get; set; }
+        public ICollection<OrderDetailEntity> OrderDetails { get; set; } = new List<OrderDetailEntity>();
+        public ICollection<CartItemEntity> CartItems { get; set; } = new List<CartItemEntity>();
     }
 }
