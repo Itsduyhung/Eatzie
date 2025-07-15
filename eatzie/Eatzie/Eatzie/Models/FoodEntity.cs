@@ -14,9 +14,12 @@ namespace Eatzie.Models
         public string? Address { get; set; }
 
         // Navigation
+        public ICollection<SavedFoodEntity> SavedByUsers { get; set; } = new List<SavedFoodEntity>();
         public ICollection<HistoryFoodEntity> HistoryFoods { get; set; }
         public ICollection<FeedbackEntity> Feedbacks { get; set; }
         public ICollection<FoodViewEntity> FoodViews { get; set; }
         public ICollection<UserDietFoodEntity> UserDietFoods { get; set; }
+        public ICollection<OrderDetailEntity> OrderDetails { get; set; } = new List<OrderDetailEntity>();
+        public ICollection<CartItemEntity> CartItems { get; set; } = new List<CartItemEntity>();
     }
 }

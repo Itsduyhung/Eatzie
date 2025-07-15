@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Eatzie.Configurations;
 using Eatzie.Data.Configuration;
 using Eatzie.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Eatzie.Data
 {
@@ -14,6 +15,10 @@ namespace Eatzie.Data
         public DbSet<UserDietFoodEntity> UserDietFoodEntitys { get; set; }
         public DbSet<FeedbackEntity> FeedbackEntitys { get; set; }
         public DbSet<FoodViewEntity> FoodViews { get; set; }
+        public DbSet<SavedFoodEntity> SavedFoods { get; set; }
+        public DbSet<CartItemEntity> CartItems { get; set; }
+        public DbSet<OrderEntity> Orders { get; set; }
+        public DbSet<OrderDetailEntity> OrderItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -26,6 +31,10 @@ namespace Eatzie.Data
             modelBuilder.ApplyConfiguration(new HistoryFoodConfiguration());
             modelBuilder.ApplyConfiguration(new FeedbackConfiguration());
             modelBuilder.ApplyConfiguration(new FoodViewConfiguration());
+            modelBuilder.ApplyConfiguration(new SavedFoodConfiguration());
+            modelBuilder.ApplyConfiguration(new CartItemConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderDetailConfiguration());
         }
     }
 }

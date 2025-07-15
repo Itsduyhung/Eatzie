@@ -41,9 +41,12 @@ namespace Eatzie.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public virtual ICollection<PasswordResetToken> PasswordResetTokens { get; set; } = [];
         [InverseProperty("User")]
+        public ICollection<SavedFoodEntity> SavedFoods { get; set; } = new List<SavedFoodEntity>();
         public ICollection<UserDietEntity>? UserDiets { get; set; }
         public ICollection<HistoryFoodEntity> HistoryFoods { get; set; }
         public ICollection<FeedbackEntity> Feedbacks { get; set; }
         public ICollection<FoodViewEntity> FoodViews { get; set; }
+        public ICollection<CartItemEntity> CartItems { get; set; } = new List<CartItemEntity>();
+        public ICollection<OrderEntity> Orders { get; set; } = new List<OrderEntity>();
     }
 }
