@@ -1,19 +1,20 @@
-import { router } from "expo-router";
-import { Formik } from "formik";
 import { useState } from "react";
+import { Image, TouchableOpacity, TextInput } from "react-native";
+import { Formik } from "formik";
 import Toast from "react-native-root-toast";
+import { YStack, SizableText } from "tamagui";
+import { Eye, EyeOff } from '@tamagui/lucide-icons';
 
-import { Button, Input, SizableText, YStack, useTheme } from "tamagui";
-
-import QuestionButton from "@/components/button/question.button";
-import SocialButton from "@/components/button/social.button";
+import { CustomInputBase } from "@/components/ui/CustomInputBase";
 import { registerAPI } from "@/utils/api";
 import { APP_COLOR } from "@/utils/constants";
 import { RegisterSchema } from "@/utils/validate.schema";
+import { ThemedScreen } from '@/components/layout/ThemedScreen';
 
 const SignUpPage = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const theme = useTheme();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleSignUp = async (
     fullName: string,
@@ -24,10 +25,10 @@ const SignUpPage = () => {
       setIsLoading(true);
       const res = await registerAPI(fullName, email, password);
       if (res.data) {
-        router.replace({
-          pathname: "/(auth)/verify",
-          params: { email },
-        });
+        // router.replace({
+        //   pathname: "/(auth)/verify",
+        //   params: { email },
+        // });
       } else {
         const msg = Array.isArray(res.message) ? res.message[0] : res.message;
         Toast.show(msg, {
@@ -45,74 +46,123 @@ const SignUpPage = () => {
   };
 
   return (
-    <YStack flex={1} padding="$4" gap="$4">
-      <SizableText fontSize="$8" fontWeight="700" marginVertical="$6">
-        Register Now
-      </SizableText>
-
-      <Formik
-        validationSchema={RegisterSchema}
-        initialValues={{ fullName: "", email: "", password: "" }}
-        onSubmit={(values) =>
-          handleSignUp(values.fullName, values.email, values.password)
-        }
-      >
-        {({ handleChange, handleBlur, handleSubmit, values, errors }) => (
-          <YStack gap="$3">
-            <Input
-              placeholder="Full Name"
-              onChangeText={handleChange("fullName")}
-              onBlur={handleBlur("fullName")}
-              value={values.fullName}
-            />
-            {errors.fullName && (
-              <SizableText color="red">{errors.fullName}</SizableText>
-            )}
-
-            <Input
-              placeholder="Email"
-              keyboardType="email-address"
-              onChangeText={handleChange("email")}
-              onBlur={handleBlur("email")}
-              value={values.email}
-            />
-            {errors.email && (
-              <SizableText color="red">{errors.email}</SizableText>
-            )}
-
-            <Input
-              placeholder="Password"
-              secureTextEntry
-              onChangeText={handleChange("password")}
-              onBlur={handleBlur("password")}
-              value={values.password}
-            />
-            {errors.password && (
-              <SizableText color="red">{errors.password}</SizableText>
-            )}
-
-            <Button
-              size="$5"
-              backgroundColor={APP_COLOR.ORANGE}
-              color="white"
-              borderRadius="$10"
-              onPress={handleSubmit as any}
-              disabled={isLoading}
-            >
-              {isLoading ? "Loading..." : "Sign Up"}
-            </Button>
-          </YStack>
-        )}
-      </Formik>
-
-      <QuestionButton
-        questionText="Already have an account?"
-        questionBtnName="Sign in"
-        path="/(auth)/login"
-      />
-
-      <SocialButton title="Sign up with" textColor="black" />
-    </YStack>
+    <ThemedScreen>
+      <YStack flex={1} backgroundColor="#F8FAFC" padding={24} justifyContent="center">
+        {/* Logo Eatzie */}
+        <Image
+          source={require('@/assets/icons/eatzie.png')}
+          style={{ width: 120, height: 120, alignSelf: 'center', marginBottom: 16, marginTop: 16 }}
+          resizeMode="contain"
+        />
+        <Formik
+          validationSchema={RegisterSchema}
+          initialValues={{ fullName: "", email: "", password: "", confirmPassword: "" }}
+          onSubmit={(values) =>
+            handleSignUp(values.fullName, values.email, values.password)
+          }
+        >
+          {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+            <YStack gap={18}>
+              <CustomInputBase
+                value={values.fullName}
+                showError={!!touched.fullName && !!errors.fullName}
+                errorMessage={errors.fullName && 'Vui lòng nhập tên người dùng'}
+                backgroundColor="#E9EEF4"
+                height={48}
+              >
+                <TextInput
+                  value={values.fullName}
+                  onChangeText={handleChange("fullName")}
+                  onBlur={handleBlur("fullName")}
+                  style={{ flex: 1, fontSize: 16, color: "#222", height: 48, paddingHorizontal: 8 }}
+                  placeholder="Tên người dùng"
+                  placeholderTextColor="#888"
+                />
+              </CustomInputBase>
+              <CustomInputBase
+                value={values.email}
+                showError={!!touched.email && !!errors.email}
+                errorMessage={errors.email && 'Vui lòng nhập email'}
+                backgroundColor="#E9EEF4"
+                height={48}
+              >
+                <TextInput
+                  value={values.email}
+                  onChangeText={handleChange("email")}
+                  onBlur={handleBlur("email")}
+                  style={{ flex: 1, fontSize: 16, color: "#222", height: 48, paddingHorizontal: 8 }}
+                  placeholder="Email"
+                  placeholderTextColor="#888"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+              </CustomInputBase>
+              <CustomInputBase
+                value={values.password}
+                showError={!!touched.password && !!errors.password}
+                errorMessage={errors.password && 'Vui lòng nhập mật khẩu'}
+                backgroundColor="#E9EEF4"
+                suffixIcon={
+                  <TouchableOpacity onPress={() => setShowPassword((v) => !v)}>
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </TouchableOpacity>
+                }
+                height={48}
+              >
+                <TextInput
+                  value={values.password}
+                  onChangeText={handleChange("password")}
+                  onBlur={handleBlur("password")}
+                  style={{ flex: 1, fontSize: 16, color: "#222", height: 48, paddingHorizontal: 8 }}
+                  placeholder="Mật khẩu"
+                  placeholderTextColor="#888"
+                  secureTextEntry={!showPassword}
+                  autoCapitalize="none"
+                />
+              </CustomInputBase>
+              <CustomInputBase
+                value={values.confirmPassword}
+                showError={!!touched.confirmPassword && !!errors.confirmPassword}
+                errorMessage={errors.confirmPassword && 'Vui lòng nhập lại mật khẩu'}
+                backgroundColor="#E9EEF4"
+                suffixIcon={
+                  <TouchableOpacity onPress={() => setShowConfirmPassword((v) => !v)}>
+                    {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </TouchableOpacity>
+                }
+                height={48}
+              >
+                <TextInput
+                  value={values.confirmPassword}
+                  onChangeText={handleChange("confirmPassword")}
+                  onBlur={handleBlur("confirmPassword")}
+                  style={{ flex: 1, fontSize: 16, color: "#222", height: 48, paddingHorizontal: 8 }}
+                  placeholder="Nhập lại mật khẩu"
+                  placeholderTextColor="#888"
+                  secureTextEntry={!showConfirmPassword}
+                  autoCapitalize="none"
+                />
+              </CustomInputBase>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: '#6666FF',
+                  borderRadius: 10,
+                  paddingVertical: 16,
+                  alignItems: 'center',
+                  marginTop: 8,
+                }}
+                onPress={() => handleSubmit()}
+                disabled={isLoading}
+              >
+                <SizableText color="#fff" fontWeight="600" fontSize={18}>
+                  {isLoading ? 'Đang đăng kí...' : 'Đăng kí'}
+                </SizableText>
+              </TouchableOpacity>
+            </YStack>
+          )}
+        </Formik>
+      </YStack>
+    </ThemedScreen>
   );
 };
 
