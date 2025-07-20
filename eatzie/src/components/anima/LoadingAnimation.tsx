@@ -5,7 +5,7 @@ import { useRouter } from "expo-router";
 import LottieView, { AnimationObject } from "lottie-react-native";
 import React from "react";
 import { Dimensions, FlatList, Pressable } from "react-native";
-import { Text, YStack } from "tamagui";
+import { Text, XStack, YStack } from "tamagui";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -50,13 +50,25 @@ export const IconInlineList = () => {
   );
 
   return (
-    <FlatList
-      data={IconInlineData}
-      horizontal
-      keyExtractor={(item, index) => `${item.title}-${index}`}
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={{ paddingHorizontal: 0, flexGrow: 1 }}
-      renderItem={renderItem}
-    />
+    <YStack width="100%" backgroundColor="#FFFFFF" borderRadius={14}>
+      <XStack marginTop="$3" marginLeft="$2">
+        <Text
+          fontSize="$5"
+          fontFamily="$heading"
+          color="#9B59B6"
+          numberOfLines={1}
+        >
+          Danh mục
+        </Text>
+      </XStack>
+      <FlatList
+        data={IconInlineData}
+        horizontal
+        keyExtractor={(item, index) => `${item.title}-${index}`}
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ paddingHorizontal: 0, flexGrow: 1 }}
+        renderItem={renderItem}
+      />
+    </YStack>
   );
 };

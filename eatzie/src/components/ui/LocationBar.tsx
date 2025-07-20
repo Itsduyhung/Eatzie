@@ -13,7 +13,7 @@ export function LocationBar() {
       <XStack alignItems="center" gap="$1">
         <MapPin size={18} color="white" />
         <Text color="white" fontWeight="600" fontSize={15}>
-          静安寺
+          QUY NHƠN
         </Text>
         <ChevronDown size={18} color="white" />
       </XStack>
@@ -24,7 +24,7 @@ export function LocationBar() {
             22°
           </Text>
           <Text color="white" fontSize={15}>
-            多云天
+            Cloudy
           </Text>
         </YStack>
         <CloudSun size={18} color="white" />

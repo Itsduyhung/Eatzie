@@ -16,8 +16,8 @@ export const HeaderGradientBackground = ({
 
   return (
     <LinearGradient
-      colors={["rgba(110, 87, 87, 1)", "rgba(237, 221, 221, 1)"]}
-      locations={[0.02, 0.91]}
+      colors={["rgba(102, 102, 255, 1)", "rgba(245, 245, 245, 1)"]}
+      locations={[0.01, 0.99]}
       start={[1, 0]}
       end={[0, 1]}
       style={[{ width: "100%" }, style]}

@@ -4,6 +4,14 @@ import { createTamagui } from "tamagui";
 
 const config = createTamagui({
   ...tamaguiDefaultConfig,
+  tokens: {
+    ...tamaguiDefaultConfig.tokens,
+  },
+  size: {
+    ...tamaguiDefaultConfig.tokens.size,
+    $5_5: 52,
+    $inputLg: 56,
+  },
 });
 
 export type Conf = typeof config;

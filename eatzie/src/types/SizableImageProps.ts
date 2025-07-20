@@ -7,7 +7,8 @@ import {
 
 export type SizableImageProps = {
   source: ImageSourcePropType;
-  width?: number;
+  width?: number | string;
+  height?: number | string;
   aspectRatio?: number;
   borderRadius?: number | string;
   resizeMode?: ImageProps["resizeMode"];

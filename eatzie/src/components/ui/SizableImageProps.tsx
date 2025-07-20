@@ -1,19 +1,19 @@
 import { SizableImageProps } from "@/types/SizableImageProps";
-import { Image } from "react-native";
+import { Image, StyleSheet } from "react-native";
 
 export const SizableImage = ({
   source,
-  width,
-  aspectRatio,
-  borderRadius = 12,
   resizeMode = "cover",
+  borderRadius = 12,
   style,
 }: SizableImageProps) => {
+  const defaultStyle = StyleSheet.flatten(style || {});
+  const hasWidth = defaultStyle?.width !== undefined;
+  const hasHeight = defaultStyle?.height !== undefined;
+
   const imageStyle = {
-    ...(width ? { width } : {}),
-    ...(typeof width === "number" && aspectRatio
-      ? { height: width / aspectRatio }
-      : {}),
+    ...(hasWidth ? {} : { width: "100%" as `${number}%` }),
+    ...(hasHeight ? {} : { height: "100%" as `${number}%` }),
     borderRadius,
   };
 

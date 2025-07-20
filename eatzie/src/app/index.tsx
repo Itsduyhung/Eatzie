@@ -42,7 +42,7 @@ const WelcomePage = () => {
         <View style={styles.container}>
           <View style={styles.welcomeHeadingWrapper}>
             <Text style={styles.welcomeText}>Welcome to</Text>
-            <Text style={styles.brandName}>ShopeeFood</Text>
+            <Text style={styles.brandName}>eeFood</Text>
             <Text style={styles.slogan}>
               Your favourite foods delivered fast at your door.
             </Text>

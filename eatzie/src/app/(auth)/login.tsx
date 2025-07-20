@@ -1,7 +1,7 @@
 import { Formik } from "formik";
 import { useState } from "react";
 import Toast from "react-native-root-toast";
-import { Spinner, YStack } from "tamagui";
+import { Spinner, XStack, YStack } from "tamagui";
 import * as Yup from "yup";
 
 import { FormErrorContext } from "@/app/hooks/FormErrorContext";
@@ -9,14 +9,18 @@ import {
   FormikInput,
   FormikPasswordInput,
 } from "@/components/formik/FormikFields";
-import { ThemedScreen } from "@/components/layout/ThemedScreen";
 import { CustomButton } from "@/components/ui/CustomButton";
 import { CustomText } from "@/components/ui/CustomText";
 
 import { useAuth } from "@/applicaton/hooks/useAuth";
+import { ScrollScreenLayout } from "@/components/layout/ScrollScreenLayout";
+import { BackButton } from "@/components/ui/BackButton";
+import { storage } from "@/infrastructure/storage/tokenStorage";
 import { useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function LoginScreen() {
+  const insets = useSafeAreaInsets();
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const router = useRouter();
@@ -38,11 +42,13 @@ export default function LoginScreen() {
 
     try {
       const result = await login(values);
-      console.log(" Login success:", result);
+      console.log(" Login success:", result.token);
+      await storage.setItem("token", result.token);
+      console.log("Save token sucessfull");
 
       Toast.show("Đăng nhập thành công", { duration: 2000 });
 
-      router.replace("/");
+      router.navigate("/(features)/survey/multistepsurvey");
     } catch (err: any) {
       console.error("❌ Login failed:", err);
       Toast.show(err?.message ?? "Đăng nhập thất bại", { duration: 2000 });
@@ -52,53 +58,58 @@ export default function LoginScreen() {
   };
 
   return (
-    <ThemedScreen backgroundColor="#ffffff">
-      <Formik
-        initialValues={initialValues}
-        onSubmit={handleSubmit}
-        validationSchema={validationSchema}
-      >
-        {(formik) => (
-          <FormErrorContext.Provider
-            value={{ showError: formik.submitCount > 0 }}
+    <ScrollScreenLayout centerContent={true}>
+      <YStack f={1}>
+        <XStack position="absolute" top={insets.top + 8} left="$1">
+          <BackButton />
+        </XStack>
+
+        <YStack f={1} justifyContent="center" px="$4">
+          <Formik
+            initialValues={initialValues}
+            onSubmit={handleSubmit}
+            validationSchema={validationSchema}
           >
-            <YStack
-              f={1}
-              p="$4"
-              paddingBottom="$10"
-              gap="$4"
-              justifyContent="center"
-              backgroundColor="white"
-            >
-              <FormikInput
-                name="email"
-                placeholder="Số điện thoại hoặc email"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                backgroundColor="transparent"
-              />
-
-              <FormikPasswordInput
-                name="password"
-                placeholder="Mật khẩu"
-                autoCapitalize="none"
-                backgroundColor="transparent"
-              />
-
-              <CustomButton
-                backgroundColor="black"
-                onPress={() => formik.handleSubmit()}
+            {(formik) => (
+              <FormErrorContext.Provider
+                value={{ showError: formik.submitCount > 0 }}
               >
-                {loading ? <Spinner color="white" /> : "Đăng nhập"}
-              </CustomButton>
+                <YStack gap="$4">
+                  <FormikInput
+                    name="email"
+                    label="Số điện thoại hoặc email"
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    backgroundColor="transparent"
+                  />
 
-              <CustomText size="$2" textAlign="center">
-                Bạn quên mật khẩu ư?
-              </CustomText>
-            </YStack>
-          </FormErrorContext.Provider>
-        )}
-      </Formik>
-    </ThemedScreen>
+                  <FormikPasswordInput
+                    name="password"
+                    label="Mật khẩu"
+                    keyboardType="email-address"
+                    // label="Số điện thoại hoặc email"
+                    autoCapitalize="none"
+                    backgroundColor="transparent"
+                  />
+
+                  <CustomButton
+                    backgroundColor="#6666FF"
+                    size="$5"
+                    textfontsize="$4"
+                    onPress={() => formik.handleSubmit()}
+                  >
+                    {loading ? <Spinner color="white" /> : "Đăng nhập"}
+                  </CustomButton>
+
+                  <CustomText size="$2" textAlign="center">
+                    Bạn quên mật khẩu ư?
+                  </CustomText>
+                </YStack>
+              </FormErrorContext.Provider>
+            )}
+          </Formik>
+        </YStack>
+      </YStack>
+    </ScrollScreenLayout>
   );
 }
