@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\hunggg\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Eatzie.csproj": {}
+    "C:\\sqdqwd\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Eatzie.csproj": {}
   },
   "projects": {
-    "C:\\hunggg\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Eatzie.csproj": {
+    "C:\\sqdqwd\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Eatzie.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\hunggg\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Eatzie.csproj",
+        "projectUniqueName": "C:\\sqdqwd\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Eatzie.csproj",
         "projectName": "Eatzie",
-        "projectPath": "C:\\hunggg\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Eatzie.csproj",
+        "projectPath": "C:\\sqdqwd\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Eatzie.csproj",
         "packagesPath": "C:\\Users\\HIEU\\.nuget\\packages\\",
-        "outputPath": "C:\\hunggg\\Eatzie\\eatzie\\Eatzie\\Eatzie\\obj\\",
+        "outputPath": "C:\\sqdqwd\\Eatzie\\eatzie\\Eatzie\\Eatzie\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\HIEU\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -47,6 +47,14 @@
             "BCrypt.Net-Next": {
               "target": "Package",
               "version": "[4.0.3, )"
+            },
+            "CloudinaryDotNet": {
+              "target": "Package",
+              "version": "[1.27.6, )"
+            },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[8.0.5, )"
             },
             "Microsoft.AspNetCore.Mvc.NewtonsoftJson": {
               "target": "Package",

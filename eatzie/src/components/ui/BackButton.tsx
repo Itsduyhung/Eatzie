@@ -1,26 +1,16 @@
 import { ChevronLeft } from "@tamagui/lucide-icons";
 import { useRouter } from "expo-router";
-import { Button, styled } from "tamagui";
-
-const CustomBackButton = styled(Button, {
-  name: "CustomBackButton",
-  chromeless: true,
-  backgroundColor: "transparent",
-  pressStyle: {
-    opacity: 0.5,
-  },
-  hoverStyle: {
-    opacity: 0.7,
-  },
-});
+import { PressableIcon } from "../layout/HoverableIconWrapper";
 
 export function BackButton() {
   const router = useRouter();
 
   return (
-    <CustomBackButton
+    <PressableIcon
+      icon={ChevronLeft}
       onPress={() => router.back()}
-      icon={<ChevronLeft size={24} color="black" />}
+      defaultColor="black"
+      pressColor="#f87171" // đỏ nhạt đẹp
     />
   );
 }

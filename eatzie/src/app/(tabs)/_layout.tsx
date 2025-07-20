@@ -10,11 +10,11 @@ const getIcons = (routeName: string, focused: boolean, size: number) => {
     case "index":
       iconName = focused ? "home" : "home-outline";
       break;
+    case "BXH":
+      iconName = focused ? "trophy" : "trophy-outline";
+      break;
     case "order":
       iconName = focused ? "receipt" : "receipt-outline";
-      break;
-    case "like":
-      iconName = focused ? "heart" : "heart-outline";
       break;
     case "notification":
       iconName = focused ? "notifications" : "notifications-outline";
