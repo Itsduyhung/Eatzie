@@ -36,26 +36,21 @@ export const CustomInputBase = ({
         borderWidth={1}
         borderRadius={15}
         paddingLeft={paddingLeft}
-        paddingBottom={10}
-        paddingTop={25}
-        height={height}
-        // {...resolvedFocusStyle}
+        paddingBottom={0}
+        paddingTop={0}
+        height={height ?? 48}
+        flexDirection="row"
+        alignItems="center"
         focusStyle={focusStyle}
       >
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
+        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
           {children}
-          {suffixIcon && (
-            <View style={{ marginRight: 10, paddingBottom: 15 }}>
-              {suffixIcon}
-            </View>
-          )}
         </View>
+        {suffixIcon && (
+          <View style={{ marginRight: 16, alignItems: 'center', justifyContent: 'center' }}>
+            {suffixIcon}
+          </View>
+        )}
       </View>
 
       {showError && errorMessage && (

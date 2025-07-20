@@ -1,6 +1,7 @@
 // app/(tabs)/home.tsx
 import React from "react";
 import { YStack } from "tamagui";
+import { ScrollView } from 'react-native';
 
 import { HeaderGradientBackground } from "@/app/untils/GradientBackground";
 import { BannerCarousel } from "@/components/anima/BannerRender";
@@ -13,21 +14,20 @@ const HomeTab = () => {
   return (
     <ScrollScreenLayout
       header={<HeaderHome />}
-      gradientWrapper={(children) => (
-        <HeaderGradientBackground>{children}</HeaderGradientBackground>
-      )}
     >
-      <YStack backgroundColor="#F5F5F5">
-        <BannerCarousel />
-      </YStack>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 24 }} showsVerticalScrollIndicator={false}>
+        <YStack backgroundColor="#F5F5F5" marginTop={16}>
+          <BannerCarousel />
+        </YStack>
 
-      <YStack width="100%" paddingHorizontal="$2" marginTop="$3">
-        <FlashCardRender />
-      </YStack>
+        <YStack width="100%" paddingHorizontal="$2" marginTop="$3">
+          <FlashCardRender />
+        </YStack>
 
-      <YStack width="100%" paddingHorizontal="$2" marginTop="$3">
-        <IconInlineList />
-      </YStack>
+        <YStack width="100%" paddingHorizontal="$2" marginTop="$3">
+          <IconInlineList />
+        </YStack>
+      </ScrollView>
     </ScrollScreenLayout>
   );
 };
