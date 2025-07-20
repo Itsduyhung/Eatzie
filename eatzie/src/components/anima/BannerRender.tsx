@@ -2,21 +2,24 @@ import React from "react";
 import { Dimensions, FlatList, Platform, View } from "react-native";
 import { YStack } from "tamagui";
 import { SizableImage } from "../ui/SizableImageProps";
+import banner1 from "@/assets/banner/banner1.png";
+import banner2 from "@/assets/banner/banner2.png";
+import banner3 from "@/assets/banner/banner3.png";
 
 const { width: screenWidth } = Dimensions.get("window");
 
 const banners = [
   {
     id: "1",
-    image: require("@/assets/banner/Fresh-and-healthy-vegetables-banner-design-template-scaled.jpg"),
+    image: require("../../assets/banner/banner1.png"),
   },
   {
     id: "2",
-    image: require("@/assets/banner/banner2.jpg"),
+    image: require("../../assets/banner/banner2.png"),
   },
   {
     id: "3",
-    image: require("@/assets/banner/banner3.jpg"),
+    image: require("../../assets/banner/banner3.png"),
   },
 ];
 
