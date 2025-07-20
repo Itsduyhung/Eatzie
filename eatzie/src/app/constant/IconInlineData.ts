@@ -28,15 +28,15 @@ export const IconInlineData: IconInline[] = [
 
 export const BannerData: BannerInline[] = [
   {
-    icon: require("../../assets/banner/Fresh-and-healthy-vegetables-banner-design-template-scaled.jpg"),
+    icon: require("../../assets/banner/banner1.png"),
     path: "/loading",
   },
   {
-    icon: require("../../assets/banner/banner3.jpg"),
+    icon: require("../../assets/banner/banner3.png"),
     path: "/loading",
   },
   {
-    icon: require("../../assets/banner/banner2.jpg"),
+    icon: require("../../assets/banner/banner2.png"),
     path: "/loading",
   },
 ];
