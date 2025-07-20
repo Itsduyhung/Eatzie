@@ -19,6 +19,7 @@ export function FormikInput(
       field={field}
       meta={meta}
       focusStyle={BlackWithShadowFocusStyle}
+      color="#000000"
     />
   );
 }
