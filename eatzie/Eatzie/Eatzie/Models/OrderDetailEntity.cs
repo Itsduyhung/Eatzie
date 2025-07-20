@@ -1,10 +1,13 @@
-﻿namespace Eatzie.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Eatzie.Models
 {
     public class OrderDetailEntity
     {
         public int Id { get; set; }
 
         public int OrderId { get; set; }
+        [Column("FoodId")]
 
         public int FoodId { get; set; }
 

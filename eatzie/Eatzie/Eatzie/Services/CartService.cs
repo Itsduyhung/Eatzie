@@ -15,12 +15,28 @@ namespace Eatzie.Services
 
         public async Task<BaseAPIResponse> AddToCartAsync(int userId, int foodId, int quantity)
         {
+            var food = await _dbContext.Foods.FindAsync(foodId);
+            if (food == null)
+            {
+                return new BaseAPIResponse("Món ăn không tồn tại.", 404, false);
+            }
+
             var existingItem = await _repo.GetCartItemAsync(userId, foodId);
 
             if (existingItem != null)
+            {
                 existingItem.Quantity += quantity;
+            }
             else
-                await _repo.AddCartItemAsync(new CartItemEntity { UserId = userId, FoodId = foodId, Quantity = quantity });
+            {
+                await _repo.AddCartItemAsync(new CartItemEntity
+                {
+                    UserId = userId,
+                    FoodId = foodId,
+                    Quantity = quantity,
+                    Food = food
+                });
+            }
 
             await _repo.SaveChangesAsync();
             return new BaseAPIResponse("Thêm vào giỏ hàng thành công.", 200, true);
@@ -43,31 +59,6 @@ namespace Eatzie.Services
             return new BaseAPIResponse("Xóa toàn bộ món ăn trong giỏ hàng thành công.", 200, true);
         }
 
-        //public async Task<BaseAPIResponse> PlaceOrderAsync(int userId)
-        //{
-        //    var cartItems = await _repo.GetCartItemsAsync(userId);
-        //    if (!cartItems.Any()) return new BaseAPIResponse("Không tìm thấy sản phẩm nào.", 400, false);
-
-        //    var order = new OrderEntity
-        //    {
-        //        UserId = userId,
-        //        CreatedAt = DateTime.UtcNow,
-        //        Status = "Pending",
-        //        TotalAmount = cartItems.Sum(c => c.Quantity * 10),
-        //        OrderDetails = cartItems.Select(c => new OrderDetailEntity
-        //        {
-        //            FoodId = c.FoodId,
-        //            Quantity = c.Quantity,
-        //            UnitPrice = 10
-        //        }).ToList()
-        //    };
-
-        //    _dbContext.Orders.Add(order);
-        //    await _repo.RemoveCartItemsAsync(cartItems);
-        //    await _repo.SaveChangesAsync();
-        //    return new BaseAPIResponse("Đơn hàng đã được đặt thành công.", 200, true);
-        //}
-
         public async Task<List<CartItemResponse>> GetCartItemsAsync(int userId)
         {
             var items = await _repo.GetCartItemsAsync(userId);
@@ -76,7 +67,8 @@ namespace Eatzie.Services
                 FoodId = i.FoodId,
                 FoodName = i.Food?.Content ?? string.Empty,
                 Quantity = i.Quantity,
-                ImageUrl = i.Food?.ImageUrl
+                ImageUrl = i.Food?.ImageUrl,
+                Price = i.Food?.Price ?? 0.0m
             }).ToList();
         }
     }

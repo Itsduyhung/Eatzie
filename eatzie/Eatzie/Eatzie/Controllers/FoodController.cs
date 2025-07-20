@@ -59,7 +59,7 @@ namespace Eatzie.Controllers
             request.UserId = userId.Value;
 
             await _service.CreateFeedbackAsync(request);
-            return Ok(new { message = "Feedback submitted successfully." });
+            return Ok(new { message = "Thêm Feedback thành công." });
         }
         [HttpGet("{foodId}/feedbacks")]
         public async Task<IActionResult> GetFeedbacks(int foodId)
@@ -76,7 +76,7 @@ namespace Eatzie.Controllers
             var result = await _service.UpdateFeedbackAsync(feedbackId, userId.Value, request);
             if (!result) return Forbid("Bạn không được phép sửa feedback này.");
 
-            return Ok(new { message = "Feedback updated successfully." });
+            return Ok(new { message = "Feedback cập nhật thành công." });
         }
         [HttpDelete("feedback/{feedbackId}")]
         public async Task<IActionResult> DeleteFeedback(int feedbackId)
@@ -87,7 +87,7 @@ namespace Eatzie.Controllers
             var result = await _service.DeleteFeedbackAsync(feedbackId, userId.Value);
             if (!result) return Forbid("Bạn không được phép xóa feedback này.");
 
-            return Ok(new { message = "Feedback deleted successfully." });
+            return Ok(new { message = "Feedback xóa thành công." });
         }
     }
 }
