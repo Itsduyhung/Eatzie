@@ -5,7 +5,7 @@ import { Ionicons, Feather } from '@expo/vector-icons';
 type Notification = {
   id: string;
   name: string;
-  avatar: string;
+  avatar: string | { uri: string } | number;
   time: string;
   content: string;
   unread: boolean;
@@ -23,7 +23,7 @@ const notifications: Notification[] = [
   {
     id: '2',
     name: 'KFC',
-    avatar: 'https://1000logos.net/wp-content/uploads/2017/03/KFC-Logo.png',
+    avatar: { uri: 'https://1000logos.net/wp-content/uploads/2017/03/KFC-Logo.png' },
     time: '16:45',
     content: 'Nhập mã KFCDEAL để nhận ngay ưu đãi 30% cho đơn hàng hôm nay!',
     unread: false,
@@ -50,6 +50,17 @@ const notifications: Notification[] = [
     avatar: require('../../assets/images/starbucks_1992ΓÇô2011-logo_brandlogos.net_mrr9i.png'),
     time: '13:30',
     content: 'StarBuck tặng bạn mã FREESHIP cho đơn hàng đầu tiên trong tuần này!',
+    unread: false,
+  },
+];
+
+const unreadNotifications: Notification[] = [
+  {
+    id: '6',
+    name: 'KFC',
+    avatar: { uri: 'https://1000logos.net/wp-content/uploads/2017/03/KFC-Logo.png' },
+    time: '18:30',
+    content: 'Bạn có đơn hàng mới từ KFC! Đặt ngay để nhận ưu đãi đặc biệt.',
     unread: true,
   },
 ];
@@ -59,7 +70,7 @@ export default function NotificationScreen() {
 
   const renderItem = ({ item }: { item: Notification }) => (
     <View style={styles.itemContainer}>
-      <Image source={{ uri: item.avatar }} style={styles.avatar} />
+      <Image source={typeof item.avatar === 'string' ? { uri: item.avatar } : item.avatar} style={styles.avatar} />
       <View style={{ flex: 1 }}>
         <View style={styles.row}>
           <Text style={styles.name}>{item.name}</Text>
@@ -70,6 +81,8 @@ export default function NotificationScreen() {
       </View>
     </View>
   );
+
+  const data = tab === 'all' ? notifications : unreadNotifications;
 
   return (
     <View style={styles.container}>
@@ -91,18 +104,18 @@ export default function NotificationScreen() {
           style={[styles.tabButton, tab === 'all' && styles.tabActive]}
           onPress={() => setTab('all')}
         >
-          <Text style={[styles.tabText, tab === 'all' && styles.tabTextActive]}>Tất cả (10)</Text>
+          <Text style={[styles.tabText, tab === 'all' && styles.tabTextActive]}>Tất cả (5)</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.tabButton, tab === 'unread' && styles.tabActive]}
           onPress={() => setTab('unread')}
         >
-          <Text style={[styles.tabText, tab === 'unread' && styles.tabTextActive]}>Chưa đọc(5)</Text>
+          <Text style={[styles.tabText, tab === 'unread' && styles.tabTextActive]}>Chưa đọc(1)</Text>
         </TouchableOpacity>
       </View>
       {/* Notification List */}
       <FlatList
-        data={notifications}
+        data={data}
         keyExtractor={item => item.id}
         renderItem={renderItem}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
