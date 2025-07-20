@@ -10,6 +10,7 @@ import { registerAPI } from "@/utils/api";
 import { APP_COLOR } from "@/utils/constants";
 import { RegisterSchema } from "@/utils/validate.schema";
 import { ThemedScreen } from '@/components/layout/ThemedScreen';
+import { FormikInput, FormikPasswordInput } from '@/components/formik/FormikFields';
 
 const SignUpPage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -61,88 +62,37 @@ const SignUpPage = () => {
             handleSignUp(values.fullName, values.email, values.password)
           }
         >
-          {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
-            <YStack gap={18}>
-              <CustomInputBase
-                value={values.fullName}
-                showError={!!touched.fullName && !!errors.fullName}
-                errorMessage={errors.fullName && 'Vui lòng nhập tên người dùng'}
-                backgroundColor="#E9EEF4"
-                height={48}
-              >
-                <TextInput
-                  value={values.fullName}
-                  onChangeText={handleChange("fullName")}
-                  onBlur={handleBlur("fullName")}
-                  style={{ flex: 1, fontSize: 16, color: "#222", height: 48, paddingHorizontal: 8 }}
-                  placeholder="Tên người dùng"
-                  placeholderTextColor="#888"
-                />
-              </CustomInputBase>
-              <CustomInputBase
-                value={values.email}
-                showError={!!touched.email && !!errors.email}
-                errorMessage={errors.email && 'Vui lòng nhập email'}
-                backgroundColor="#E9EEF4"
-                height={48}
-              >
-                <TextInput
-                  value={values.email}
-                  onChangeText={handleChange("email")}
-                  onBlur={handleBlur("email")}
-                  style={{ flex: 1, fontSize: 16, color: "#222", height: 48, paddingHorizontal: 8 }}
-                  placeholder="Email"
-                  placeholderTextColor="#888"
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                />
-              </CustomInputBase>
-              <CustomInputBase
-                value={values.password}
-                showError={!!touched.password && !!errors.password}
-                errorMessage={errors.password && 'Vui lòng nhập mật khẩu'}
-                backgroundColor="#E9EEF4"
-                suffixIcon={
-                  <TouchableOpacity onPress={() => setShowPassword((v) => !v)}>
-                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                  </TouchableOpacity>
-                }
-                height={48}
-              >
-                <TextInput
-                  value={values.password}
-                  onChangeText={handleChange("password")}
-                  onBlur={handleBlur("password")}
-                  style={{ flex: 1, fontSize: 16, color: "#222", height: 48, paddingHorizontal: 8 }}
-                  placeholder="Mật khẩu"
-                  placeholderTextColor="#888"
-                  secureTextEntry={!showPassword}
-                  autoCapitalize="none"
-                />
-              </CustomInputBase>
-              <CustomInputBase
-                value={values.confirmPassword}
-                showError={!!touched.confirmPassword && !!errors.confirmPassword}
-                errorMessage={errors.confirmPassword && 'Vui lòng nhập lại mật khẩu'}
-                backgroundColor="#E9EEF4"
-                suffixIcon={
-                  <TouchableOpacity onPress={() => setShowConfirmPassword((v) => !v)}>
-                    {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                  </TouchableOpacity>
-                }
-                height={48}
-              >
-                <TextInput
-                  value={values.confirmPassword}
-                  onChangeText={handleChange("confirmPassword")}
-                  onBlur={handleBlur("confirmPassword")}
-                  style={{ flex: 1, fontSize: 16, color: "#222", height: 48, paddingHorizontal: 8 }}
-                  placeholder="Nhập lại mật khẩu"
-                  placeholderTextColor="#888"
-                  secureTextEntry={!showConfirmPassword}
-                  autoCapitalize="none"
-                />
-              </CustomInputBase>
+          {(formik) => (
+            <YStack gap="$4">
+              <FormikInput
+                name="fullName"
+                label="Tên người dùng"
+                backgroundColor="#FFFFFF"
+                autoCapitalize="words"
+                paddingBottom={10}
+              />
+              <FormikInput
+                name="email"
+                label="Email"
+                backgroundColor="#FFFFFF"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                paddingBottom={10}
+              />
+              <FormikPasswordInput
+                name="password"
+                label="Mật khẩu"
+                placeholder="Mật khẩu"
+                backgroundColor="#FFFFFF"
+                autoCapitalize="none"
+              />
+              <FormikPasswordInput
+                name="confirmPassword"
+                label="Nhập lại mật khẩu"
+                placeholder="Nhập lại mật khẩu"
+                backgroundColor="#FFFFFF"
+                autoCapitalize="none"
+              />
               <TouchableOpacity
                 style={{
                   backgroundColor: '#6666FF',
@@ -151,7 +101,7 @@ const SignUpPage = () => {
                   alignItems: 'center',
                   marginTop: 8,
                 }}
-                onPress={() => handleSubmit()}
+                onPress={() => formik.handleSubmit()}
                 disabled={isLoading}
               >
                 <SizableText color="#fff" fontWeight="600" fontSize={18}>
