@@ -18,6 +18,7 @@ namespace Eatzie.Controllers
         {
             var userId = GetUserIdFromToken.ExtractUserId(HttpContext);
             if (userId == null) return Unauthorized();
+
             var result = await _service.AddToCartAsync(userId.Value, request.FoodId, request.Quantity);
             return StatusCode(result.StatusCode, result);
         }
@@ -39,15 +40,6 @@ namespace Eatzie.Controllers
             var result = await _service.ClearCartAsync(userId.Value);
             return StatusCode(result.StatusCode, result);
         }
-
-        //[HttpPost("place-order")]
-        //public async Task<IActionResult> PlaceOrder()
-        //{
-        //    var userId = GetUserIdFromToken.ExtractUserId(HttpContext);
-        //    if (userId == null) return Unauthorized();
-        //    var result = await _service.PlaceOrderAsync(userId.Value);
-        //    return StatusCode(result.StatusCode, result);
-        //}
 
         [HttpGet]
         public async Task<IActionResult> GetCart()

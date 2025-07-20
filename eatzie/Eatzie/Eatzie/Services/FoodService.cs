@@ -76,7 +76,14 @@ public class FoodService(
                 .OrderByDescending(f => favorites.Any(fav => f.Description.ToLower().Contains(fav)))
                 .ToList();
         }
-
+        // Nếu có giới hạn chi tiêu, lọc theo giá
+        if (userDiet.Min_spending.HasValue && userDiet.Max_spending.HasValue &&
+            (!decimal.IsNegative(userDiet.Min_spending.Value) || !decimal.IsNegative(userDiet.Max_spending.Value)))
+        {
+            filteredFoods = filteredFoods
+                .Where(f => f.Price >= userDiet.Min_spending.Value && f.Price <= userDiet.Max_spending.Value)
+                .ToList();
+        }
         // Lấy n món để gợi ý
         var suggestions = filteredFoods.Take(count).ToList();
         var foodIds = suggestions.Select(f => f.Id).ToList();
@@ -152,7 +159,8 @@ public class FoodService(
             IsVegetarian = food.IsVegetarian,
             Address = food.Address,
             TotalViews = views,
-            AverageRating = Math.Round(avgRating, 2)
+            AverageRating = Math.Round(avgRating, 2),
+            Price = food.Price
         };
     }
 

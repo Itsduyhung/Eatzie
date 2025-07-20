@@ -16,6 +16,8 @@ namespace Eatzie.Data.Configuration
             builder.Property(f => f.ImageUrl);
             builder.Property(f => f.IsVegetarian).HasDefaultValue(false);
             builder.Property(f => f.CreatedAt).HasDefaultValueSql("NOW()");
+            builder.Property(f => f.Address).HasMaxLength(255);
+            builder.Property(f => f.Price).HasColumnType("decimal(18,2)").HasDefaultValue(0.0);
         }
     }
 }

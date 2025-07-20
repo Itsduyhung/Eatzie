@@ -12,6 +12,7 @@ namespace Eatzie.Models
         public bool IsVegetarian { get; set; }
         public DateTime CreatedAt { get; set; }
         public string? Address { get; set; }
+        public decimal Price { get; set; }
 
         // Navigation
         public ICollection<SavedFoodEntity> SavedByUsers { get; set; } = new List<SavedFoodEntity>();

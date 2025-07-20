@@ -43,7 +43,8 @@ namespace Eatzie.Services
                 TotalViews = food.FoodViews?.Count ?? 0,
                 AverageRating = food.Feedbacks != null && food.Feedbacks.Count != 0
                     ? Math.Round(food.Feedbacks.Average(f => f.Rating), 1)
-                    : 0.0
+                    : 0.0,
+                Price = food.Price
             }).ToList();
 
             return response;

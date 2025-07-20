@@ -10,5 +10,7 @@
         public int TotalViews { get; set; }
         public double AverageRating { get; set; }
         public string? Address { get; set; }
-    }
+        public double Value { get; set; }
+        public decimal Price { get; set; }
+        }
 }
