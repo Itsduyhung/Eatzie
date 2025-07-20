@@ -97,7 +97,7 @@ export const CartFooter = () => {
           paddingVertical={8}
           onPress={() =>
             router.push({
-              pathname: "/(features)/cart/screencart",
+              pathname: "/(features)/cart/confirmorderscreen",
             })
           }
         >
