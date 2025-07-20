@@ -1,12 +1,10 @@
-import facebookLogo from "@/assets/auth/facebook.png";
-import googleLogo from "@/assets/auth/google.png";
 import backgroundAuth from "@/assets/auth/welcome-background.png";
 import QuestionButton from "@/components/button/question.button";
 import ShareButton from "@/components/button/share.button";
 import SocialButton from "@/components/button/social.button";
 import { APP_COLOR } from "@/utils/constants";
 import { LinearGradient } from "expo-linear-gradient";
-import { Link, Redirect, router } from "expo-router";
+import { Redirect, router } from "expo-router";
 import { ImageBackground, StyleSheet, Text, View } from "react-native";
 
 const styles = StyleSheet.create({
@@ -28,7 +26,7 @@ const styles = StyleSheet.create({
 });
 
 const WelcomePage = () => {
-  if (true) return <Redirect href={"/(tabs)"}/>;
+  if (true) return <Redirect href={"/(tabs)"} />;
 
   return (
     <ImageBackground
@@ -44,7 +42,7 @@ const WelcomePage = () => {
         <View style={styles.container}>
           <View style={styles.welcomeHeadingWrapper}>
             <Text style={styles.welcomeText}>Welcome to</Text>
-            <Text style={styles.brandName}>ShopeeFood</Text>
+            <Text style={styles.brandName}>eeFood</Text>
             <Text style={styles.slogan}>
               Your favourite foods delivered fast at your door.
             </Text>

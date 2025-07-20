@@ -1,8 +1,10 @@
 import { User } from "@/domain/model/User";
 import { AuthService } from "@/domain/service/AuthService";
 import { storage } from "@/infrastructure/storage/tokenStorage";
-import { getValidPayLoad } from "@/utils/jwt";
+import { LoginResponse } from "@/types/login/login";
+import { getUserFromPayload, getValidPayLoad } from "@/utils/jwt";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
@@ -14,7 +16,10 @@ interface AuthState {
   isLoading: boolean;
   error: string | null;
 
-  login: (credentials: { email: string; password: string }) => Promise<void>;
+  login: (credentials: {
+    email: string;
+    password: string;
+  }) => Promise<LoginResponse>;
   logout: () => void;
   // checkAuthStatus: () => Promise<boolean>;
   // initialize: () => Promise<void>;
@@ -35,27 +40,16 @@ export const useAuthStore = create<AuthState>()(
       login: async (credentials) => {
         set({ isLoading: true, error: null });
         try {
-          await storage.remove("token");
-          await storage.remove("refreshToken");
+          await storage.removeItem("token");
+          await storage.removeItem("refreshToken");
 
           const data = await AuthService.login(credentials);
           const payload = getValidPayLoad(data.token);
           if (!payload) throw new Error("Invalid token payload");
 
-          const user: User = {
-            userId:
-              payload[
-                "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
-              ],
-            role: payload.role?.toLowerCase().replace("role_", ""),
-            fullName:
-              payload[
-                "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"
-              ],
-            verified: payload.verified,
-          };
+          const user = getUserFromPayload(payload);
 
-          await storage.set("token", data.token);
+          await storage.setItem("token", data.token);
           // await storage.set('refreshToken', data.refreshToken);
           set({
             user,
@@ -64,6 +58,7 @@ export const useAuthStore = create<AuthState>()(
             isAuthenticated: true,
             isLoading: false,
           });
+          return data;
         } catch (error: any) {
           set({ isLoading: false, error: error.message || "Login failed" });
           throw error;
@@ -71,7 +66,7 @@ export const useAuthStore = create<AuthState>()(
       },
 
       logout: async () => {
-        await storage.remove("token");
+        await storage.removeItem("token");
         // await storage.remove('refreshToken');
         set({
           user: null,
@@ -81,6 +76,8 @@ export const useAuthStore = create<AuthState>()(
           isLoading: false,
           error: null,
         });
+        router.push("/(auth)/login");
+        console.log("Logout successful");
       },
     }),
     {
