@@ -8,15 +8,15 @@ const { width: screenWidth } = Dimensions.get("window");
 const banners = [
   {
     id: "1",
-    image: require("@/assets/banner/Fresh-and-healthy-vegetables-banner-design-template-scaled.jpg"),
+    image: require("@/assets/images/banner1.png"),
   },
   {
     id: "2",
-    image: require("@/assets/banner/banner2.jpg"),
+    image: require("@/assets/images/banner2.png"),
   },
   {
     id: "3",
-    image: require("@/assets/banner/banner3.jpg"),
+    image: require("@/assets/images/banner3.png"),
   },
 ];
 
