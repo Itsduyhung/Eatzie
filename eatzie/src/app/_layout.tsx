@@ -79,11 +79,11 @@ const RootLayout = () => {
                       options={{ headerShown: false }}
                     />
                     <Stack.Screen
-                      name="(features)/survey/multistepsurvey.tsx"
+                      name="(features)/survey/multistepsurvey"
                       options={{ headerShown: false }}
                     />
                     <Stack.Screen
-                      name="(features)/cart/screencart.tsx"
+                      name="(features)/cart/screencart"
                       options={{ headerShown: false }}
                     />
                   </Stack>

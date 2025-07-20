@@ -86,7 +86,7 @@ export const ScrollScreenLayout = ({
               style={{
                 height: 200,
                 width: "100%",
-                marginTop: 50,
+                marginTop: 0,
               }}
               source={backgroundImage}
               resizeMode="cover"
