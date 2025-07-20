@@ -3,17 +3,17 @@ import axios from "axios";
 import { storage } from "../storage/tokenStorage";
 
 export const api = axios.create({
-baseURL: "http://192.168.1.11:5237/api",
+  baseURL: process.env.EXPO_PUBLIC_API_URL || "http://192.168.250.119:7121/api",
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
   },
-  timeout: 30000,
+  timeout: 5000,
 });
 
 api.interceptors.request.use(
   async (config) => {
-    let token = await storage.get("token");
+    let token = await storage.getItem("token");
     // if (token && !isTokenValid(token)) {
     //   const resfreshed = await useAuthStore.getState().refreshToken();
     //   if (!refreshed) return config;
@@ -42,7 +42,7 @@ api.interceptors.response.use(
         // const refreshed = await useAuthStore.getState().refreshToken();
         // if (!refreshed) throw new Error('Token refresh failed');
 
-        const token = await storage.get("token");
+        const token = await storage.getItem("token");
         originalRequest.headers.Authorization = `Bearer ${token}`;
         return api(originalRequest);
       } catch (err) {

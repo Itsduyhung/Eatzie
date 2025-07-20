@@ -1,13 +1,14 @@
 import { ThemedScreenContext } from "@/app/hooks/ThemedTextColor";
 import { isColorDark } from "@/app/untils/isColorDark";
 import { ThemedScreenProps } from "@/types/themedScreenProps";
+import { StatusBar } from "expo-status-bar";
 import { useMemo } from "react";
 import { useTheme, YStack } from "tamagui";
 
 export function ThemedScreen({
   children,
   backgroundColor = "$background",
-  padding = "$6",
+  padding = "$0",
 }: ThemedScreenProps) {
   const theme = useTheme();
 
@@ -15,12 +16,15 @@ export function ThemedScreen({
     ? theme[backgroundColor.replace("$", "")]?.val || "#ffffff"
     : backgroundColor;
 
-  const textColor = useMemo(() => {
-    return isColorDark(resolvedBg) ? "white" : "black";
-  }, [resolvedBg]);
+  const isDarkMode = useMemo(() => isColorDark(resolvedBg), [resolvedBg]);
+  const textColor = useMemo(
+    () => (isDarkMode ? "#ffffff" : "#000000"),
+    [isDarkMode]
+  );
 
   return (
-    <ThemedScreenContext.Provider value={{ textColor }}>
+    <ThemedScreenContext.Provider value={{ textColor, isDarkMode }}>
+      <StatusBar style={isDarkMode ? "light" : "dark"} />
       <YStack flex={1} backgroundColor={backgroundColor} padding={padding}>
         {typeof children === "function" ? children({ textColor }) : children}
       </YStack>
