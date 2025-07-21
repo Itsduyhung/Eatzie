@@ -1,3 +1,4 @@
+// components/HeaderWithTabs.tsx
 import { ThemedText } from "@/app/hooks/ThemedTextColor";
 import { FontAwesome } from "@expo/vector-icons";
 import React from "react";
@@ -28,7 +29,6 @@ export const HeaderWithTabs = ({ activeTab, setActiveTab }: Props) => {
         justifyContent="center"
         height={50}
       >
-        {/* Chữ ở giữa */}
         <ThemedText
           style={{
             fontSize: 20,

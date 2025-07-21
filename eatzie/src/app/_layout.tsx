@@ -86,6 +86,18 @@ const RootLayout = () => {
                       name="(features)/cart/screencart"
                       options={{ headerShown: false }}
                     />
+                    <Stack.Screen
+                      name="(features)/cart/confirmorderscreen"
+                      options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                      name="(features)/profile/settingprofile"
+                      options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                      name="(features)/cart/qrscreen"
+                      options={{ headerShown: false }}
+                    />
                   </Stack>
                 </ThemeProvider>
               </Theme>

@@ -124,3 +124,67 @@ export const foodCategoryData: FoodCategory[] = [
     ],
   },
 ];
+
+export const foodCategoryData1: FoodCategory[] = [
+  {
+    id: "5",
+    nameFood: "Đồ chay Duy Hùng",
+    title: "Bún, Mì, Phở",
+    image: require("../../assets/images/mam-590k.jpg"),
+    imageClick: require("../../assets/images/mam-590k.jpg"),
+    type: "bunchay",
+    rating: 2.5,
+    views: 100,
+    path: "/loading",
+    location: "Sảnh Penrose",
+    comment: "10+",
+    items: [
+      {
+        id: "5-1",
+        name: "Bún chay",
+        price: 45000,
+        salePrice: 40,
+        likes: 120,
+        path: "loading",
+        image: require("../../assets/images/bunchay1.jpg"),
+        categoryId: "6",
+        decription: "Bún chay thanh đạm, nước dùng nấu từ rau củ.",
+        feedbacks: [
+          {
+            userName: "Duy Hùng",
+            comment: "Ngon tuyệt, nước lèo rất đậm đà",
+            rating: 5,
+          },
+          {
+            userName: "Ẩn danh",
+            comment: "Thịt hơi ít nhưng ok",
+            rating: 4,
+          },
+        ],
+      },
+      {
+        id: "5-2",
+        name: "Chả giò chay",
+        price: 48000,
+        salePrice: 4,
+        likes: 95,
+        image: require("../../assets/images/images.jpg"),
+        path: "loading",
+        categoryId: "4",
+        decription: "Phở chay đậm đà với nấm và rau củ thanh mát.",
+        feedbacks: [
+          {
+            userName: "Ẩn Danh",
+            comment: "",
+            rating: 4,
+          },
+          {
+            userName: "Ẩn Danh",
+            comment: "Ngonnnn",
+            rating: 5,
+          },
+        ],
+      },
+    ],
+  },
+];

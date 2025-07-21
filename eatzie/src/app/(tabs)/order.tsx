@@ -1,15 +1,17 @@
 import { HeaderWithTabs } from "@/components/home/headerOrder";
 import { ScrollScreenLayout } from "@/components/layout/ScrollScreenLayout";
-import React from "react";
-import { Tabs, Text, YStack } from "tamagui";
+import { OrderTabsContent } from "@/components/order/ordertabscontent";
 
-const TABS_CONTENT: Record<string, string> = {
-  "Đang đến": "Các đơn hàng sắp đến.",
-  "Deal đã mua": "Tất cả deal bạn đã mua.",
-  "Lịch sử": "Lịch sử đơn hàng của bạn.",
-  "Đánh giá": "Đơn cần đánh giá.",
-  "Đơn nháp": "Đơn hàng bạn chưa hoàn tất.",
-};
+import React from "react";
+import { Tabs, YStack } from "tamagui";
+
+const TAB_ITEMS = [
+  "Đang đến",
+  "Deal đã mua",
+  "Lịch sử",
+  "Đánh giá",
+  "Đơn nháp",
+];
 
 export default function TabsWithContent() {
   const [activeTab, setActiveTab] = React.useState("Deal đã mua");
@@ -23,16 +25,14 @@ export default function TabsWithContent() {
     >
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <YStack px="$4" py="$3" bg="white" minHeight={200}>
-          {Object.entries(TABS_CONTENT).map(([tab, content]) => (
+          {TAB_ITEMS.map((tab) => (
             <Tabs.Content
               key={tab}
               value={tab}
               forceMount
               display={activeTab === tab ? "flex" : "none"}
             >
-              <Text fontSize="$5" color="black">
-                {content}
-              </Text>
+              <OrderTabsContent activeTab={tab} />
             </Tabs.Content>
           ))}
         </YStack>

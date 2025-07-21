@@ -3,16 +3,20 @@ import React from "react";
 import { YStack } from "tamagui";
 
 import { HeaderGradientBackground } from "@/app/untils/GradientBackground";
+import { useAuthStore } from "@/applicaton/stores/authStores";
 import { BannerCarousel } from "@/components/anima/BannerRender";
 import { FlashCardRender } from "@/components/anima/FlashCardRender";
 import { IconInlineList } from "@/components/anima/LoadingAnimation";
 import HeaderHome from "@/components/home/header.home";
+import HeaderHome1 from "@/components/home/headerPicture";
 import { ScrollScreenLayout } from "@/components/layout/ScrollScreenLayout";
 
 const HomeTab = () => {
+  const user = useAuthStore((state) => state.user);
+  const header = user?.userId === "8" ? <HeaderHome1 /> : <HeaderHome />;
   return (
     <ScrollScreenLayout
-      header={<HeaderHome />}
+      header={header}
       gradientWrapper={(children) => (
         <HeaderGradientBackground>{children}</HeaderGradientBackground>
       )}

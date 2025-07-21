@@ -1,19 +1,22 @@
-import { router } from "expo-router";
 import { Formik } from "formik";
 import { useState } from "react";
+import { Image, TouchableOpacity } from "react-native";
 import Toast from "react-native-root-toast";
+import { SizableText, YStack } from "tamagui";
 
-import { Button, Input, SizableText, YStack, useTheme } from "tamagui";
-
-import QuestionButton from "@/components/button/question.button";
-import SocialButton from "@/components/button/social.button";
+import {
+  FormikInput,
+  FormikPasswordInput,
+} from "@/components/formik/FormikFields";
+import { ThemedScreen } from "@/components/layout/ThemedScreen";
 import { registerAPI } from "@/utils/api";
 import { APP_COLOR } from "@/utils/constants";
 import { RegisterSchema } from "@/utils/validate.schema";
 
 const SignUpPage = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const theme = useTheme();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleSignUp = async (
     fullName: string,
@@ -24,10 +27,10 @@ const SignUpPage = () => {
       setIsLoading(true);
       const res = await registerAPI(fullName, email, password);
       if (res.data) {
-        router.replace({
-          pathname: "/(auth)/verify",
-          params: { email },
-        });
+        // router.replace({
+        //   pathname: "/(auth)/verify",
+        //   params: { email },
+        // });
       } else {
         const msg = Array.isArray(res.message) ? res.message[0] : res.message;
         Toast.show(msg, {
@@ -45,74 +48,88 @@ const SignUpPage = () => {
   };
 
   return (
-    <YStack flex={1} padding="$4" gap="$4">
-      <SizableText fontSize="$8" fontWeight="700" marginVertical="$6">
-        Register Now
-      </SizableText>
-
-      <Formik
-        validationSchema={RegisterSchema}
-        initialValues={{ fullName: "", email: "", password: "" }}
-        onSubmit={(values) =>
-          handleSignUp(values.fullName, values.email, values.password)
-        }
+    <ThemedScreen>
+      <YStack
+        flex={1}
+        backgroundColor="#F8FAFC"
+        padding={24}
+        justifyContent="center"
       >
-        {({ handleChange, handleBlur, handleSubmit, values, errors }) => (
-          <YStack gap="$3">
-            <Input
-              placeholder="Full Name"
-              onChangeText={handleChange("fullName")}
-              onBlur={handleBlur("fullName")}
-              value={values.fullName}
-            />
-            {errors.fullName && (
-              <SizableText color="red">{errors.fullName}</SizableText>
-            )}
-
-            <Input
-              placeholder="Email"
-              keyboardType="email-address"
-              onChangeText={handleChange("email")}
-              onBlur={handleBlur("email")}
-              value={values.email}
-            />
-            {errors.email && (
-              <SizableText color="red">{errors.email}</SizableText>
-            )}
-
-            <Input
-              placeholder="Password"
-              secureTextEntry
-              onChangeText={handleChange("password")}
-              onBlur={handleBlur("password")}
-              value={values.password}
-            />
-            {errors.password && (
-              <SizableText color="red">{errors.password}</SizableText>
-            )}
-
-            <Button
-              size="$5"
-              backgroundColor={APP_COLOR.ORANGE}
-              color="white"
-              borderRadius="$10"
-              onPress={handleSubmit as any}
-              disabled={isLoading}
-            >
-              {isLoading ? "Loading..." : "Sign Up"}
-            </Button>
-          </YStack>
-        )}
-      </Formik>
-
-      <QuestionButton
-        questionText="Already have an account?"
-        questionBtnName="Sign in"
-        path="/(auth)/login"
-      />
-
-      <SocialButton title="Sign up with" textColor="black" />
-    </YStack>
+        {/* Logo Eatzie */}
+        <Image
+          source={require("@/assets/icons/eatzie.png")}
+          style={{
+            width: 120,
+            height: 120,
+            alignSelf: "center",
+            marginBottom: 16,
+            marginTop: 16,
+          }}
+          resizeMode="contain"
+        />
+        <Formik
+          validationSchema={RegisterSchema}
+          initialValues={{
+            fullName: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+          }}
+          onSubmit={(values) =>
+            handleSignUp(values.fullName, values.email, values.password)
+          }
+        >
+          {(formik) => (
+            <YStack gap="$4">
+              <FormikInput
+                name="fullName"
+                label="Tên người dùng"
+                backgroundColor="#FFFFFF"
+                autoCapitalize="words"
+                paddingBottom={10}
+              />
+              <FormikInput
+                name="email"
+                label="Email"
+                backgroundColor="#FFFFFF"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                paddingBottom={10}
+              />
+              <FormikPasswordInput
+                name="password"
+                label="Mật khẩu"
+                placeholder="Mật khẩu"
+                backgroundColor="#FFFFFF"
+                autoCapitalize="none"
+              />
+              <FormikPasswordInput
+                name="confirmPassword"
+                label="Nhập lại mật khẩu"
+                placeholder="Nhập lại mật khẩu"
+                backgroundColor="#FFFFFF"
+                autoCapitalize="none"
+              />
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "#6666FF",
+                  borderRadius: 10,
+                  paddingVertical: 16,
+                  alignItems: "center",
+                  marginTop: 8,
+                }}
+                onPress={() => formik.handleSubmit()}
+                disabled={isLoading}
+              >
+                <SizableText color="#fff" fontWeight="600" fontSize={18}>
+                  {isLoading ? "Đang đăng kí..." : "Đăng kí"}
+                </SizableText>
+              </TouchableOpacity>
+            </YStack>
+          )}
+        </Formik>
+      </YStack>
+    </ThemedScreen>
   );
 };
 

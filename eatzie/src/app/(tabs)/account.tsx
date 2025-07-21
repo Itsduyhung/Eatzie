@@ -30,7 +30,7 @@ const AccountTab = () => {
                   backgroundColor="#FFFFFF"
                   onPress={() => {
                     router.push({
-                      pathname: "/(tabs)/order",
+                      pathname: "/(features)/profile/settingprofile",
                       params: { title: item.title },
                     });
                   }}

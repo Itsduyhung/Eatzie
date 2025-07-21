@@ -15,7 +15,16 @@ export const IconInlineList = () => {
 
   const renderItem = ({ item }: { item: IconInline }) => (
     <Pressable
-      onPress={() => item.path && router.push(item.path as any)}
+      onPress={() => {
+        if (item.path) {
+          router.push({
+            pathname: "/(features)/food/contentfood",
+            params: {
+              id: item.path.replace("/category/", ""),
+            },
+          });
+        }
+      }}
       style={{
         alignItems: "center",
         justifyContent: "flex-start",

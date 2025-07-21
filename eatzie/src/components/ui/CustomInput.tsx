@@ -24,7 +24,7 @@ export const CustomInput = forwardRef<TextInput, CustomInputProps>(
       paddingLeft = 12,
       height,
       focusStyle,
-      paddingBottom = 20,
+      paddingBottom = 0,
       ...rest
     } = props;
 
@@ -80,7 +80,7 @@ export const CustomInput = forwardRef<TextInput, CustomInputProps>(
           height={height}
           focusStyle={resolvedFocusStyle}
           paddingBottom={paddingBottom as number}
-          paddingTop={25}
+          paddingTop={0}
         />
 
         {suffixIcon && (

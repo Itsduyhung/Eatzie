@@ -59,6 +59,7 @@ export const IOMoney = forwardRef<IOMoneyRef, IOMoneyProps>((props, ref) => {
           )
           .required("Không được bỏ trống")
       : Yup.number().transform(transformToNumber).nullable(),
+
     outputMoney: payMoney.out.required
       ? Yup.number()
           .transform(transformToNumber)
@@ -68,7 +69,19 @@ export const IOMoney = forwardRef<IOMoneyRef, IOMoneyProps>((props, ref) => {
             `Tối đa là ${payMoney.out.maxValue}`
           )
           .required("Không được bỏ trống")
-      : Yup.number().transform(transformToNumber).nullable(),
+          .when("inputMoney", (inputMoney, schema) =>
+            typeof inputMoney === "number"
+              ? schema.min(inputMoney, "Không được nhỏ hơn số tiền vào")
+              : schema
+          )
+      : Yup.number()
+          .transform(transformToNumber)
+          .nullable()
+          .when("inputMoney", (inputMoney, schema) =>
+            typeof inputMoney === "number"
+              ? schema.min(inputMoney, "Không được nhỏ hơn số tiền vào")
+              : schema
+          ),
   });
 
   return (
@@ -92,7 +105,7 @@ export const IOMoney = forwardRef<IOMoneyRef, IOMoneyProps>((props, ref) => {
       }}
     >
       {() => (
-        <XStack justifyContent="center" gap="$4" marginTop={30}>
+        <XStack justifyContent="center" gap="$4" marginTop={20}>
           <MoneyInput
             name="inputMoney"
             label={payMoney.out.title}

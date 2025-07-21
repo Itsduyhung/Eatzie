@@ -22,12 +22,35 @@ export default function ConfirmOrderScreen() {
   const total = useCartStore((s) => s.total)();
 
   return (
-    <ScrollScreenLayout headerLeftIcons={[<BackButton key="back" />]}>
+    <ScrollScreenLayout>
+      <XStack
+        marginTop={50}
+        alignItems="center"
+        position="relative"
+        paddingHorizontal="$4"
+      >
+        <YStack position="absolute" left={0}>
+          <BackButton key="back" />
+        </YStack>
+
+        <XStack flex={1} alignItems="center" justifyContent="center">
+          <ThemedText
+            style={{
+              fontSize: 18,
+              fontWeight: "500",
+              textAlign: "center",
+            }}
+          >
+            Xác nhận đơn hàng
+          </ThemedText>
+        </XStack>
+      </XStack>
+
       <YStack padding="$2" gap="$5">
         <YStack
           backgroundColor="white"
           paddingHorizontal="$2"
-          paddingVertical="$2"
+          paddingVertical="$3"
           borderRadius={8}
           gap={"$2"}
         >
@@ -304,7 +327,10 @@ export default function ConfirmOrderScreen() {
             onPress={() => {
               alert("Đặt hàng thành công!");
               useCartStore.getState().clearCart();
-              router.push("/");
+              router.push("/(features)/cart/qrscreen");
+              setTimeout(() => {
+                router.push("/");
+              }, 3000);
             }}
           >
             <ThemedText

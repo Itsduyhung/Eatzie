@@ -1,5 +1,9 @@
 import { IconInline, InstallType } from "@/types/iconInline";
-import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+  Feather,
+  FontAwesome6,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 
 export const ProfileData: IconInline[] = [
   {
@@ -20,6 +24,16 @@ export const ProfileData: IconInline[] = [
     },
     path: "/loading",
     title: "Món ăn đã lưu gần đây",
+  },
+  {
+    iconComponent: FontAwesome6,
+
+    iconProps: {
+      name: "clock",
+      size: 24,
+    },
+    path: "/loading",
+    title: "Đã gợi ý gần đây",
   },
   {
     iconComponent: Feather,

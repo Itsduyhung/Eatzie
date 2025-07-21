@@ -46,7 +46,7 @@ export default function CartScreen() {
             fontWeight: "900",
             position: "absolute",
             left: "50%",
-            transform: [{ translateX: -10 }, { translateY: 5 }], // Căn giữa tuyệt đối
+            transform: [{ translateX: -10 }, { translateY: 5 }],
           }}
         >
           Giỏ hàng
