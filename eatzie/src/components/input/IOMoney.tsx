@@ -108,13 +108,13 @@ export const IOMoney = forwardRef<IOMoneyRef, IOMoneyProps>((props, ref) => {
         <XStack justifyContent="center" gap="$4" marginTop={20}>
           <MoneyInput
             name="inputMoney"
-            label={payMoney.out.title}
+            label={payMoney.input.title}
             keyboardType="numeric"
             backgroundColor="transparent"
           />
           <MoneyInput
             name="outputMoney"
-            label={payMoney.input.title}
+            label={payMoney.out.title}
             keyboardType="numeric"
             backgroundColor="transparent"
           />

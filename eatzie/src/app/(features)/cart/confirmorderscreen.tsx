@@ -327,10 +327,14 @@ export default function ConfirmOrderScreen() {
             onPress={() => {
               alert("Đặt hàng thành công!");
               useCartStore.getState().clearCart();
-              router.push("/(features)/cart/qrscreen");
+              router.push({
+                pathname: "/(features)/cart/qrscreen",
+                params: { total: String(total + 14000) },
+              });
+
               setTimeout(() => {
                 router.push("/");
-              }, 3000);
+              }, 4000);
             }}
           >
             <ThemedText

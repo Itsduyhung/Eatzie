@@ -1,11 +1,10 @@
 import { useAuthStore } from "@/applicaton/stores/authStores";
-import { HeaderProps } from "@/types/headerProps";
 import { UserRound } from "@tamagui/lucide-icons";
 import { useRouter } from "expo-router";
 import { Avatar, XStack, YStack } from "tamagui";
 import { CustomButton } from "../ui/CustomButton";
 
-export const HeaderProfile = ({ user1 }: HeaderProps) => {
+export const HeaderProfile = () => {
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
   const checkAuthUI = () =>
@@ -56,7 +55,6 @@ export const HeaderProfile = ({ user1 }: HeaderProps) => {
           <UserRound color={"$blue2Dark"} size={35} />
         )}
       </XStack>
-
       {checkAuthUI()}
     </YStack>
   );

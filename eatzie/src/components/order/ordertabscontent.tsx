@@ -13,16 +13,10 @@ export const OrderTabsContent = ({ activeTab }: { activeTab: string }) => {
     }
 
     return (
-      <YStack gap="$3" width="100%">
+      <YStack gap="$2" width={"100%"} borderRadius={8} padding="$2">
         {cart.map((item) => (
-          <YStack
-            key={item.id}
-            backgroundColor={"#F5F5F5"}
-            borderRadius={8}
-            padding="$2"
-            width="100%"
-          >
-            <XStack gap="$4" justifyContent="space-between" alignItems="center">
+          <YStack key={item.id} width={"100%"}>
+            <XStack gap={10}>
               <SizableImage
                 source={item.image}
                 resizeMode="cover"
@@ -30,8 +24,7 @@ export const OrderTabsContent = ({ activeTab }: { activeTab: string }) => {
                 style={{ width: 60, height: 60 }}
               />
 
-              {/* Tên món và ghi chú */}
-              <YStack flex={1}>
+              <YStack gap={20}>
                 <ThemedText style={{ fontSize: 16, fontWeight: "500" }}>
                   {item.quantity} x {item.name}
                 </ThemedText>
@@ -39,6 +32,7 @@ export const OrderTabsContent = ({ activeTab }: { activeTab: string }) => {
                   style={{
                     fontSize: 14,
                     fontWeight: "500",
+                    textAlign: "center",
                     color: "#A0A0A0",
                   }}
                 >
@@ -46,11 +40,17 @@ export const OrderTabsContent = ({ activeTab }: { activeTab: string }) => {
                 </ThemedText>
               </YStack>
 
-              <XStack marginLeft={80}>
-                <ThemedText style={{ fontSize: 16, fontWeight: "500" }}>
+              <YStack marginLeft={40}>
+                <ThemedText
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "500",
+                    textAlign: "center",
+                  }}
+                >
                   {formatCurrency(item.price * (item.quantity ?? 1))}
                 </ThemedText>
-              </XStack>
+              </YStack>
             </XStack>
           </YStack>
         ))}
@@ -62,10 +62,7 @@ export const OrderTabsContent = ({ activeTab }: { activeTab: string }) => {
     switch (activeTab) {
       case "Đang đến":
         return (
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ flexGrow: 1 }}
-          >
+          <ScrollView showsVerticalScrollIndicator={false}>
             {renderComingOrders()}
           </ScrollView>
         );
@@ -82,9 +79,5 @@ export const OrderTabsContent = ({ activeTab }: { activeTab: string }) => {
     }
   };
 
-  return (
-    <YStack flex={1} padding="$4" width="100%">
-      {renderContent()}
-    </YStack>
-  );
+  return <YStack p="$4">{renderContent()}</YStack>;
 };
