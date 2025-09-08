@@ -17,7 +17,7 @@ type CustomInputProps = {
   paddingLeft?: number;
   focusStyle?: "none" | "default";
 };
-
+//aaaaa//
 export function CustomInputText({
   label,
   value,
