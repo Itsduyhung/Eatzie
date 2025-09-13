@@ -37,7 +37,7 @@ namespace Eatzie.Services
                 Id = food.Id,
                 Content = food.Content,
                 Description = food.Description,
-                ImageUrl = food.ImageUrl,
+                ImageUrl = food.ImageUrl ?? string.Empty,
                 IsVegetarian = food.IsVegetarian,
                 Address = food.Address,
                 TotalViews = food.FoodViews?.Count ?? 0,

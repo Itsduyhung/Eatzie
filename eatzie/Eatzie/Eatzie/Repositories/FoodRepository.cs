@@ -69,5 +69,39 @@ namespace Eatzie.Repositories
                 .Where(f => f.Id == foodId)
                 .FirstOrDefaultAsync();
         }
+        /// <summary>
+        /// CRUD for Food - Restaurant
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<FoodEntity?> GetFoodByIdAsync(int id)
+        {
+            return await _context.Foods
+                .Include(f => f.RestaurantFoods)
+                .FirstOrDefaultAsync(f => f.Id == id);
+        }
+
+        public async Task<bool> AddFoodAsync(FoodEntity food)
+        {
+            _context.Foods.Add(food);
+            return await SaveChangesAsync();
+        }
+
+        public async Task<bool> UpdateFoodAsync(FoodEntity food)
+        {
+            _context.Foods.Update(food);
+            return await SaveChangesAsync();
+        }
+
+        public async Task<bool> DeleteFoodAsync(FoodEntity food)
+        {
+            _context.Foods.Remove(food);
+            return await SaveChangesAsync();
+        }
+
+        public async Task<bool> SaveChangesAsync()
+        {
+            return await _context.SaveChangesAsync() > 0;
+        }
     }
 }

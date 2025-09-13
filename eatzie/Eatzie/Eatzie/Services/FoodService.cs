@@ -2,31 +2,46 @@
 using Eatzie.DTOs.Request;
 using Eatzie.DTOs.Response;
 using Eatzie.Enum;
+using Eatzie.Helpers;
 using Eatzie.Interfaces.IRepository;
 using Eatzie.Interfaces.IService;
 using Eatzie.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace Eatzie.Services;
 
-public class FoodService(
-    IFoodRepository foodRepository,
-    IFoodViewRepository foodViewRepo,
-    IFeedbackRepository feedbackRepo,
-    ApplicationDbContext context
-) : IFoodService
+public class FoodService : IFoodService
 {
-    private readonly IFoodRepository _foodRepository = foodRepository;
-    private readonly IFoodViewRepository _foodViewRepo = foodViewRepo;
-    private readonly IFeedbackRepository _feedbackRepo = feedbackRepo;
-    private readonly ApplicationDbContext _context = context;
+    private readonly IFoodRepository _foodRepository;
+    private readonly IFoodViewRepository _foodViewRepo;
+    private readonly IFeedbackRepository _feedbackRepo;
+    private readonly IRestaurantRepository _restaurantRepository;
+    private readonly ApplicationDbContext _context;
+    private readonly IPhotoService _photoService;
+
+    public FoodService(
+        IFoodRepository foodRepository,
+        IFoodViewRepository foodViewRepo,
+        IFeedbackRepository feedbackRepo,
+        IRestaurantRepository restaurantRepository,
+        ApplicationDbContext context,
+        IPhotoService photoService
+    )
+    {
+        _foodRepository = foodRepository;
+        _foodViewRepo = foodViewRepo;
+        _feedbackRepo = feedbackRepo;
+        _restaurantRepository = restaurantRepository;
+        _context = context;
+        _photoService = photoService;
+    }
 
     public async Task<List<FoodResponse>> SuggestFoodsAsync(int userId, int count = 3)
     {
         var userDiet = await _foodRepository.GetUserDietAsync(userId);
         if (userDiet == null) return new List<FoodResponse>();
 
-        // Nếu đã được suggest ≥ 18 món thì reset lại lịch sử
         var totalHistoryCount = await _context.HistoryFoodEntitys
             .Where(h => h.UserId == userId)
             .CountAsync();
@@ -41,10 +56,8 @@ public class FoodService(
             await _context.SaveChangesAsync();
         }
 
-        // Lấy danh sách món chưa từng được suggest trong 3 ngày gần nhất
         var availableFoods = await _foodRepository.GetAvailableFoodsAsync(userId);
 
-        // Filter theo chế độ ăn
         var dietType = (DietTypeEnum)userDiet.Diet_type;
 
         var filteredFoods = availableFoods.Where(f =>
@@ -53,7 +66,6 @@ public class FoodService(
             (dietType == DietTypeEnum.Savory && f.IsVegetarian != true)
         ).ToList();
 
-        // Loại bỏ món dị ứng
         if (!string.IsNullOrWhiteSpace(userDiet.Allergic_food))
         {
             var allergies = userDiet.Allergic_food
@@ -65,7 +77,6 @@ public class FoodService(
                 .ToList();
         }
 
-        // Ưu tiên món yêu thích
         if (!string.IsNullOrWhiteSpace(userDiet.Favorite_food))
         {
             var favorites = userDiet.Favorite_food
@@ -76,7 +87,7 @@ public class FoodService(
                 .OrderByDescending(f => favorites.Any(fav => f.Description.ToLower().Contains(fav)))
                 .ToList();
         }
-        // Nếu có giới hạn chi tiêu, lọc theo giá
+
         if (userDiet.Min_spending.HasValue && userDiet.Max_spending.HasValue &&
             (!decimal.IsNegative(userDiet.Min_spending.Value) || !decimal.IsNegative(userDiet.Max_spending.Value)))
         {
@@ -84,7 +95,7 @@ public class FoodService(
                 .Where(f => f.Price >= userDiet.Min_spending.Value && f.Price <= userDiet.Max_spending.Value)
                 .ToList();
         }
-        // Lấy n món để gợi ý
+
         var suggestions = filteredFoods.Take(count).ToList();
         var foodIds = suggestions.Select(f => f.Id).ToList();
 
@@ -105,7 +116,7 @@ public class FoodService(
             Id = f.Id,
             Content = f.Content,
             Description = f.Description,
-            ImageUrl = f.ImageUrl,
+            ImageUrl = f.ImageUrl ?? string.Empty,
             IsVegetarian = f.IsVegetarian,
             TotalViews = views.ContainsKey(f.Id) ? views[f.Id] : 0,
             AverageRating = ratings.ContainsKey(f.Id) ? Math.Round(ratings[f.Id], 2) : 0
@@ -155,7 +166,7 @@ public class FoodService(
             Id = food.Id,
             Content = food.Content,
             Description = food.Description,
-            ImageUrl = food.ImageUrl,
+            ImageUrl = food.ImageUrl ?? string.Empty,
             IsVegetarian = food.IsVegetarian,
             Address = food.Address,
             TotalViews = views,
@@ -189,6 +200,7 @@ public class FoodService(
         };
         await _feedbackRepo.AddAsync(feedback);
     }
+
     public async Task<List<FeedbackResponse>> GetFeedbacksByFoodIdAsync(int foodId)
     {
         var feedbacks = await _context.FeedbackEntitys
@@ -207,6 +219,7 @@ public class FoodService(
 
         return feedbacks;
     }
+
     public async Task<bool> UpdateFeedbackAsync(int feedbackId, int userId, FeedbackRequest request)
     {
         var feedback = await _context.FeedbackEntitys.FirstOrDefaultAsync(f => f.Id == feedbackId);
@@ -218,6 +231,7 @@ public class FoodService(
         await _context.SaveChangesAsync();
         return true;
     }
+
     public async Task<bool> DeleteFeedbackAsync(int feedbackId, int userId)
     {
         var feedback = await _context.FeedbackEntitys.FirstOrDefaultAsync(f => f.Id == feedbackId);
@@ -228,4 +242,303 @@ public class FoodService(
         return true;
     }
 
+    // --- Các phương thức CRUD cho Food - Restaurant đã được sửa lỗi ---
+
+    public async Task<BaseAPIResponse> GetFoodDetailsAsync(int foodId)
+    {
+        var food = await _foodRepository.GetFoodByIdAsync(foodId);
+
+        if (food is null)
+        {
+            return new BaseAPIResponse
+            {
+                IsSuccess = false,
+                StatusCode = (int)HttpStatusCode.NotFound,
+                Message = "Không tìm thấy món ăn."
+            };
+        }
+
+        var responseDto = new FoodBriefResponse
+        {
+            Id = food.Id,
+            Content = food.Content,
+            Description = food.Description,
+            Price = food.Price,
+            ImageUrl = food.ImageUrl ?? string.Empty,
+            IsVegetarian = food.IsVegetarian,
+            CreatedAt = food.CreatedAt
+        };
+
+        return new BaseAPIResponse
+        {
+            IsSuccess = true,
+            StatusCode = (int)HttpStatusCode.OK,
+            Message = "Lấy dữ liệu món ăn thành công.",
+            Data = responseDto
+        };
+    }
+
+    public async Task<BaseAPIResponse> CreateFoodAsync(int userId, int restaurantId, FoodCreateRequest dto)
+    {
+        var restaurant = await _restaurantRepository.GetRestaurantByIdAsync(restaurantId);
+
+        if (restaurant == null || restaurant.UserId != userId)
+        {
+            return new BaseAPIResponse
+            {
+                IsSuccess = false,
+                StatusCode = (int)HttpStatusCode.Forbidden,
+                Message = "Bạn không có quyền thêm món ăn vào nhà hàng này."
+            };
+        }
+
+        string? imageUrl = null;
+        if (dto.ImageUrl != null)
+        {
+            imageUrl = await _photoService.UploadPhotoAsync(dto.ImageUrl);
+        }
+
+        var newFood = new FoodEntity
+        {
+            Content = dto.Content,
+            Description = dto.Description,
+            Price = dto.Price,
+            ImageUrl = imageUrl ?? string.Empty,
+            IsVegetarian = dto.IsVegetarian,
+            Address = restaurant.Address
+        };
+
+        await _foodRepository.AddFoodAsync(newFood);
+
+        var restaurantFood = new RestaurantFoodEntity
+        {
+            RestaurantId = restaurant.Id,
+            FoodId = newFood.Id
+        };
+        _context.RestaurantFoods.Add(restaurantFood);
+
+        // Xử lý danh sách tên category
+        if (dto.CategoryNames != null && dto.CategoryNames.Any())
+        {
+            foreach (var categoryName in dto.CategoryNames)
+            {
+                // Tìm category theo tên
+                var existingCategory = await _context.FoodCategories
+                    .FirstOrDefaultAsync(c => c.Name.ToLower() == categoryName.Trim().ToLower());
+
+                int categoryId;
+
+                // Nếu category không tồn tại, tạo mới
+                if (existingCategory == null)
+                {
+                    var newCategory = new FoodCategoryEntity
+                    {
+                        Name = categoryName.Trim()
+                    };
+                    _context.FoodCategories.Add(newCategory);
+                    await _context.SaveChangesAsync();
+                    categoryId = newCategory.Id;
+                }
+                else
+                {
+                    categoryId = existingCategory.Id;
+                }
+
+                // Thêm liên kết giữa món ăn và category
+                var foodCategoryItem = new FoodCategoryItemEntity
+                {
+                    CategoryId = categoryId,
+                    FoodId = newFood.Id
+                };
+                _context.FoodCategoryItems.Add(foodCategoryItem);
+            }
+        }
+
+        await _context.SaveChangesAsync();
+
+        var responseDto = new FoodBriefResponse
+        {
+            Id = newFood.Id,
+            Content = newFood.Content,
+            Description = newFood.Description,
+            Price = newFood.Price,
+            ImageUrl = newFood.ImageUrl,
+            IsVegetarian = newFood.IsVegetarian,
+            CreatedAt = newFood.CreatedAt
+        };
+
+        return new BaseAPIResponse
+        {
+            IsSuccess = true,
+            StatusCode = (int)HttpStatusCode.Created,
+            Message = "Tạo món ăn thành công.",
+            Data = responseDto
+        };
+    }
+
+
+    public async Task<BaseAPIResponse> UpdateFoodAsync(int userId, int foodId, FoodUpdateRequest dto)
+    {
+        var food = await _foodRepository.GetFoodByIdAsync(foodId);
+
+        if (food is null)
+        {
+            return new BaseAPIResponse
+            {
+                IsSuccess = false,
+                StatusCode = (int)HttpStatusCode.NotFound,
+                Message = "Không tìm thấy món ăn."
+            };
+        }
+
+        // Kiểm tra xem người dùng có sở hữu bất kỳ nhà hàng nào mà món ăn này thuộc về không.
+        var userOwnsFood = await _context.RestaurantFoods
+            .AnyAsync(rf => rf.FoodId == foodId && rf.Restaurant.UserId == userId);
+
+        if (!userOwnsFood)
+        {
+            return new BaseAPIResponse
+            {
+                IsSuccess = false,
+                StatusCode = (int)HttpStatusCode.Forbidden,
+                Message = "Bạn không có quyền chỉnh sửa món ăn này."
+            };
+        }
+
+        if (!string.IsNullOrEmpty(dto.Content)) food.Content = dto.Content;
+        if (!string.IsNullOrEmpty(dto.Description)) food.Description = dto.Description;
+        if (dto.Price.HasValue) food.Price = dto.Price.Value;
+
+        if (dto.ImageUrl != null)
+        {
+            string newImageUrl = await _photoService.UploadPhotoAsync(dto.ImageUrl);
+            food.ImageUrl = newImageUrl;
+        }
+
+        if (dto.IsVegetarian.HasValue) food.IsVegetarian = dto.IsVegetarian.Value;
+
+        // Xóa các liên kết category cũ
+        var existingCategories = _context.FoodCategoryItems.Where(fci => fci.FoodId == foodId);
+        _context.FoodCategoryItems.RemoveRange(existingCategories);
+        await _context.SaveChangesAsync();
+
+        // Xử lý và thêm các liên kết category mới
+        if (dto.CategoryNames != null && dto.CategoryNames.Any())
+        {
+            foreach (var categoryName in dto.CategoryNames)
+            {
+                var existingCategory = await _context.FoodCategories
+                    .FirstOrDefaultAsync(c => c.Name.ToLower() == categoryName.Trim().ToLower());
+
+                int categoryId;
+
+                if (existingCategory == null)
+                {
+                    var newCategory = new FoodCategoryEntity
+                    {
+                        Name = categoryName.Trim()
+                    };
+                    _context.FoodCategories.Add(newCategory);
+                    await _context.SaveChangesAsync();
+                    categoryId = newCategory.Id;
+                }
+                else
+                {
+                    categoryId = existingCategory.Id;
+                }
+
+                var foodCategoryItem = new FoodCategoryItemEntity
+                {
+                    CategoryId = categoryId,
+                    FoodId = foodId
+                };
+                _context.FoodCategoryItems.Add(foodCategoryItem);
+            }
+        }
+
+        if (!await _foodRepository.UpdateFoodAsync(food))
+        {
+            return new BaseAPIResponse
+            {
+                IsSuccess = false,
+                StatusCode = (int)HttpStatusCode.InternalServerError,
+                Message = "Không thể cập nhật món ăn."
+            };
+        }
+
+        await _context.SaveChangesAsync();
+
+        var responseDto = new FoodBriefResponse
+        {
+            Id = food.Id,
+            Content = food.Content,
+            Description = food.Description,
+            Price = food.Price,
+            ImageUrl = food.ImageUrl ?? string.Empty,
+            IsVegetarian = food.IsVegetarian,
+            CreatedAt = food.CreatedAt
+        };
+
+        return new BaseAPIResponse
+        {
+            IsSuccess = true,
+            StatusCode = (int)HttpStatusCode.OK,
+            Message = "Cập nhật món ăn thành công.",
+            Data = responseDto
+        };
+    }
+public async Task<BaseAPIResponse> DeleteFoodsAsync(int userId, int foodId)
+    {
+        var food = await _foodRepository.GetFoodByIdAsync(foodId);
+
+        if (food is null)
+        {
+            return new BaseAPIResponse
+            {
+                IsSuccess = false,
+                StatusCode = (int)HttpStatusCode.NotFound,
+                Message = "Không tìm thấy món ăn."
+            };
+        }
+
+        // Kiểm tra xem người dùng có sở hữu bất kỳ nhà hàng nào mà món ăn này thuộc về không.
+        var userOwnsFood = await _context.RestaurantFoods
+            .AnyAsync(rf => rf.FoodId == foodId && rf.Restaurant.UserId == userId);
+
+        if (!userOwnsFood)
+        {
+            return new BaseAPIResponse
+            {
+                IsSuccess = false,
+                StatusCode = (int)HttpStatusCode.Forbidden,
+                Message = "Bạn không có quyền xóa món ăn này."
+            };
+        }
+
+        // Xóa tất cả các liên kết liên quan đến món ăn trước khi xóa món ăn
+        var relatedCategoryItems = _context.FoodCategoryItems.Where(fci => fci.FoodId == foodId);
+        _context.FoodCategoryItems.RemoveRange(relatedCategoryItems);
+
+        var relatedRestaurantFoods = _context.RestaurantFoods.Where(rf => rf.FoodId == foodId);
+        _context.RestaurantFoods.RemoveRange(relatedRestaurantFoods);
+
+        await _context.SaveChangesAsync();
+
+        if (!await _foodRepository.DeleteFoodAsync(food))
+        {
+            return new BaseAPIResponse
+            {
+                IsSuccess = false,
+                StatusCode = (int)HttpStatusCode.InternalServerError,
+                Message = "Không thể xóa món ăn."
+            };
+        }
+
+        return new BaseAPIResponse
+        {
+            IsSuccess = true,
+            StatusCode = (int)HttpStatusCode.NoContent,
+            Message = "Xóa món ăn thành công."
+        };
+    }
 }

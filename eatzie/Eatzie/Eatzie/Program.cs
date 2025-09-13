@@ -29,7 +29,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // 3.Service + Repository
 builder.Services.AddScoped<ISignInRepository, SignInRepository>();
 builder.Services.AddScoped<ISignInService, SignInService>();
-
+builder.Services.AddScoped<IRestaurantRepository, RestaurantRepository>();
+builder.Services.AddScoped<IRestaurantService, RestaurantService>();
 builder.Services.AddScoped<ISignUpService, SignUpService>();
 builder.Services.AddScoped<ISignUpRepository, SignUpRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();

@@ -19,6 +19,10 @@ namespace Eatzie.Data
         public DbSet<CartItemEntity> CartItems { get; set; }
         public DbSet<OrderEntity> Orders { get; set; }
         public DbSet<OrderDetailEntity> OrderItems { get; set; }
+        public DbSet<RestaurantEntity> Restaurants { get; set; }
+        public DbSet<RestaurantFoodEntity> RestaurantFoods { get; set; }
+        public DbSet<FoodCategoryEntity> FoodCategories { get; set; }
+        public DbSet<FoodCategoryItemEntity> FoodCategoryItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -35,6 +39,10 @@ namespace Eatzie.Data
             modelBuilder.ApplyConfiguration(new CartItemConfiguration());
             modelBuilder.ApplyConfiguration(new OrderConfiguration());
             modelBuilder.ApplyConfiguration(new OrderDetailConfiguration());
+            modelBuilder.ApplyConfiguration(new RestaurantConfiguration());
+            modelBuilder.ApplyConfiguration(new RestaurantFoodConfiguration());
+            modelBuilder.ApplyConfiguration(new FoodCategoryConfiguration());
+            modelBuilder.ApplyConfiguration(new FoodCategoryItemConfiguration());
         }
     }
 }
