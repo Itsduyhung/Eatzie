@@ -109,6 +109,12 @@ namespace Eatzie.Controllers
 
             return StatusCode(response.StatusCode, response);
         }
+        [HttpGet("search")]
+        public async Task<IActionResult> GetFoodsByName([FromQuery] string? foodName)
+        {
+            var foods = await _service.GetFoodsByNameAsync(foodName);
+            return Ok(foods);
+        }
 
         [Authorize]
         [HttpPost("{restaurantId}")]

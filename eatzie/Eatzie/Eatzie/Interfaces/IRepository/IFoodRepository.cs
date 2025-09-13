@@ -22,6 +22,7 @@ namespace Eatzie.Interfaces.IRepository
         /// <param name="id"></param>
         /// <returns></returns>
         Task<FoodEntity?> GetFoodByIdAsync(int id);
+        Task<List<FoodEntity>> GetFoodsByNameAsync(string? foodName);
         Task<bool> AddFoodAsync(FoodEntity food);
         Task<bool> UpdateFoodAsync(FoodEntity food);
         Task<bool> DeleteFoodAsync(FoodEntity food);

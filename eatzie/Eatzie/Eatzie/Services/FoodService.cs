@@ -541,4 +541,38 @@ public async Task<BaseAPIResponse> DeleteFoodsAsync(int userId, int foodId)
             Message = "Xóa món ăn thành công."
         };
     }
+    public async Task<List<FoodResponse>> GetFoodsByNameAsync(string? foodName)
+    {
+        var foods = await _foodRepository.GetFoodsByNameAsync(foodName);
+        var foodIds = foods.Select(f => f.Id).ToList();
+
+        // Truy vấn số lượt xem
+        var views = await _context.FoodViews
+            .Where(v => foodIds.Contains(v.Food_id))
+            .GroupBy(v => v.Food_id)
+            .Select(g => new { FoodId = g.Key, ViewCount = g.Count() })
+            .ToDictionaryAsync(g => g.FoodId, g => g.ViewCount);
+
+        // Truy vấn đánh giá trung bình
+        var ratings = await _context.FeedbackEntitys
+            .Where(f => foodIds.Contains(f.Food_id))
+            .GroupBy(f => f.Food_id)
+            .Select(g => new { FoodId = g.Key, AvgRating = g.Average(f => f.Rating) })
+            .ToDictionaryAsync(g => g.FoodId, g => g.AvgRating);
+
+        var result = foods.Select(f => new FoodResponse
+        {
+            Id = f.Id,
+            Content = f.Content,
+            Description = f.Description,
+            ImageUrl = f.ImageUrl ?? string.Empty,
+            IsVegetarian = f.IsVegetarian,
+            Address = f.Address,
+            TotalViews = views.ContainsKey(f.Id) ? views[f.Id] : 0,
+            AverageRating = ratings.ContainsKey(f.Id) ? Math.Round(ratings[f.Id], 2) : 0,
+            Price = f.Price
+        }).ToList();
+
+        return result;
+    }
 }

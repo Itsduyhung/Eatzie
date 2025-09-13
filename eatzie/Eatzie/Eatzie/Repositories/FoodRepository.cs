@@ -103,5 +103,16 @@ namespace Eatzie.Repositories
         {
             return await _context.SaveChangesAsync() > 0;
         }
+        public async Task<List<FoodEntity>> GetFoodsByNameAsync(string? foodName)
+        {
+            var query = _context.Foods.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(foodName))
+            {
+                query = query.Where(f => f.Content.Contains(foodName) || f.Description.Contains(foodName));
+            }
+
+            return await query.ToListAsync();
+        }
     }
 }
