@@ -15,5 +15,16 @@ namespace Eatzie.Interfaces.IRepository
         /// <returns></returns>
         Task<List<HistoryFoodEntity>> GetAllHistoryFoodsAsync(int userId);
         Task<FoodEntity?> GetFoodDetailByIdAsync(int foodId);
+
+        /// <summary>
+        /// Restaurant
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<FoodEntity?> GetFoodByIdAsync(int id);
+        Task<bool> AddFoodAsync(FoodEntity food);
+        Task<bool> UpdateFoodAsync(FoodEntity food);
+        Task<bool> DeleteFoodAsync(FoodEntity food);
+        Task<bool> SaveChangesAsync();
     }
 }

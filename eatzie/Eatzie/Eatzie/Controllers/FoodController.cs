@@ -1,7 +1,9 @@
 ﻿using Eatzie.DTOs.Request;
-using Eatzie.Interfaces.IService;
-using Microsoft.AspNetCore.Mvc;
 using Eatzie.Helpers;
+using Eatzie.Interfaces.IService;
+using Eatzie.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Eatzie.Controllers
@@ -88,6 +90,87 @@ namespace Eatzie.Controllers
             if (!result) return Forbid("Bạn không được phép xóa feedback này.");
 
             return Ok(new { message = "Feedback xóa thành công." });
+        }
+
+        /// <summary>
+        /// CRUD Food for Restaurant
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetFoodDetails(int id)
+        {
+            var response = await _service.GetFoodDetailsAsync(id);
+
+            if (response.IsSuccess)
+            {
+                return Ok(response);
+            }
+
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [Authorize]
+        [HttpPost("{restaurantId}")]
+        public async Task<IActionResult> CreateFood(int restaurantId, [FromForm] FoodCreateRequest dto)
+        {
+            var userId = GetUserIdFromToken.ExtractUserId(HttpContext);
+
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            var response = await _service.CreateFoodAsync(userId.Value, restaurantId, dto);
+
+            if (response.IsSuccess)
+            {
+                return StatusCode(response.StatusCode, response);
+            }
+
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [Authorize]
+        [HttpPut("{foodId}")]
+        public async Task<IActionResult> UpdateFood(int foodId, [FromForm] FoodUpdateRequest dto)
+        {
+            var userId = GetUserIdFromToken.ExtractUserId(HttpContext);
+
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            var response = await _service.UpdateFoodAsync(userId.Value, foodId, dto);
+
+            if (response.IsSuccess)
+            {
+                return Ok(response);
+            }
+
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [Authorize]
+        [HttpDelete("{foodId}")]
+        public async Task<IActionResult> DeletesFood(int foodId)
+        {
+            var userId = GetUserIdFromToken.ExtractUserId(HttpContext);
+
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            var response = await _service.DeleteFoodsAsync(userId.Value, foodId);
+
+            if (response.IsSuccess)
+            {
+                return Ok(response);
+            }
+
+            return StatusCode(response.StatusCode, response);
         }
     }
 }

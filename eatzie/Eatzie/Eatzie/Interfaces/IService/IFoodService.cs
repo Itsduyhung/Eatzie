@@ -1,5 +1,6 @@
-﻿using Eatzie.DTOs.Response;
-using Eatzie.DTOs.Request;
+﻿using Eatzie.DTOs.Request;
+using Eatzie.DTOs.Response;
+using Eatzie.Helpers;
 
 namespace Eatzie.Interfaces.IService
 {
@@ -13,5 +14,15 @@ namespace Eatzie.Interfaces.IService
         Task<List<FeedbackResponse>> GetFeedbacksByFoodIdAsync(int foodId);
         Task<bool> UpdateFeedbackAsync(int feedbackId, int userId, FeedbackRequest request);
         Task<bool> DeleteFeedbackAsync(int feedbackId, int userId);
+
+        /// <summary>
+        /// Restaurant
+        /// </summary>
+        /// <param name="foodId"></param>
+        /// <returns></returns>
+        Task<BaseAPIResponse> GetFoodDetailsAsync(int foodId);
+        Task<BaseAPIResponse> CreateFoodAsync(int userId, int restaurantId, FoodCreateRequest dto);
+        Task<BaseAPIResponse> UpdateFoodAsync(int userId, int foodId, FoodUpdateRequest dto);
+        Task<BaseAPIResponse> DeleteFoodsAsync(int userId, int foodId);
     }
 }

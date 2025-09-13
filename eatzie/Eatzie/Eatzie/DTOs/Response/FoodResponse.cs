@@ -13,4 +13,13 @@
         public double Value { get; set; }
         public decimal Price { get; set; }
         }
+    //public class FoodBriefResponse
+    //{
+    //    public int Id { get; set; }
+    //    public string Name { get; set; } = string.Empty;
+    //    public string Address { get; set; } = string.Empty;
+    //    public string Status { get; set; } = string.Empty;
+    //    public string OperatingHours { get; set; } = string.Empty;
+    //    public List<FoodCategoryDto> FoodCategories { get; set; } = new List<FoodCategoryDto>();
+    //}
 }

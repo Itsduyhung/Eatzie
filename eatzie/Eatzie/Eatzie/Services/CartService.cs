@@ -67,7 +67,7 @@ namespace Eatzie.Services
                 FoodId = i.FoodId,
                 FoodName = i.Food?.Content ?? string.Empty,
                 Quantity = i.Quantity,
-                ImageUrl = i.Food?.ImageUrl,
+                ImageUrl = i.Food?.ImageUrl ?? string.Empty,
                 Price = i.Food?.Price ?? 0.0m
             }).ToList();
         }
