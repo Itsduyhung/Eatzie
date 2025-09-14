@@ -1,24 +1,80 @@
-﻿using Eatzie.DTOs.Response;
+﻿using Eatzie.Data;
+using Eatzie.DTOs.Request;
+using Eatzie.DTOs.Response;
 using Eatzie.Helpers;
-using Eatzie.Interfaces;
-using Eatzie.Interfaces.IRepository;
-using Eatzie.Interfaces.IService;
+using Eatzie.Models;
+using Eatzie.Services;
+using Microsoft.EntityFrameworkCore;
 using System.Net;
-
-namespace Eatzie.Services;
 
 public class RestaurantService : IRestaurantService
 {
     private readonly IRestaurantRepository _restaurantRepository;
+    private readonly ApplicationDbContext _context;
+    private readonly IPhotoService _photoService;
 
-    public RestaurantService(IRestaurantRepository restaurantRepository)
+    public RestaurantService(IRestaurantRepository restaurantRepository, ApplicationDbContext context, IPhotoService photoService)
     {
         _restaurantRepository = restaurantRepository;
+        _context = context;
+        _photoService = photoService;
     }
 
-    public async Task<BaseAPIResponse> GetRestaurantDetailsAsync(int restaurantId)
+    private RestaurantResponse MapToResponseDto(RestaurantEntity restaurant)
     {
-        var restaurant = await _restaurantRepository.GetRestaurantDetailsWithFoodsAsync(restaurantId);
+        return new RestaurantResponse
+        {
+            Id = restaurant.Id,
+            Name = restaurant.Name,
+            Description = restaurant.Description,
+            Address = restaurant.Address,
+            PhoneNumber = restaurant.PhoneNumber,
+            ImageUrl = restaurant.ImageUrl,
+            Latitude = restaurant.Latitude,
+            Longitude = restaurant.Longitude,
+            CreatedAt = restaurant.CreatedAt,
+            Status = restaurant.Status
+        };
+    }
+
+    public async Task<BaseAPIResponse> CreateRestaurantAsync(int userId, RestaurantRequest dto)
+    {
+        string? imageUrl = null;
+        if (dto.ImageUrl != null)
+        {
+            imageUrl = await _photoService.UploadPhotoAsync(dto.ImageUrl);
+        }
+
+        var newRestaurant = new RestaurantEntity
+        {
+            Name = dto.Name,
+            Description = dto.Description,
+            Address = dto.Address,
+            PhoneNumber = dto.PhoneNumber,
+            ImageUrl = imageUrl,
+            Latitude = dto.Latitude,
+            Longitude = dto.Longitude,
+            UserId = userId,
+            Status = "active",
+            CreatedAt = DateTime.UtcNow
+        };
+
+        await _restaurantRepository.AddRestaurantAsync(newRestaurant);
+
+        var responseDto = MapToResponseDto(newRestaurant);
+
+        return new BaseAPIResponse
+        {
+            IsSuccess = true,
+            StatusCode = (int)HttpStatusCode.Created,
+            Message = "Tạo nhà hàng thành công.",
+            Data = responseDto
+        };
+    }
+
+    public async Task<BaseAPIResponse> GetRestaurantByIdAsync(int restaurantId)
+    {
+        var restaurant = await _restaurantRepository.GetRestaurantByIdAsync(restaurantId);
 
         if (restaurant == null)
         {
@@ -30,40 +86,159 @@ public class RestaurantService : IRestaurantService
             };
         }
 
-        var restaurantResponse = new RestaurantResponse
-        {
-            Id = restaurant.Id,
-            Name = restaurant.Name,
-            Address = restaurant.Address,
-            Status = restaurant.Status == "Open" ? "Đang mở cửa" : "Đóng cửa",
-            OperatingHours = "Mở cửa từ 08h30 đến 22h30"
-        };
+        var responseDto = MapToResponseDto(restaurant);
 
-        // Xử lý và nhóm món ăn theo danh mục
-        var categorizedFoods = restaurant.RestaurantFoods
-            .SelectMany(rf => rf.Food.FoodCategoryItems)
-            .GroupBy(fci => fci.Category.Name)
-            .Select(g => new FoodCategoryDto
+        var foods = await _context.RestaurantFoods
+            .Where(rf => rf.RestaurantId == restaurantId)
+            .Select(rf => new FoodBriefResponse
             {
-                CategoryName = g.Key,
-                Foods = g.Select(fci => new FoodResponse
-                {
-                    Id = fci.Food.Id,
-                    Content = fci.Food.Content,
-                    Description = fci.Food.Description,
-                    ImageUrl = fci.Food.ImageUrl ?? string.Empty,
-                    Price = fci.Food.Price,
-                }).ToList()
-            }).ToList();
+                Id = rf.Food.Id,
+                Content = rf.Food.Content,
+                Description = rf.Food.Description,
+                Price = rf.Food.Price,
+                ImageUrl = rf.Food.ImageUrl,
+                IsVegetarian = rf.Food.IsVegetarian,
+                CreatedAt = rf.Food.CreatedAt
+            })
+            .ToListAsync();
 
-        restaurantResponse.FoodCategories = categorizedFoods;
+        var categories = await _context.FoodCategories
+            .Where(fc => fc.FoodCategoryItems.Any(fci => fci.Food.RestaurantFoods.Any(rf => rf.RestaurantId == restaurantId)))
+            .Select(fc => new FoodCategoryDto
+            {
+                Id = fc.Id,
+                Name = fc.Name,
+                // Thuộc tính Foods sẽ được populate sau nếu cần
+            })
+            .ToListAsync();
+
+        responseDto.RestaurantFoods = foods;
+        responseDto.FoodCategories = categories;
 
         return new BaseAPIResponse
         {
             IsSuccess = true,
             StatusCode = (int)HttpStatusCode.OK,
-            Message = "Lấy dữ liệu nhà hàng thành công.",
-            Data = restaurantResponse
+            Data = responseDto
+        };
+    }
+
+    public async Task<BaseAPIResponse> GetAllRestaurantsAsync()
+    {
+        var restaurants = await _restaurantRepository.GetAllRestaurantsAsync();
+
+        var responseData = restaurants.Select(r => MapToResponseDto(r)).ToList();
+
+        return new BaseAPIResponse
+        {
+            IsSuccess = true,
+            StatusCode = (int)HttpStatusCode.OK,
+            Data = responseData
+        };
+    }
+
+    public async Task<BaseAPIResponse> UpdateRestaurantAsync(int userId, int restaurantId, RestaurantRequest dto)
+    {
+        var existingRestaurant = await _restaurantRepository.GetRestaurantByIdAsync(restaurantId);
+
+        if (existingRestaurant == null)
+        {
+            return new BaseAPIResponse
+            {
+                IsSuccess = false,
+                StatusCode = (int)HttpStatusCode.NotFound,
+                Message = "Không tìm thấy nhà hàng."
+            };
+        }
+
+        if (existingRestaurant.UserId != userId)
+        {
+            return new BaseAPIResponse
+            {
+                IsSuccess = false,
+                StatusCode = (int)HttpStatusCode.Forbidden,
+                Message = "Bạn không có quyền chỉnh sửa nhà hàng này."
+            };
+        }
+
+        if (!string.IsNullOrEmpty(dto.Name)) existingRestaurant.Name = dto.Name;
+        if (!string.IsNullOrEmpty(dto.Description)) existingRestaurant.Description = dto.Description;
+        if (!string.IsNullOrEmpty(dto.Address)) existingRestaurant.Address = dto.Address;
+        if (!string.IsNullOrEmpty(dto.PhoneNumber)) existingRestaurant.PhoneNumber = dto.PhoneNumber;
+        if (!string.IsNullOrEmpty(dto.Status)) existingRestaurant.Status = dto.Status;
+
+        if (dto.ImageUrl != null)
+        {
+            existingRestaurant.ImageUrl = await _photoService.UploadPhotoAsync(dto.ImageUrl);
+        }
+
+        if (dto.Latitude.HasValue) existingRestaurant.Latitude = dto.Latitude.Value;
+        if (dto.Longitude.HasValue) existingRestaurant.Longitude = dto.Longitude.Value;
+
+        var isUpdated = await _restaurantRepository.UpdateRestaurantAsync(existingRestaurant);
+
+        if (!isUpdated)
+        {
+            return new BaseAPIResponse
+            {
+                IsSuccess = false,
+                StatusCode = (int)HttpStatusCode.InternalServerError,
+                Message = "Không thể cập nhật nhà hàng."
+            };
+        }
+
+        var responseDto = MapToResponseDto(existingRestaurant);
+
+        return new BaseAPIResponse
+        {
+            IsSuccess = true,
+            StatusCode = (int)HttpStatusCode.OK,
+            Message = "Cập nhật nhà hàng thành công.",
+            Data = responseDto
+        };
+    }
+
+    public async Task<BaseAPIResponse> DeleteRestaurantAsync(int userId, int restaurantId)
+    {
+        var restaurant = await _restaurantRepository.GetRestaurantByIdAsync(restaurantId);
+
+        if (restaurant == null)
+        {
+            return new BaseAPIResponse
+            {
+                IsSuccess = false,
+                StatusCode = (int)HttpStatusCode.NotFound,
+                Message = "Không tìm thấy nhà hàng."
+            };
+        }
+
+        if (restaurant.UserId != userId)
+        {
+            return new BaseAPIResponse
+            {
+                IsSuccess = false,
+                StatusCode = (int)HttpStatusCode.Forbidden,
+                Message = "Bạn không có quyền xóa nhà hàng này."
+            };
+        }
+
+        var isDeleted = await _restaurantRepository.DeleteRestaurantAsync(restaurant);
+
+        if (!isDeleted)
+        {
+            return new BaseAPIResponse
+            {
+                IsSuccess = false,
+                StatusCode = (int)HttpStatusCode.InternalServerError,
+                Message = "Không thể xóa nhà hàng."
+            };
+        }
+
+        return new BaseAPIResponse
+        {
+            IsSuccess = true,
+            StatusCode = (int)HttpStatusCode.NoContent,
+            Message = "Xóa nhà hàng thành công."
         };
     }
 }
