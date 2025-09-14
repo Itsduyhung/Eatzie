@@ -1,10 +1,6 @@
 ﻿using Eatzie.Data;
-using Eatzie.Interfaces;
-using Eatzie.Interfaces.IRepository;
 using Eatzie.Models;
 using Microsoft.EntityFrameworkCore;
-
-namespace Eatzie.Repositories;
 
 public class RestaurantRepository : IRestaurantRepository
 {
@@ -15,21 +11,31 @@ public class RestaurantRepository : IRestaurantRepository
         _context = context;
     }
 
-    public async Task<RestaurantEntity?> GetRestaurantByIdAsync(int id)
+    public async Task<RestaurantEntity> GetRestaurantByIdAsync(int restaurantId)
     {
-        return await _context.Restaurants
-            .Include(r => r.RestaurantFoods)
-            .ThenInclude(rf => rf.Food)
-            .FirstOrDefaultAsync(r => r.Id == id);
+        return await _context.Restaurants.FindAsync(restaurantId);
     }
 
-    public async Task<RestaurantEntity?> GetRestaurantDetailsWithFoodsAsync(int id)
+    public async Task<List<RestaurantEntity>> GetAllRestaurantsAsync()
     {
-        return await _context.Restaurants
-            .Include(r => r.RestaurantFoods)
-                .ThenInclude(rf => rf.Food)
-                    .ThenInclude(f => f.FoodCategoryItems)
-                        .ThenInclude(fci => fci.Category)
-            .FirstOrDefaultAsync(r => r.Id == id);
+        return await _context.Restaurants.ToListAsync();
+    }
+
+    public async Task AddRestaurantAsync(RestaurantEntity restaurant)
+    {
+        _context.Restaurants.Add(restaurant);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<bool> UpdateRestaurantAsync(RestaurantEntity restaurant)
+    {
+        _context.Restaurants.Update(restaurant);
+        return await _context.SaveChangesAsync() > 0;
+    }
+
+    public async Task<bool> DeleteRestaurantAsync(RestaurantEntity restaurant)
+    {
+        _context.Restaurants.Remove(restaurant);
+        return await _context.SaveChangesAsync() > 0;
     }
 }

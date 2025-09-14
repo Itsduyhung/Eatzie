@@ -1,6 +1,8 @@
 ﻿namespace Eatzie.DTOs.Response;
+
 public class FoodCategoryDto
 {
-    public string CategoryName { get; set; } = string.Empty;
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
     public List<FoodResponse> Foods { get; set; } = new List<FoodResponse>();
 }

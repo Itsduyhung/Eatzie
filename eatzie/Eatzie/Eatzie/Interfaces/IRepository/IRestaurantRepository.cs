@@ -1,9 +1,9 @@
 ﻿using Eatzie.Models;
-
-namespace Eatzie.Interfaces.IRepository;
-
 public interface IRestaurantRepository
 {
-    Task<RestaurantEntity?> GetRestaurantByIdAsync(int id);
-    Task<RestaurantEntity?> GetRestaurantDetailsWithFoodsAsync(int id);
+    Task<RestaurantEntity> GetRestaurantByIdAsync(int restaurantId);
+    Task<List<RestaurantEntity>> GetAllRestaurantsAsync();
+    Task AddRestaurantAsync(RestaurantEntity restaurant);
+    Task<bool> UpdateRestaurantAsync(RestaurantEntity restaurant);
+    Task<bool> DeleteRestaurantAsync(RestaurantEntity restaurant);
 }
