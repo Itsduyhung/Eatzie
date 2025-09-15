@@ -2,7 +2,6 @@ import { Formik } from "formik";
 import { useState } from "react";
 import Toast from "react-native-root-toast";
 import { Spinner, XStack, YStack } from "tamagui";
-import { Image } from 'react-native';
 import * as Yup from "yup";
 
 import { FormErrorContext } from "@/app/hooks/FormErrorContext";
@@ -66,11 +65,6 @@ export default function LoginScreen() {
         </XStack>
 
         <YStack f={1} justifyContent="center" px="$4">
-        <Image
-            source={require('@/assets/icons/eatzie.png')}
-            style={{ width: 120, height: 120, alignSelf: 'center', marginBottom: 16, marginTop: 16 }}
-            resizeMode="contain"
-          />
           <Formik
             initialValues={initialValues}
             onSubmit={handleSubmit}
@@ -87,7 +81,6 @@ export default function LoginScreen() {
                     keyboardType="email-address"
                     autoCapitalize="none"
                     backgroundColor="transparent"
-                    paddingBottom={10}
                   />
 
                   <FormikPasswordInput

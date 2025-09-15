@@ -1,4 +1,3 @@
-// src/infrastructure/storage/storage.ts
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const storage = {

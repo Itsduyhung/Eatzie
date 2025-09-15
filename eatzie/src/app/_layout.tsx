@@ -41,7 +41,11 @@ const RootLayout = () => {
                   >
                     <Stack.Screen
                       name="index"
-                      options={{ headerShown: false }}
+                      options={{ headerShown: false, freezeOnBlur: true }}
+                    />
+                    <Stack.Screen
+                      name="(tabs)/index"
+                      options={{ headerShown: false, freezeOnBlur: true }}
                     />
                     <Stack.Screen
                       name="(auth)/signup"
@@ -84,6 +88,22 @@ const RootLayout = () => {
                     />
                     <Stack.Screen
                       name="(features)/cart/screencart"
+                      options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                      name="(features)/cart/confirmorderscreen"
+                      options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                      name="(features)/profile/settingprofile"
+                      options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                      name="(features)/cart/qrscreen"
+                      options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                      name="(features)/search/searchcategories"
                       options={{ headerShown: false }}
                     />
                   </Stack>

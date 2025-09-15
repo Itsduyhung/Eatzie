@@ -27,7 +27,18 @@ function CustomButtonText({
   children: React.ReactNode;
 }) {
   return (
-    <SizableText fontSize={fontsize} fontWeight={fontWeight} color={color}>
+    <SizableText
+      fontSize={fontsize}
+      fontWeight={fontWeight}
+      color={color}
+      numberOfLines={1}
+      ellipsizeMode="tail"
+      maxWidth={300}
+      style={{
+        flexShrink: 1,
+        overflow: "hidden",
+      }}
+    >
       {children}
     </SizableText>
   );
@@ -105,7 +116,14 @@ export const CustomButton = forwardRef<any, CustomButtonProps>(
       >
         {typeof children === "string" || typeof children === "number" ? (
           iconAfter ? (
-            <XStack alignItems="center" gap="$2">
+            <XStack
+              alignItems="center"
+              gap="$2"
+              flexDirection="row"
+              flex={1}
+              flexShrink={1}
+              overflow="hidden"
+            >
               <CustomButtonText
                 fontsize={textfontsize}
                 fontWeight={textfontweight}

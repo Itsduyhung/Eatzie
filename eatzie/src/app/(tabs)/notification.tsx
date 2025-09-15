@@ -1,6 +1,13 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image, ScrollView } from 'react-native';
-import { Ionicons, Feather } from '@expo/vector-icons';
+import { Feather, Ionicons } from "@expo/vector-icons";
+import React, { useState } from "react";
+import {
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 type Notification = {
   id: string;
@@ -13,64 +20,76 @@ type Notification = {
 
 const notifications: Notification[] = [
   {
-    id: '1',
-    name: 'Mixue',
-    avatar: require('../../assets/images/mixue-logo_brandlogos.net_wijie.png'),
-    time: '17:06',
-    content: 'Đơn hàng của bạn đã giao thành công. Cảm ơn bạn đã đặt Mixue!',
+    id: "1",
+    name: "Mixue",
+    avatar: require("../../assets/images/mixue-logo_brandlogos.net_wijie.png"),
+    time: "17:06",
+    content: "Đơn hàng của bạn đã giao thành công. Cảm ơn bạn đã đặt Mixue!",
     unread: false,
   },
   {
-    id: '2',
-    name: 'KFC',
-    avatar: { uri: 'https://1000logos.net/wp-content/uploads/2017/03/KFC-Logo.png' },
-    time: '16:45',
-    content: 'Nhập mã KFCDEAL để nhận ngay ưu đãi 30% cho đơn hàng hôm nay!',
+    id: "2",
+    name: "KFC",
+    avatar: {
+      uri: "https://1000logos.net/wp-content/uploads/2017/03/KFC-Logo.png",
+    },
+    time: "16:45",
+    content: "Nhập mã KFCDEAL để nhận ngay ưu đãi 30% cho đơn hàng hôm nay!",
     unread: false,
   },
   {
-    id: '3',
-    name: 'Hight Land',
-    avatar: require('../../assets/images/highlands_coffee-logo.png'),
-    time: '15:20',
-    content: 'Bạn vừa nhận được mã giảm giá 20k cho mọi thức uống tại Highlands Coffee.',
+    id: "3",
+    name: "Hight Land",
+    avatar: require("../../assets/images/highlands_coffee-logo.png"),
+    time: "15:20",
+    content:
+      "Bạn vừa nhận được mã giảm giá 20k cho mọi thức uống tại Highlands Coffee.",
     unread: false,
   },
   {
-    id: '4',
-    name: 'Lotteria',
-    avatar: require('../../assets/images/lotteria-brandlogo.net.png'),
-    time: '14:10',
-    content: 'Đơn hàng Lotteria của bạn đã được xác nhận và đang chuẩn bị giao.',
+    id: "4",
+    name: "Lotteria",
+    avatar: require("../../assets/images/lotteria-brandlogo.net.png"),
+    time: "14:10",
+    content:
+      "Đơn hàng Lotteria của bạn đã được xác nhận và đang chuẩn bị giao.",
     unread: false,
   },
   {
-    id: '5',
-    name: 'StarBuck',
-    avatar: require('../../assets/images/starbucks_1992ΓÇô2011-logo_brandlogos.net_mrr9i.png'),
-    time: '13:30',
-    content: 'StarBuck tặng bạn mã FREESHIP cho đơn hàng đầu tiên trong tuần này!',
+    id: "5",
+    name: "StarBuck",
+    avatar: require("../../assets/images/starbucks_1992ΓÇô2011-logo_brandlogos.net_mrr9i.png"),
+    time: "13:30",
+    content:
+      "StarBuck tặng bạn mã FREESHIP cho đơn hàng đầu tiên trong tuần này!",
     unread: false,
   },
 ];
 
 const unreadNotifications: Notification[] = [
   {
-    id: '6',
-    name: 'KFC',
-    avatar: { uri: 'https://1000logos.net/wp-content/uploads/2017/03/KFC-Logo.png' },
-    time: '18:30',
-    content: 'Bạn có đơn hàng mới từ KFC! Đặt ngay để nhận ưu đãi đặc biệt.',
+    id: "6",
+    name: "KFC",
+    avatar: {
+      uri: "https://1000logos.net/wp-content/uploads/2017/03/KFC-Logo.png",
+    },
+    time: "18:30",
+    content: "Bạn có đơn hàng mới từ KFC! Đặt ngay để nhận ưu đãi đặc biệt.",
     unread: true,
   },
 ];
 
 export default function NotificationScreen() {
-  const [tab, setTab] = useState('all');
+  const [tab, setTab] = useState("all");
 
   const renderItem = ({ item }: { item: Notification }) => (
     <View style={styles.itemContainer}>
-      <Image source={typeof item.avatar === 'string' ? { uri: item.avatar } : item.avatar} style={styles.avatar} />
+      <Image
+        source={
+          typeof item.avatar === "string" ? { uri: item.avatar } : item.avatar
+        }
+        style={styles.avatar}
+      />
       <View style={{ flex: 1 }}>
         <View style={styles.row}>
           <Text style={styles.name}>{item.name}</Text>
@@ -82,7 +101,7 @@ export default function NotificationScreen() {
     </View>
   );
 
-  const data = tab === 'all' ? notifications : unreadNotifications;
+  const data = tab === "all" ? notifications : unreadNotifications;
 
   return (
     <View style={styles.container}>
@@ -101,22 +120,28 @@ export default function NotificationScreen() {
       {/* Tabs */}
       <View style={styles.tabs}>
         <TouchableOpacity
-          style={[styles.tabButton, tab === 'all' && styles.tabActive]}
-          onPress={() => setTab('all')}
+          style={[styles.tabButton, tab === "all" && styles.tabActive]}
+          onPress={() => setTab("all")}
         >
-          <Text style={[styles.tabText, tab === 'all' && styles.tabTextActive]}>Tất cả (5)</Text>
+          <Text style={[styles.tabText, tab === "all" && styles.tabTextActive]}>
+            Tất cả (5)
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.tabButton, tab === 'unread' && styles.tabActive]}
-          onPress={() => setTab('unread')}
+          style={[styles.tabButton, tab === "unread" && styles.tabActive]}
+          onPress={() => setTab("unread")}
         >
-          <Text style={[styles.tabText, tab === 'unread' && styles.tabTextActive]}>Chưa đọc(1)</Text>
+          <Text
+            style={[styles.tabText, tab === "unread" && styles.tabTextActive]}
+          >
+            Chưa đọc(1)
+          </Text>
         </TouchableOpacity>
       </View>
       {/* Notification List */}
       <FlatList
         data={data}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item.id}
         renderItem={renderItem}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         contentContainerStyle={{ paddingBottom: 16 }}
@@ -129,28 +154,28 @@ export default function NotificationScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     paddingTop: 40,
     paddingHorizontal: 16,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: 20,
   },
   headerTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#222',
+    fontWeight: "bold",
+    color: "#222",
   },
   headerIcons: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   tabs: {
-    flexDirection: 'row',
-    backgroundColor: '#F2F4F7',
+    flexDirection: "row",
+    backgroundColor: "#F2F4F7",
     borderRadius: 16,
     marginBottom: 20,
     padding: 4,
@@ -158,22 +183,22 @@ const styles = StyleSheet.create({
   tabButton: {
     flex: 1,
     paddingVertical: 8,
-    alignItems: 'center',
+    alignItems: "center",
     borderRadius: 12,
   },
   tabActive: {
-    backgroundColor: '#5B5FEF',
+    backgroundColor: "#5B5FEF",
   },
   tabText: {
-    color: '#222',
-    fontWeight: '500',
+    color: "#222",
+    fontWeight: "500",
   },
   tabTextActive: {
-    color: '#fff',
+    color: "#fff",
   },
   itemContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start",
     paddingVertical: 12,
   },
   avatar: {
@@ -183,12 +208,12 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   row: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 4,
   },
   name: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 16,
     marginRight: 6,
   },
@@ -196,22 +221,22 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#1ED760',
+    backgroundColor: "#1ED760",
     marginRight: 6,
   },
   time: {
-    marginLeft: 'auto',
-    color: '#888',
+    marginLeft: "auto",
+    color: "#888",
     fontSize: 13,
   },
   content: {
-    color: '#444',
+    color: "#444",
     fontSize: 14,
     marginRight: 12,
   },
   separator: {
     height: 1,
-    backgroundColor: '#E5E7EB',
+    backgroundColor: "#E5E7EB",
     marginVertical: 2,
     marginLeft: 60,
   },

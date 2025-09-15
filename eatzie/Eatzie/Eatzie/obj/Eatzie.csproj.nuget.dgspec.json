@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\sqdqwd\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Eatzie.csproj": {}
+    "C:\\testhung\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Eatzie.csproj": {}
   },
   "projects": {
-    "C:\\sqdqwd\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Eatzie.csproj": {
+    "C:\\testhung\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Eatzie.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\sqdqwd\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Eatzie.csproj",
+        "projectUniqueName": "C:\\testhung\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Eatzie.csproj",
         "projectName": "Eatzie",
-        "projectPath": "C:\\sqdqwd\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Eatzie.csproj",
+        "projectPath": "C:\\testhung\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Eatzie.csproj",
         "packagesPath": "C:\\Users\\HIEU\\.nuget\\packages\\",
-        "outputPath": "C:\\sqdqwd\\Eatzie\\eatzie\\Eatzie\\Eatzie\\obj\\",
+        "outputPath": "C:\\testhung\\Eatzie\\eatzie\\Eatzie\\Eatzie\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\HIEU\\AppData\\Roaming\\NuGet\\NuGet.Config"

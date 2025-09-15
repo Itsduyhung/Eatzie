@@ -1,4 +1,7 @@
-import { foodCategoryData } from "@/app/constant/FoodCategoryData";
+import {
+  foodCategoryData,
+  foodCategoryData1,
+} from "@/app/constant/FoodCategoryData";
 import { ThemedText } from "@/app/hooks/ThemedTextColor";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Avatar, XStack, YStack } from "tamagui";
@@ -10,9 +13,9 @@ type Props = {
 
 export const Rating = ({ id }: Props) => {
   const insets = useSafeAreaInsets();
-  const category = foodCategoryData.find((f) =>
-    f.items.some((item) => item.id === id)
-  );
+  const category =
+    foodCategoryData.find((f) => f.items.some((item) => item.id === id)) ??
+    foodCategoryData1.find((f) => f.items.some((item) => item.id === id));
   const item = category?.items.find((item) => item.id === id);
   const feedbacks = item?.feedbacks || [];
 

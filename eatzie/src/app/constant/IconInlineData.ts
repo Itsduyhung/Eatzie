@@ -11,7 +11,7 @@ export const IconInlineData: IconInline[] = [
     icon: require("../../assets/animations/loading2.json"),
     iconType: "lottie",
     title: "Ăn chay sống khỏe",
-    path: "/loading",
+    path: "/category/5",
   },
   {
     iconComponent: MaterialCommunityIcons,
@@ -32,11 +32,11 @@ export const BannerData: BannerInline[] = [
     path: "/loading",
   },
   {
-    icon: require("../../assets/banner/banner3.png"),
+    icon: require("../../assets/banner/banner2.png"),
     path: "/loading",
   },
   {
-    icon: require("../../assets/banner/banner2.png"),
+    icon: require("../../assets/banner/banner3.jpg"),
     path: "/loading",
   },
 ];

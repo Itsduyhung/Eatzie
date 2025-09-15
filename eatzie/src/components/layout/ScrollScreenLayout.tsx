@@ -46,6 +46,7 @@ export const ScrollScreenLayout = ({
   const scrollHandler = useAnimatedScrollHandler((event) => {
     scrollY.value = event.contentOffset.y;
   });
+
   const pathname = usePathname();
   const showCartFooterRoutes = ["/cartScreen", "/checkout"];
   const shouldShowCartFooter = showCartFooterRoutes.includes(pathname);
@@ -115,12 +116,35 @@ export const ScrollScreenLayout = ({
           </YStack>
         ) : gradientWrapper ? (
           gradientWrapper(header)
-        ) : (
-          header
-        )}
+        ) : header ? (
+          <YStack
+            style={{
+              backgroundColor: headerBackgroundColor,
+              paddingTop: insets.top,
+              paddingHorizontal: 0,
+            }}
+          >
+            <XStack alignItems="center">
+              <XStack>
+                {headerLeftIcons.map((icon, index) => (
+                  <YStack key={index}>{icon}</YStack>
+                ))}
+              </XStack>
+
+              <YStack flex={1}>{header}</YStack>
+
+              <XStack>
+                {headerRightIcons.map((icon, index) => (
+                  <YStack key={index}>{icon}</YStack>
+                ))}
+              </XStack>
+            </XStack>
+          </YStack>
+        ) : null}
 
         {children}
       </Animated.ScrollView>
+
       {shouldShowCartFooter && <CartFooter />}
     </ThemedScreen>
   );

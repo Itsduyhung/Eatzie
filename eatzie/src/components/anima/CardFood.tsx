@@ -1,4 +1,7 @@
-import { foodCategoryData } from "@/app/constant/FoodCategoryData";
+import {
+  foodCategoryData,
+  foodCategoryData1,
+} from "@/app/constant/FoodCategoryData";
 import { ThemedText } from "@/app/hooks/ThemedTextColor";
 import { useCartStore } from "@/stores/useCartStore";
 import { FoodItem } from "@/types/foodCategory";
@@ -19,7 +22,9 @@ type Props = {
 
 export const FoodCardContent = ({ id, variant = "default" }: Props) => {
   const router = useRouter();
-  const category = foodCategoryData.find((f) => f.id === id);
+  const category =
+    foodCategoryData.find((f) => f.id === id) ??
+    foodCategoryData1.find((f) => f.id === id);
   const items = category?.items || [];
   const addToCart = useCartStore((state) => state.addToCart);
   const decreaseQuantity = useCartStore((state) => state.decreaseQuantity);

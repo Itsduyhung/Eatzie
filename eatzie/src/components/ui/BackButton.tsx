@@ -10,7 +10,7 @@ export function BackButton() {
       icon={ChevronLeft}
       onPress={() => router.back()}
       defaultColor="black"
-      pressColor="#f87171" // đỏ nhạt đẹp
+      pressColor="#f87171" 
     />
   );
 }

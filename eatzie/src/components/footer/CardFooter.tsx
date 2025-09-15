@@ -4,15 +4,13 @@ import { formatCurrency } from "@/utils/formatCurrency";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useMemo } from "react";
-import { View } from "react-native";
+import { Pressable } from "react-native";
 import { XStack, YStack } from "tamagui";
 import { cartRef } from "../anima/cartRef";
 import { CustomButton } from "../ui/CustomButton";
 
 export const CartFooter = () => {
   const router = useRouter();
-  //   const itemCount = useCartStore((state) => state.itemCount)();
-  //   const total = useCartStore((state) => state.total)();
 
   const getTotal = useCartStore((s) => s.total);
   const getItemCount = useCartStore((s) => s.itemCount);
@@ -38,7 +36,8 @@ export const CartFooter = () => {
       zIndex={100}
     >
       <YStack>
-        <View
+        <Pressable
+          onPress={() => router.push("/(features)/cart/screencart")}
           ref={(ref) => {
             if (ref) cartRef.current = ref;
           }}
@@ -71,8 +70,9 @@ export const CartFooter = () => {
               </YStack>
             )}
           </YStack>
-        </View>
+        </Pressable>
       </YStack>
+
       <XStack
         alignItems="center"
         justifyContent="space-between"
@@ -97,7 +97,7 @@ export const CartFooter = () => {
           paddingVertical={8}
           onPress={() =>
             router.push({
-              pathname: "/(features)/cart/screencart",
+              pathname: "/(features)/cart/confirmorderscreen",
             })
           }
         >

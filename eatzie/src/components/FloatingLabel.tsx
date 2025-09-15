@@ -18,7 +18,7 @@ export function FloatingLabel({ label, focused, filled }: Label) {
 
   const translateY = animated.interpolate({
     inputRange: [0, 1],
-    outputRange: [-2, -20],
+    outputRange: [-1, -20],
   });
 
   const translateX = animated.interpolate({

@@ -64,13 +64,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
       ),
     }));
   },
-  /*************  ✨ Windsurf Command ⭐  *************/
-  /**
-   * Calculates the total price of all items in the cart.
-   *
-   * @returns The total price of all items in the cart.
-   */
-  /*******  a57aacea-6b59-4e5e-9fa2-92bc89c124c0  *******/
+
   total: () =>
     get().cart.reduce(
       (sum, item) => sum + item.price * (item.quantity ?? 1),

@@ -61,6 +61,8 @@ const MultiStepSurvey = () => {
       if (item.data === undefined) return null;
       return (
         <CustomButton
+          marginRight="$3"
+          marginBottom={10}
           key={item.data}
           size="$4"
           onPress={() => toggleSelection(item.data!)}
@@ -154,7 +156,7 @@ const MultiStepSurvey = () => {
             <Progress.Indicator animation="bouncy" backgroundColor="#6666FF" />
           </Progress>
 
-          <YStack alignItems="center" gap="$2" marginTop={insets.top}>
+          <YStack alignItems="center" gap="$3" marginTop={insets.top}>
             {stepData.item?.title?.map((line, i) => (
               <ThemedText
                 key={i}

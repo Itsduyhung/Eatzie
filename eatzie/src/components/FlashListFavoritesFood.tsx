@@ -1,4 +1,7 @@
-import { foodCategoryData } from "@/app/constant/FoodCategoryData";
+import {
+  foodCategoryData,
+  foodCategoryData1,
+} from "@/app/constant/FoodCategoryData";
 import { ThemedText } from "@/app/hooks/ThemedTextColor";
 import { FlatList } from "react-native";
 import { View, XStack, YStack } from "tamagui";
@@ -9,7 +12,9 @@ type Props = {
 };
 
 const FlashListFavoritesFood = ({ id }: Props) => {
-  const rawCategory = foodCategoryData.find((f) => f.id === id);
+  const rawCategory =
+    foodCategoryData.find((f) => f.id === id) ??
+    foodCategoryData1.find((f) => f.id === id);
   const category = rawCategory
     ? {
         ...rawCategory,
