@@ -1,4 +1,7 @@
-import { foodCategoryData } from "@/app/constant/FoodCategoryData";
+import {
+  foodCategoryData,
+  foodCategoryData1,
+} from "@/app/constant/FoodCategoryData";
 import { ThemedText } from "@/app/hooks/ThemedTextColor";
 import { cartRef } from "@/components/anima/cartRef";
 import { useFlyToCart } from "@/components/anima/useFlyToCart";
@@ -25,9 +28,9 @@ const DetailsFood = () => {
   const buttonRefs = useRef<Record<string, View | null>>({});
   const insets = useSafeAreaInsets();
 
-  const category = foodCategoryData.find((f) =>
-    f.items.some((item) => item.id === id)
-  );
+  const category =
+    foodCategoryData.find((f) => f.items.some((item) => item.id === id)) ??
+    foodCategoryData1.find((f) => f.items.some((item) => item.id === id));
   const item = category?.items.find((item) => item.id === id);
   const image = item?.image;
 

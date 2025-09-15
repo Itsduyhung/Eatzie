@@ -1,12 +1,12 @@
-import { HeaderProps } from "@/types/headerProps";
+import { useAuthStore } from "@/applicaton/stores/authStores";
 import { UserRound } from "@tamagui/lucide-icons";
 import { useRouter } from "expo-router";
-import { XStack, YStack } from "tamagui";
+import { Avatar, XStack, YStack } from "tamagui";
 import { CustomButton } from "../ui/CustomButton";
 
-export const HeaderProfile = ({ user }: HeaderProps) => {
+export const HeaderProfile = () => {
   const router = useRouter();
-
+  const user = useAuthStore((state) => state.user);
   const checkAuthUI = () =>
     !user && (
       <CustomButton
@@ -46,9 +46,15 @@ export const HeaderProfile = ({ user }: HeaderProps) => {
         borderWidth={1}
         borderColor="$gray5"
       >
-        <UserRound color={"$blue2Dark"} size={35} />
+        {user?.userId === "8" ? (
+          <Avatar circular size="$6">
+            <Avatar.Image src="http://picsum.photos/200/300" />
+            <Avatar.Fallback bc="red" />
+          </Avatar>
+        ) : (
+          <UserRound color={"$blue2Dark"} size={35} />
+        )}
       </XStack>
-
       {checkAuthUI()}
     </YStack>
   );

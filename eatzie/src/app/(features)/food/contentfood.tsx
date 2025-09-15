@@ -1,5 +1,8 @@
 // app/(tabs)/test.tsx
-import { foodCategoryData } from "@/app/constant/FoodCategoryData";
+import {
+  foodCategoryData,
+  foodCategoryData1,
+} from "@/app/constant/FoodCategoryData";
 import { ThemedText } from "@/app/hooks/ThemedTextColor";
 import { FoodCardContent } from "@/components/anima/CardFood";
 import { FavoriteButton } from "@/components/FavoriteButton";
@@ -16,7 +19,9 @@ import { Text, XStack, YStack } from "tamagui";
 
 const ContentFood = () => {
   const { id } = useLocalSearchParams();
-  const item = foodCategoryData.find((f) => f.id === id);
+  const item =
+    foodCategoryData.find((f) => f.id === id) ??
+    foodCategoryData1.find((f) => f.id === id);
   const image = item?.imageClick;
   const insets = useSafeAreaInsets();
 

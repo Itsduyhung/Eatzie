@@ -1,16 +1,17 @@
-import { useState } from "react";
-import { Image, TouchableOpacity, TextInput } from "react-native";
 import { Formik } from "formik";
+import { useState } from "react";
+import { Image, TouchableOpacity } from "react-native";
 import Toast from "react-native-root-toast";
-import { YStack, SizableText } from "tamagui";
-import { Eye, EyeOff } from '@tamagui/lucide-icons';
+import { SizableText, YStack } from "tamagui";
 
-import { CustomInputBase } from "@/components/ui/CustomInputBase";
+import {
+  FormikInput,
+  FormikPasswordInput,
+} from "@/components/formik/FormikFields";
+import { ThemedScreen } from "@/components/layout/ThemedScreen";
 import { registerAPI } from "@/utils/api";
 import { APP_COLOR } from "@/utils/constants";
 import { RegisterSchema } from "@/utils/validate.schema";
-import { ThemedScreen } from '@/components/layout/ThemedScreen';
-import { FormikInput, FormikPasswordInput } from '@/components/formik/FormikFields';
 
 const SignUpPage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -48,16 +49,32 @@ const SignUpPage = () => {
 
   return (
     <ThemedScreen>
-      <YStack flex={1} backgroundColor="#F8FAFC" padding={24} justifyContent="center">
+      <YStack
+        flex={1}
+        backgroundColor="#F8FAFC"
+        padding={24}
+        justifyContent="center"
+      >
         {/* Logo Eatzie */}
         <Image
-          source={require('@/assets/icons/eatzie.png')}
-          style={{ width: 120, height: 120, alignSelf: 'center', marginBottom: 16, marginTop: 16 }}
+          source={require("@/assets/icons/eatzie.png")}
+          style={{
+            width: 120,
+            height: 120,
+            alignSelf: "center",
+            marginBottom: 16,
+            marginTop: 16,
+          }}
           resizeMode="contain"
         />
         <Formik
           validationSchema={RegisterSchema}
-          initialValues={{ fullName: "", email: "", password: "", confirmPassword: "" }}
+          initialValues={{
+            fullName: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+          }}
           onSubmit={(values) =>
             handleSignUp(values.fullName, values.email, values.password)
           }
@@ -95,17 +112,17 @@ const SignUpPage = () => {
               />
               <TouchableOpacity
                 style={{
-                  backgroundColor: '#6666FF',
+                  backgroundColor: "#6666FF",
                   borderRadius: 10,
                   paddingVertical: 16,
-                  alignItems: 'center',
+                  alignItems: "center",
                   marginTop: 8,
                 }}
                 onPress={() => formik.handleSubmit()}
                 disabled={isLoading}
               >
                 <SizableText color="#fff" fontWeight="600" fontSize={18}>
-                  {isLoading ? 'Đang đăng kí...' : 'Đăng kí'}
+                  {isLoading ? "Đang đăng kí..." : "Đăng kí"}
                 </SizableText>
               </TouchableOpacity>
             </YStack>

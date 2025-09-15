@@ -19,7 +19,6 @@ export function FormikInput(
       field={field}
       meta={meta}
       focusStyle={BlackWithShadowFocusStyle}
-      color="#000000"
     />
   );
 }
@@ -55,7 +54,7 @@ export function MoneyInput(
         field={field}
         meta={meta}
         height="$5"
-        paddingBottom={8}
+        paddingBottom={0}
         size="$5"
         focusStyle={BlackWithShadowFocusStyle}
         onChangeText={(text) => {

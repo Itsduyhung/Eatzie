@@ -1,38 +1,51 @@
-import React from "react";
+import { Image, TextInput, View } from "react-native";
 import { YStack } from "tamagui";
-import { Image } from "react-native";
-import { SearchBar } from "../ui/CustomSearchInput";
-import { LocationBar } from "../ui/LocationBar";
+
+const HEADER_HEIGHT = 159;
 
 const HeaderHome = () => {
   return (
-    <YStack width="100%" height={180} position="relative" justifyContent="center" alignItems="center" backgroundColor="#F8FAFC">
-      {/* Layered header images */}
+    <YStack
+      width="100%"
+      height={HEADER_HEIGHT}
+      position="relative"
+      alignItems="center"
+      justifyContent="flex-start"
+    >
       <Image
-        source={require('@/assets/images/header.png')}
-        style={{ position: 'absolute', width: '100%', height: 180, top: 0, left: 0 }}
-        resizeMode="cover"
+        source={require("@/assets/images/headereatzie.png")}
+        style={{
+          width: "100%",
+          height: HEADER_HEIGHT,
+          resizeMode: "cover",
+          alignSelf: "center",
+        }}
       />
-      <Image
-        source={require('@/assets/images/good.png')}
-        style={{ position: 'absolute', top: 32, left: 24, width: 120, height: 40 }}
-        resizeMode="contain"
-      />
-      <Image
-        source={require('@/assets/images/morning.png')}
-        style={{ position: 'absolute', top: 32, right: 24, width: 160, height: 40 }}
-        resizeMode="contain"
-      />
-      <Image
-        source={require('@/assets/icons/hinhthoi.png')}
-        style={{ position: 'absolute', top: 24, left: '50%', marginLeft: -40, width: 80, height: 80, opacity: 0.2 }}
-        resizeMode="contain"
-      />
-      {/* Search bar and location bar */}
-      <YStack position="absolute" bottom={12} left={0} right={0} px={20}>
-        <LocationBar />
-        <SearchBar />
-      </YStack>
+      <View
+        style={{
+          position: "absolute",
+          top: HEADER_HEIGHT * 0.65,
+          left: "7.5%",
+          width: "85%",
+          zIndex: 2,
+        }}
+      >
+        <TextInput
+          placeholder="Tìm món ăn..."
+          style={{
+            backgroundColor: "#fff",
+            borderRadius: 16,
+            paddingVertical: 12,
+            paddingHorizontal: 18,
+            fontSize: 18,
+            shadowColor: "#000",
+            shadowOpacity: 0.05,
+            shadowRadius: 8,
+            elevation: 2,
+            width: "100%",
+          }}
+        />
+      </View>
     </YStack>
   );
 };

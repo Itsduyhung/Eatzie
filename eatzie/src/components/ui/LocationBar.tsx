@@ -1,5 +1,5 @@
 import { ChevronDown, CloudSun, MapPin } from "@tamagui/lucide-icons";
-import { Text, XStack, YStack } from "tamagui";
+import { Text, XStack } from "tamagui";
 
 export function LocationBar() {
   return (
@@ -19,14 +19,6 @@ export function LocationBar() {
       </XStack>
 
       <XStack alignItems="center" gap="$2">
-        <YStack alignItems="flex-end">
-          <Text color="white" fontSize={15}>
-            22°
-          </Text>
-          <Text color="white" fontSize={15}>
-            Cloudy
-          </Text>
-        </YStack>
         <CloudSun size={18} color="white" />
       </XStack>
     </XStack>

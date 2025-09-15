@@ -3,12 +3,12 @@ import axios from "axios";
 import { storage } from "../storage/tokenStorage";
 
 export const api = axios.create({
-  baseURL: process.env.EXPO_PUBLIC_API_URL || "http://192.168.250.119:7121/api",
+  baseURL: process.env.EXPO_PUBLIC_API_URL || "http://192.168.0.190:7121/api",
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
   },
-  timeout: 5000,
+  timeout: 10000,
 });
 
 api.interceptors.request.use(

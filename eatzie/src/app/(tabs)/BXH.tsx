@@ -1,18 +1,18 @@
 import { ScrollScreenLayout } from "@/components/layout/ScrollScreenLayout";
-import { Text, YStack, XStack, View } from "tamagui";
-import { HeaderGradientBackground } from "../untils/GradientBackground";
+import { ChevronRight } from "@tamagui/lucide-icons";
 import { useState } from "react";
-import { ChevronDown, ChevronRight } from '@tamagui/lucide-icons';
-import { Image, TouchableOpacity, Dimensions } from "react-native";
+import { Dimensions, Image, TouchableOpacity } from "react-native";
+import { Text, View, XStack, YStack } from "tamagui";
+import { HeaderGradientBackground } from "../untils/GradientBackground";
 
 const categories = [
-  { label: "Lượt đánh giá", icon: require('../../assets/icons/points.png') },
-  { label: "Lượt xem", icon: require('../../assets/icons/eye.png') },
+  { label: "Lượt đánh giá", icon: require("../../assets/icons/points.png") },
+  { label: "Lượt xem", icon: require("../../assets/icons/eye.png") },
 ] as const;
-type CategoryKey = typeof categories[number]["label"];
+type CategoryKey = (typeof categories)[number]["label"];
 
 const tabs = ["Ngày", "Tuần", "Tháng", "Năm"] as const;
-type TabKey = typeof tabs[number];
+type TabKey = (typeof tabs)[number];
 
 const rankingData: Record<TabKey, { rank: number; name: string }[]> = {
   Ngày: [
@@ -53,10 +53,11 @@ const rankIcons = [
 
 const BXHScreen = () => {
   const [selectedTab, setSelectedTab] = useState(0);
-  const [selectedCategory, setSelectedCategory] = useState<CategoryKey>('Lượt đánh giá');
-  const screenWidth = Dimensions.get('window').width;
+  const [selectedCategory, setSelectedCategory] =
+    useState<CategoryKey>("Lượt đánh giá");
+  const screenWidth = Dimensions.get("window").width;
   let ranking = rankingData[tabs[selectedTab]];
-  if (selectedCategory === 'Lượt xem') {
+  if (selectedCategory === "Lượt xem") {
     ranking = [...ranking].reverse();
   }
   return (
@@ -68,8 +69,13 @@ const BXHScreen = () => {
       <YStack background="#FFFFFF" flex={1} padding={20}>
         {/* Title with trophy icon */}
         <XStack alignItems="center" marginBottom={16}>
-          <Image source={require('../../assets/icons/trophy.png')} style={{ width: 28, height: 28, marginRight: 8 }} />
-          <Text fontSize={26} fontWeight="700" color="#111">Bảng xếp hạng</Text>
+          <Image
+            source={require("../../assets/icons/trophy.png")}
+            style={{ width: 28, height: 28, marginRight: 8 }}
+          />
+          <Text fontSize={26} fontWeight="700" color="#111">
+            Bảng xếp hạng
+          </Text>
         </XStack>
         {/* Danh mục */}
         <XStack alignItems="center" justifyContent="center" marginBottom={16}>
@@ -83,15 +89,25 @@ const BXHScreen = () => {
                 width={90}
                 height={90}
                 borderRadius={16}
-                backgroundColor={selectedCategory === cat.label ? '#E5E7EB' : '#F2F4F7'}
+                backgroundColor={
+                  selectedCategory === cat.label ? "#E5E7EB" : "#F2F4F7"
+                }
                 alignItems="center"
                 justifyContent="center"
                 marginHorizontal={12}
                 borderWidth={selectedCategory === cat.label ? 2 : 0}
-                borderColor={selectedCategory === cat.label ? '#5B5FEF' : 'transparent'}
+                borderColor={
+                  selectedCategory === cat.label ? "#5B5FEF" : "transparent"
+                }
               >
-                <Image source={cat.icon} style={{ width: 36, height: 36, marginBottom: 8 }} resizeMode="contain" />
-                <Text fontSize={13} color="#888" textAlign="center">{cat.label}</Text>
+                <Image
+                  source={cat.icon}
+                  style={{ width: 36, height: 36, marginBottom: 8 }}
+                  resizeMode="contain"
+                />
+                <Text fontSize={13} color="#888" textAlign="center">
+                  {cat.label}
+                </Text>
               </YStack>
             </TouchableOpacity>
           ))}
@@ -102,7 +118,7 @@ const BXHScreen = () => {
             <TouchableOpacity
               key={tab}
               onPress={() => setSelectedTab(idx)}
-              style={{ flex: 1, alignItems: 'center' }}
+              style={{ flex: 1, alignItems: "center" }}
             >
               <YStack alignItems="center" width="100%">
                 <Text
@@ -114,7 +130,7 @@ const BXHScreen = () => {
                 </Text>
                 {selectedTab === idx && (
                   <Image
-                    source={require('../../assets/icons/hinhthoi.png')}
+                    source={require("../../assets/icons/hinhthoi.png")}
                     style={{ width: 16, height: 8, marginTop: 2 }}
                     resizeMode="contain"
                   />
@@ -124,12 +140,14 @@ const BXHScreen = () => {
           ))}
         </XStack>
         {/* Đường kẻ ngang phân cách */}
-        <View style={{ height: 1, backgroundColor: '#E5E7EB', marginBottom: 4 }} />
+        <View
+          style={{ height: 1, backgroundColor: "#E5E7EB", marginBottom: 4 }}
+        />
         {/* Danh sách xếp hạng */}
         <YStack>
           {ranking.map((item: { rank: number; name: string }, idx: number) => (
             <XStack
-              key={item.rank + '-' + item.name}
+              key={item.rank + "-" + item.name}
               alignItems="center"
               paddingVertical={10}
               borderBottomWidth={idx < ranking.length - 1 ? 1 : 0}
@@ -142,9 +160,19 @@ const BXHScreen = () => {
                   style={{ width: 32, height: 32, marginRight: 8 }}
                 />
               ) : (
-                <Text fontSize={22} fontWeight="700" color="#888" width={32} textAlign="center">{idx + 1}</Text>
+                <Text
+                  fontSize={22}
+                  fontWeight="700"
+                  color="#888"
+                  width={32}
+                  textAlign="center"
+                >
+                  {idx + 1}
+                </Text>
               )}
-              <Text flex={1} fontSize={16} fontWeight="500" color="#111">{item.name}</Text>
+              <Text flex={1} fontSize={16} fontWeight="500" color="#111">
+                {item.name}
+              </Text>
               <ChevronRight size={18} color="#888" />
             </XStack>
           ))}
