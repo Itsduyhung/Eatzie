@@ -9,8 +9,8 @@ namespace Eatzie.Interfaces.IService
         Task<List<FoodResponse>> SuggestFoodsAsync(int userId, int count = 3);
         Task<List<FoodResponse>> GetAllHistoryFoodsAsync(int userId);
         Task<FoodResponse?> GetFoodDetailAsync(int foodId);
-        Task AddFoodViewAsync(int? userId, int foodId, string deviceInfo);
-        Task CreateFeedbackAsync(FeedbackRequest request);
+        Task<BaseAPIResponse> AddFoodViewAsync(int? userId, int foodId, string deviceInfo);
+        Task<BaseAPIResponse> CreateFeedbackAsync(int userId, int foodId, FeedbackRequest request);
         Task<List<FeedbackResponse>> GetFeedbacksByFoodIdAsync(int foodId);
         Task<bool> UpdateFeedbackAsync(int feedbackId, int userId, FeedbackRequest request);
         Task<bool> DeleteFeedbackAsync(int feedbackId, int userId);
