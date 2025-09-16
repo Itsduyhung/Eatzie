@@ -123,6 +123,13 @@ namespace Eatzie.Controllers
             return Ok(foods);
         }
 
+        [HttpGet("by-category")]
+        public async Task<IActionResult> GetFoodsByCategory([FromQuery] int restaurantId, [FromQuery] int categoryId)
+        {
+            var response = await _service.GetFoodsByCategoryAsync(restaurantId, categoryId);
+            return StatusCode(response.StatusCode, response);
+        }
+
         [Authorize]
         [HttpPost("{restaurantId}")]
         public async Task<IActionResult> CreateFood(int restaurantId, [FromForm] FoodCreateRequest dto)

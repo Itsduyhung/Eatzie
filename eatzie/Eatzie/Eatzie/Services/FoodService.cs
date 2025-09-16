@@ -557,4 +557,91 @@ public async Task<BaseAPIResponse> DeleteFoodsAsync(int userId, int foodId)
 
         return result;
     }
+
+    public async Task<BaseAPIResponse> GetFoodsByCategoryAsync(int restaurantId, int categoryId)
+    {
+        if (restaurantId <= 0 || categoryId <= 0)
+        {
+            return new BaseAPIResponse
+            {
+                IsSuccess = false,
+                StatusCode = (int)HttpStatusCode.BadRequest,
+                Message = "Tham số không hợp lệ."
+            };
+        }
+
+        var restaurant = await _restaurantRepository.GetRestaurantByIdAsync(restaurantId);
+        if (restaurant == null)
+        {
+            return new BaseAPIResponse
+            {
+                IsSuccess = false,
+                StatusCode = (int)HttpStatusCode.NotFound,
+                Message = "Không tìm thấy nhà hàng."
+            };
+        }
+
+        var category = await _context.FoodCategories.FirstOrDefaultAsync(c => c.Id == categoryId);
+        if (category == null)
+        {
+            return new BaseAPIResponse
+            {
+                IsSuccess = false,
+                StatusCode = (int)HttpStatusCode.NotFound,
+                Message = "Không tìm thấy danh mục."
+            };
+        }
+
+        var query = from rf in _context.RestaurantFoods
+                    where rf.RestaurantId == restaurantId
+                    join fci in _context.FoodCategoryItems on rf.FoodId equals fci.FoodId
+                    where fci.CategoryId == categoryId
+                    join f in _context.Foods on rf.FoodId equals f.Id
+                    select f;
+
+        var foods = await query.Distinct().ToListAsync();
+        if (foods.Count == 0)
+        {
+            return new BaseAPIResponse
+            {
+                IsSuccess = false,
+                StatusCode = (int)HttpStatusCode.NotFound,
+                Message = "Không có món ăn nào trong danh mục này của nhà hàng."
+            };
+        }
+        var foodIds = foods.Select(f => f.Id).ToList();
+
+        var views = await _context.FoodViews
+            .Where(v => foodIds.Contains(v.Food_id))
+            .GroupBy(v => v.Food_id)
+            .Select(g => new { FoodId = g.Key, ViewCount = g.Count() })
+            .ToDictionaryAsync(g => g.FoodId, g => g.ViewCount);
+
+        var ratings = await _context.FeedbackEntitys
+            .Where(fb => foodIds.Contains(fb.Food_id))
+            .GroupBy(fb => fb.Food_id)
+            .Select(g => new { FoodId = g.Key, AvgRating = g.Average(fb => fb.Rating) })
+            .ToDictionaryAsync(g => g.FoodId, g => g.AvgRating);
+
+        var result = foods.Select(f => new FoodResponse
+        {
+            Id = f.Id,
+            Content = f.Content,
+            Description = f.Description,
+            ImageUrl = f.ImageUrl ?? string.Empty,
+            IsVegetarian = f.IsVegetarian,
+            Address = f.Address,
+            TotalViews = views.ContainsKey(f.Id) ? views[f.Id] : 0,
+            AverageRating = ratings.ContainsKey(f.Id) ? Math.Round(ratings[f.Id], 2) : 0,
+            Price = f.Price
+        }).ToList();
+
+        return new BaseAPIResponse
+        {
+            IsSuccess = true,
+            StatusCode = (int)HttpStatusCode.OK,
+            Message = "Lấy danh sách món theo danh mục thành công.",
+            Data = result
+        };
+    }
 }

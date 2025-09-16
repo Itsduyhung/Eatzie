@@ -25,5 +25,6 @@ namespace Eatzie.Interfaces.IService
         Task<BaseAPIResponse> CreateFoodAsync(int userId, int restaurantId, FoodCreateRequest dto);
         Task<BaseAPIResponse> UpdateFoodAsync(int userId, int foodId, FoodUpdateRequest dto);
         Task<BaseAPIResponse> DeleteFoodsAsync(int userId, int foodId);
+        Task<BaseAPIResponse> GetFoodsByCategoryAsync(int restaurantId, int categoryId);
     }
 }
