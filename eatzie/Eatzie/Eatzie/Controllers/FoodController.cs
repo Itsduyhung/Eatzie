@@ -15,16 +15,22 @@ namespace Eatzie.Controllers
         private readonly IFoodService _service = service;
 
         [HttpGet("suggest")]
-        public async Task<IActionResult> SuggestFoods([FromQuery] int userId)
+        public async Task<IActionResult> SuggestFoods()
         {
-            var result = await _service.SuggestFoodsAsync(userId);
+            var userId = GetUserIdFromToken.ExtractUserId(HttpContext);
+            if (userId == null) return Unauthorized("Token không hợp lệ.");
+
+            var result = await _service.SuggestFoodsAsync(userId.Value);
             return Ok(result);
         }
 
         [HttpGet("history")]
-        public async Task<IActionResult> GetHistoryFoods([FromQuery] int userId)
+        public async Task<IActionResult> GetHistoryFoods()
         {
-            var result = await _service.GetAllHistoryFoodsAsync(userId);
+            var userId = GetUserIdFromToken.ExtractUserId(HttpContext);
+            if (userId == null) return Unauthorized("Token không hợp lệ.");
+
+            var result = await _service.GetAllHistoryFoodsAsync(userId.Value);
             return Ok(result);
         }
 
@@ -41,27 +47,28 @@ namespace Eatzie.Controllers
         public async Task<IActionResult> AddFoodView(int foodId)
         {
             var userId = GetUserIdFromToken.ExtractUserId(HttpContext);
-            if (userId == null) return Unauthorized("Token không hợp lệ.");
+            if (userId == null)
+            {
+                return StatusCode(401, new BaseAPIResponse("Token không hợp lệ.", 401, false));
+            }
 
             var deviceInfo = Request.Headers["User-Agent"].ToString();
 
-            await _service.AddFoodViewAsync(userId, foodId, deviceInfo);
-            return Ok(new { message = "View has been counted." });
+            var response = await _service.AddFoodViewAsync(userId, foodId, deviceInfo);
+            return StatusCode(response.StatusCode, response);
         }
 
         [HttpPost("{foodId}/feedback")]
         public async Task<IActionResult> AddFeedback(int foodId, [FromBody] FeedbackRequest request)
         {
-            if (foodId != request.Food_id)
-                return BadRequest("FoodId mismatch between URL and body.");
-
             var userId = GetUserIdFromToken.ExtractUserId(HttpContext);
-            if (userId == null) return Unauthorized("Token không hợp lệ.");
+            if (userId == null)
+            {
+                return StatusCode(401, new BaseAPIResponse("Token không hợp lệ.", 401, false));
+            }
 
-            request.UserId = userId.Value;
-
-            await _service.CreateFeedbackAsync(request);
-            return Ok(new { message = "Thêm Feedback thành công." });
+            var response = await _service.CreateFeedbackAsync(userId.Value, foodId, request);
+            return StatusCode(response.StatusCode, response);
         }
         [HttpGet("{foodId}/feedbacks")]
         public async Task<IActionResult> GetFeedbacks(int foodId)

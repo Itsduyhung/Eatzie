@@ -39,64 +39,7 @@ public class FoodService : IFoodService
 
     public async Task<List<FoodResponse>> SuggestFoodsAsync(int userId, int count = 3)
     {
-        var userDiet = await _foodRepository.GetUserDietAsync(userId);
-        if (userDiet == null) return new List<FoodResponse>();
-
-        var totalHistoryCount = await _context.HistoryFoodEntitys
-            .Where(h => h.UserId == userId)
-            .CountAsync();
-
-        if (totalHistoryCount >= 18)
-        {
-            var userHistories = await _context.HistoryFoodEntitys
-                .Where(h => h.UserId == userId)
-                .ToListAsync();
-
-            _context.HistoryFoodEntitys.RemoveRange(userHistories);
-            await _context.SaveChangesAsync();
-        }
-
-        var availableFoods = await _foodRepository.GetAvailableFoodsAsync(userId);
-
-        var dietType = (DietTypeEnum)userDiet.Diet_type;
-
-        var filteredFoods = availableFoods.Where(f =>
-            dietType == DietTypeEnum.Both ||
-            (dietType == DietTypeEnum.Vegetarian && f.IsVegetarian == true) ||
-            (dietType == DietTypeEnum.Savory && f.IsVegetarian != true)
-        ).ToList();
-
-        if (!string.IsNullOrWhiteSpace(userDiet.Allergic_food))
-        {
-            var allergies = userDiet.Allergic_food
-                .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                .Select(a => a.Trim().ToLower()).ToList();
-
-            filteredFoods = filteredFoods
-                .Where(f => allergies.All(allergy => !f.Description.ToLower().Contains(allergy)))
-                .ToList();
-        }
-
-        if (!string.IsNullOrWhiteSpace(userDiet.Favorite_food))
-        {
-            var favorites = userDiet.Favorite_food
-                .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                .Select(fav => fav.Trim().ToLower()).ToList();
-
-            filteredFoods = filteredFoods
-                .OrderByDescending(f => favorites.Any(fav => f.Description.ToLower().Contains(fav)))
-                .ToList();
-        }
-
-        if (userDiet.Min_spending.HasValue && userDiet.Max_spending.HasValue &&
-            (!decimal.IsNegative(userDiet.Min_spending.Value) || !decimal.IsNegative(userDiet.Max_spending.Value)))
-        {
-            filteredFoods = filteredFoods
-                .Where(f => f.Price >= userDiet.Min_spending.Value && f.Price <= userDiet.Max_spending.Value)
-                .ToList();
-        }
-
-        var suggestions = filteredFoods.Take(count).ToList();
+        var suggestions = await _foodRepository.GetSuggestionsAsync(userId, count);
         var foodIds = suggestions.Select(f => f.Id).ToList();
 
         var views = await _context.FoodViews
@@ -111,6 +54,13 @@ public class FoodService : IFoodService
             .Select(g => new { FoodId = g.Key, AvgRating = g.Average(f => f.Rating) })
             .ToDictionaryAsync(g => g.FoodId, g => g.AvgRating);
 
+        // fetch first restaurant name for each food
+        var foodRestaurantNames = await _context.RestaurantFoods
+            .Where(rf => foodIds.Contains(rf.FoodId))
+            .GroupBy(rf => rf.FoodId)
+            .Select(g => new { FoodId = g.Key, Name = g.Select(rf => rf.Restaurant.Name).FirstOrDefault() })
+            .ToDictionaryAsync(x => x.FoodId, x => x.Name);
+
         var result = suggestions.Select(f => new FoodResponse
         {
             Id = f.Id,
@@ -119,7 +69,8 @@ public class FoodService : IFoodService
             ImageUrl = f.ImageUrl ?? string.Empty,
             IsVegetarian = f.IsVegetarian,
             TotalViews = views.ContainsKey(f.Id) ? views[f.Id] : 0,
-            AverageRating = ratings.ContainsKey(f.Id) ? Math.Round(ratings[f.Id], 2) : 0
+            AverageRating = ratings.ContainsKey(f.Id) ? Math.Round(ratings[f.Id], 2) : 0,
+            RestaurantName = foodRestaurantNames.ContainsKey(f.Id) ? foodRestaurantNames[f.Id] : null
         }).ToList();
 
         await _foodRepository.SaveHistoryAsync(userId, suggestions);
@@ -138,6 +89,8 @@ public class FoodService : IFoodService
             ImageUrl = h.Food.ImageUrl,
             IsVegetarian = h.Food.IsVegetarian,
             Address = h.Food.Address,
+            RestaurantName = _context.RestaurantFoods.Where(rf => rf.FoodId == h.Food.Id)
+                .Select(rf => rf.Restaurant.Name).FirstOrDefault(),
             TotalViews = _context.FoodViews.Count(v => v.Food_id == h.Food.Id),
             AverageRating = Math.Round(
                 _context.FeedbackEntitys
@@ -171,12 +124,20 @@ public class FoodService : IFoodService
             Address = food.Address,
             TotalViews = views,
             AverageRating = Math.Round(avgRating, 2),
+            RestaurantName = await _context.RestaurantFoods.Where(rf => rf.FoodId == foodId)
+                .Select(rf => rf.Restaurant.Name).FirstOrDefaultAsync(),
             Price = food.Price
         };
     }
 
-    public async Task AddFoodViewAsync(int? userId, int foodId, string deviceInfo)
+    public async Task<BaseAPIResponse> AddFoodViewAsync(int? userId, int foodId, string deviceInfo)
     {
+        var food = await _foodRepository.GetFoodByIdAsync(foodId);
+        if (food == null)
+        {
+            return new BaseAPIResponse("Món ăn không tồn tại.", 404, false);
+        }
+
         var view = new FoodViewEntity
         {
             UserId = userId,
@@ -185,20 +146,28 @@ public class FoodService : IFoodService
             DeviceInfo = deviceInfo
         };
         await _foodViewRepo.AddAsync(view);
+        return new BaseAPIResponse("View has been counted.", 200, true);
     }
 
-    public async Task CreateFeedbackAsync(FeedbackRequest request)
+    public async Task<BaseAPIResponse> CreateFeedbackAsync(int userId, int foodId, FeedbackRequest request)
     {
+        var food = await _foodRepository.GetFoodByIdAsync(foodId);
+        if (food == null)
+        {
+            return new BaseAPIResponse("Món ăn không tồn tại.", 404, false);
+        }
+
         var feedback = new FeedbackEntity
         {
-            UserId = request.UserId,
-            Food_id = request.Food_id,
+            UserId = userId,
+            Food_id = foodId,
             Content = request.Content,
             Rating = request.Rating,
             CreatedAt = DateTime.UtcNow,
             IsResolved = false
         };
         await _feedbackRepo.AddAsync(feedback);
+        return new BaseAPIResponse("Thêm Feedback thành công.", 201, true);
     }
 
     public async Task<List<FeedbackResponse>> GetFeedbacksByFoodIdAsync(int foodId)
@@ -258,6 +227,16 @@ public class FoodService : IFoodService
             };
         }
 
+        var viewsCount = await _context.FoodViews.CountAsync(v => v.Food_id == foodId);
+        var averageRating = await _context.FeedbackEntitys
+            .Where(f => f.Food_id == foodId)
+            .AverageAsync(f => (double?)f.Rating) ?? 0;
+
+        var restaurantName = await _context.RestaurantFoods
+            .Where(rf => rf.FoodId == foodId)
+            .Select(rf => rf.Restaurant.Name)
+            .FirstOrDefaultAsync();
+
         var responseDto = new FoodBriefResponse
         {
             Id = food.Id,
@@ -266,7 +245,10 @@ public class FoodService : IFoodService
             Price = food.Price,
             ImageUrl = food.ImageUrl ?? string.Empty,
             IsVegetarian = food.IsVegetarian,
-            CreatedAt = food.CreatedAt
+            CreatedAt = food.CreatedAt,
+            RestaurantName = restaurantName,
+            TotalViews = viewsCount,
+            AverageRating = Math.Round(averageRating, 2)
         };
 
         return new BaseAPIResponse

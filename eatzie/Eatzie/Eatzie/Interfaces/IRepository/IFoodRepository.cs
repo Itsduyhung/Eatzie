@@ -6,6 +6,7 @@ namespace Eatzie.Interfaces.IRepository
     {
         Task<UserDietEntity> GetUserDietAsync(int userId);
         Task<List<FoodEntity>> GetAvailableFoodsAsync(int userId);
+        Task<List<FoodEntity>> GetSuggestionsAsync(int userId, int count = 3);
         Task SaveHistoryAsync(int userId, List<FoodEntity> foods);
 
         /// <summary>
