@@ -7,6 +7,8 @@ import { BannerCarousel } from "@/components/anima/BannerRender";
 import { FlashCardRender } from "@/components/anima/FlashCardRender";
 import { IconInlineList } from "@/components/anima/LoadingAnimation";
 import HeaderLand from "@/components/home/headerLand";
+import { SpecialtiesSection } from "@/components/home/SpecialtiesSection";
+import { ExploreSection } from "@/components/home/ExploreSection";
 import { ScrollScreenLayout } from "@/components/layout/ScrollScreenLayout";
 import { HeaderGradientBackground } from "../untils/GradientBackground";
 
@@ -32,7 +34,11 @@ const HomeTab = () => {
         </YStack>
 
         <YStack width="100%" paddingHorizontal="$2" marginTop="$3">
-          <IconInlineList />
+          <SpecialtiesSection />
+        </YStack>
+
+        <YStack width="100%" paddingHorizontal="$2" marginTop="$3">
+          <ExploreSection />
         </YStack>
       </ScrollView>
     </ScrollScreenLayout>
