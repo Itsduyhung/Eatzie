@@ -14,12 +14,12 @@ namespace Eatzie.Controllers
         private readonly ICartService _service = service;
 
         [HttpPost("add")]
-        public async Task<IActionResult> AddToCart([FromBody] AddToCartRequest request)
+        public async Task<IActionResult> AddToCart([FromBody] AddToCartBatchRequest request)
         {
             var userId = GetUserIdFromToken.ExtractUserId(HttpContext);
             if (userId == null) return Unauthorized();
 
-            var result = await _service.AddToCartAsync(userId.Value, request.FoodId, request.Quantity);
+            var result = await _service.AddToCartRangeAsync(userId.Value, request.Items);
             return StatusCode(result.StatusCode, result);
         }
 
