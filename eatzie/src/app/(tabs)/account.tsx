@@ -9,8 +9,9 @@ import { ProfileData } from "../constant/ProfileData";
 import { HeaderGradientBackground } from "../untils/GradientBackground";
 
 const AccountTab = () => {
-  const user = useAuthStore((state) => state.user);
+  const { isAuthenticated } = useAuthStore();
   const router = useRouter();
+
   return (
     <ScrollScreenLayout
       header={<HeaderProfile />}
@@ -19,7 +20,7 @@ const AccountTab = () => {
       )}
     >
       <YStack background="#FFFFFF">
-        {user?.userId === "8" && (
+        {isAuthenticated && (
           <YStack padding="$6" gap="$3">
             {ProfileData.map((item, index) => {
               const Icon = item.iconComponent as React.ComponentType<any>;

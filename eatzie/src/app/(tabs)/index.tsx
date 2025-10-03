@@ -1,15 +1,13 @@
 // app/(tabs)/home.tsx
 import React from "react";
-import { ScrollView } from "react-native";
 import { YStack } from "tamagui";
 
 import { BannerCarousel } from "@/components/anima/BannerRender";
-import { FlashCardRender } from "@/components/anima/FlashCardRender";
-import { IconInlineList } from "@/components/anima/LoadingAnimation";
 import HeaderLand from "@/components/home/headerLand";
-import { SpecialtiesSection } from "@/components/home/SpecialtiesSection";
-import { ExploreSection } from "@/components/home/ExploreSection";
+import RecentFoodScreen from "@/components/hotFood/cartRecent";
 import { ScrollScreenLayout } from "@/components/layout/ScrollScreenLayout";
+import HotFoodScreen from "../(features)/food/hotFood";
+import RecommentdedFoodScreen from "../(features)/food/recommendedfood";
 import { HeaderGradientBackground } from "../untils/GradientBackground";
 
 const HomeTab = () => {
@@ -20,27 +18,22 @@ const HomeTab = () => {
         <HeaderGradientBackground>{children}</HeaderGradientBackground>
       )}
     >
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: 24 }}
-        showsVerticalScrollIndicator={false}
-      >
-        <YStack backgroundColor="#F5F5F5" marginTop={16}>
-          <BannerCarousel />
-        </YStack>
+      <YStack backgroundColor="#F5F5F5" marginTop={16}>
+        <BannerCarousel />
+      </YStack>
 
-        <YStack width="100%" paddingHorizontal="$2" marginTop="$3">
-          <FlashCardRender />
-        </YStack>
+      <YStack width="100%" paddingHorizontal="$2" marginTop="$3">
+        {/* <FlashCardRender /> */}
+        <RecommentdedFoodScreen />
+      </YStack>
 
-        <YStack width="100%" paddingHorizontal="$2" marginTop="$3">
-          <SpecialtiesSection />
-        </YStack>
+      <YStack width="100%" paddingHorizontal="$2" marginTop="$3">
+        <HotFoodScreen />
+      </YStack>
 
-        <YStack width="100%" paddingHorizontal="$2" marginTop="$3">
-          <ExploreSection />
-        </YStack>
-      </ScrollView>
+      <YStack width="100%" marginTop="$3" paddingHorizontal="$2">
+        <RecentFoodScreen title="Khám phá" />
+      </YStack>
     </ScrollScreenLayout>
   );
 };

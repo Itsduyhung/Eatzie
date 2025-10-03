@@ -4,9 +4,11 @@ import { Text } from "tamagui";
 export function TagButton({
   label,
   onPress,
+  color,
 }: {
   label: string;
   onPress: () => void;
+  color: string;
 }) {
   return (
     <TouchableOpacity onPress={onPress}>
@@ -18,7 +20,7 @@ export function TagButton({
           backgroundColor: "#eee",
         }}
       >
-        <Text>{label}</Text>
+        <Text color={color}>{label}</Text>
       </View>
     </TouchableOpacity>
   );

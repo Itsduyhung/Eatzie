@@ -28,7 +28,7 @@ export function SearchBar() {
       }
       style={{ width: "100%", height: inputHeight }}
     >
-      <View style={{ position: "relative", flex: 1 }}>
+      <View style={{ position: "relative", flex: 1, marginHorizontal: 14 }}>
         <CustomInputText
           value=""
           onChangeText={() => {}}
@@ -42,7 +42,6 @@ export function SearchBar() {
           pointerEvents="none"
         />
 
-        {/* Placeholder hiển thị khi input trống */}
         <View
           style={{
             position: "absolute",

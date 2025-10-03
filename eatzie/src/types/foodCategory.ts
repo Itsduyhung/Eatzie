@@ -27,7 +27,6 @@ export type FoodItem = {
   path: string;
   quantity?: number;
   categoryId?: string;
-  decription?: string;
   isFavourite?: boolean;
   note?: string;
 };
@@ -39,3 +38,16 @@ export type Feedback = {
   rating: number;
   link?: string;
 };
+
+export interface FoodItemD {
+  id: number;
+  name: string;
+  description: string;
+  image: string | null;
+  price: number;
+  isVegetarian: boolean;
+  views: number;
+  rating: number;
+  restaurantName?: string | null;
+  address?: string | null;
+}

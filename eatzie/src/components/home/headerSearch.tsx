@@ -1,33 +1,33 @@
-// src/components/home/headerSearch.tsx
+import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useRef, useState } from "react";
-import { Keyboard, TouchableOpacity } from "react-native";
-import { Text, YStack } from "tamagui";
+import { TouchableOpacity } from "react-native";
+import { YStack } from "tamagui";
 
-import { SearchSuggestionList } from "@/components/search/SearchSuggestionList";
+import { toTiltleCase } from "@/app/untils/string";
 import { useSearchStore } from "@/stores/searchStore";
 import { CustomInputText } from "../ui/CustomTextInput";
 
-/**
- * SearchScreen (header)
- * - Dùng store (text, suggestions, fetchSuggestions, addHistory, clearSuggestions)
- * - Debounce khi user gõ
- * - Hiện suggestion dưới input khi focus
- */
-export function SearchScreen() {
-  const {
-    text,
-    setText,
-    suggestions,
-    fetchSuggestions,
-    clearSuggestions,
-    addHistory,
-  } = useSearchStore();
+type SearchScreenProps = {
+  onTextChange?: (val: string, submitted?: boolean) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
+  readonly?: boolean;
+};
 
+export function SearchScreen({
+  onTextChange,
+  onFocus,
+  onBlur,
+  readonly,
+}: SearchScreenProps) {
+  const { text, setText, fetchSuggestions, clearSuggestions } =
+    useSearchStore();
   const [focused, setFocused] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Debounce tìm suggestion
   useEffect(() => {
+    if (readonly) return;
+
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
     if (!text) {
@@ -42,61 +42,55 @@ export function SearchScreen() {
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [text, fetchSuggestions, clearSuggestions]);
-
-  // suggestions trong store có thể là object (FoodSuggestion) hoặc string.
-  const suggestionLabels = (suggestions as any[]).map((s) =>
-    typeof s === "string" ? s : s?.name ?? String(s)
-  );
-
-  const onSelect = (val: string) => {
-    addHistory(val);
-    setText(val);
-    clearSuggestions();
-    setFocused(false);
-    Keyboard.dismiss();
-    // nếu dùng navigation: chuyển trang kết quả ở đây
-    // router.push(`/search/results?query=${encodeURIComponent(val)}`)
-  };
+  }, [text, fetchSuggestions, clearSuggestions, readonly]);
 
   return (
     <YStack>
       <CustomInputText
         marginRight={20}
         value={text}
-        onChangeText={setText}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setTimeout(() => setFocused(false), 120)}
+        editable={!readonly}
+        onChangeText={(val) => {
+          if (!readonly) {
+            setText(val);
+            onTextChange?.(val);
+          }
+        }}
+        onFocus={() => {
+          if (!readonly) {
+            setFocused(true);
+            onFocus?.();
+          }
+        }}
+        onBlur={() => {
+          if (!readonly) {
+            setFocused(false);
+            onBlur?.();
+          }
+        }}
         focused={focused}
         placeholder="Tìm kiếm..."
+        onSubmitEditing={() => {
+          if (!readonly) {
+            const formatted = toTiltleCase(text);
+            onTextChange?.(formatted, true);
+            console.log("🔍 Text đã chuẩn hóa:", formatted);
+          }
+        }}
         suffixIcon={
-          text ? (
+          !readonly && text ? (
             <TouchableOpacity
               onPress={() => {
                 setText("");
                 clearSuggestions();
+                onTextChange?.("");
               }}
             >
-              <Text>✖</Text>
+              <Ionicons name="close-circle" size={16} color="gray" />
             </TouchableOpacity>
           ) : undefined
         }
       />
-
-      {focused && suggestionLabels.length > 0 && (
-        <YStack
-          marginTop="$2"
-          borderRadius={8}
-          overflow="hidden"
-          backgroundColor="white"
-          // tamagui props; nếu không dùng tamagui theme, thay bằng style thông thường
-        >
-          <SearchSuggestionList
-            suggestions={suggestionLabels}
-            onSelect={onSelect}
-          />
-        </YStack>
-      )}
     </YStack>
   );
 }

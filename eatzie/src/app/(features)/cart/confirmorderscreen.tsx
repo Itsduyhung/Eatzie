@@ -1,5 +1,3 @@
-// app/(features)/cart/ConfirmOrderScreen.tsx
-
 import { ThemedText } from "@/app/hooks/ThemedTextColor";
 import { ScrollScreenLayout } from "@/components/layout/ScrollScreenLayout";
 import { BackButton } from "@/components/ui/BackButton";
@@ -7,12 +5,14 @@ import { CustomButton } from "@/components/ui/CustomButton";
 import { SizableImage } from "@/components/ui/SizableImageProps";
 import { useCartStore } from "@/stores/useCartStore";
 import { formatCurrency } from "@/utils/formatCurrency";
+import { useState } from "react";
+
+import { CartOrderService } from "@/infrastructure/mappers/cartorder/cartorderservice";
 import {
   FontAwesome5,
   FontAwesome6,
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
-
 import { useRouter } from "expo-router";
 import { XStack, YStack } from "tamagui";
 
@@ -20,6 +20,25 @@ export default function ConfirmOrderScreen() {
   const router = useRouter();
   const cart = useCartStore((s) => s.cart);
   const total = useCartStore((s) => s.total)();
+  const [loading, setLoading] = useState(false);
+
+  const handlePlaceOrder = async () => {
+    if (loading) return;
+    setLoading(true);
+
+    try {
+      await CartOrderService.placeOrder();
+
+      router.push({
+        pathname: "/(features)/cart/qrscreen",
+        params: { total: String(total) },
+      });
+    } catch (err: any) {
+      alert(err.message || "Đặt hàng thất bại");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <ScrollScreenLayout>
@@ -32,14 +51,9 @@ export default function ConfirmOrderScreen() {
         <YStack position="absolute" left={0}>
           <BackButton key="back" />
         </YStack>
-
         <XStack flex={1} alignItems="center" justifyContent="center">
           <ThemedText
-            style={{
-              fontSize: 18,
-              fontWeight: "500",
-              textAlign: "center",
-            }}
+            style={{ fontSize: 18, fontWeight: "500", textAlign: "center" }}
           >
             Xác nhận đơn hàng
           </ThemedText>
@@ -47,89 +61,58 @@ export default function ConfirmOrderScreen() {
       </XStack>
 
       <YStack padding="$2" gap="$5">
-        <YStack
-          backgroundColor="white"
-          paddingHorizontal="$2"
-          paddingVertical="$3"
-          borderRadius={8}
-          gap={"$2"}
-        >
-          <YStack>
-            <XStack gap={"$3"}>
-              <MaterialCommunityIcons
-                name="map-marker-radius-outline"
-                size={24}
-                color="black"
-              />
+        <YStack backgroundColor="white" padding="$3" borderRadius={8} gap="$2">
+          <XStack gap="$3">
+            <MaterialCommunityIcons
+              name="map-marker-radius-outline"
+              size={24}
+              color="black"
+            />
+            <ThemedText style={{ fontSize: 16, fontWeight: "500" }}>
+              Nhơn Bình, Quy Nhơn
+            </ThemedText>
+          </XStack>
+          <XStack marginLeft={35}>
+            <ThemedText style={{ fontSize: 16, fontWeight: "500" }}>
+              fooode_hqchfspri | 0901234567
+            </ThemedText>
+          </XStack>
+          <XStack
+            marginTop={20}
+            gap="$3"
+            position="relative"
+            alignItems="center"
+          >
+            <FontAwesome6 name="clock" size={24} color="black" />
+            <ThemedText style={{ fontSize: 16, fontWeight: "500" }}>
+              Giao ngay
+            </ThemedText>
+            <XStack position="absolute" right={0}>
               <ThemedText
-                style={{
-                  fontSize: 16,
-                  fontWeight: "500",
-                  textAlign: "center",
-                }}
+                style={{ fontSize: 16, fontWeight: "500", color: "#6666FF" }}
               >
-                Nhơn Bình, Quy Nhơn
+                Đổi sang giờ hẹn
               </ThemedText>
             </XStack>
-          </YStack>
-          <XStack marginLeft={35}>
+          </XStack>
+          <CustomButton
+            paddingVertical={15}
+            borderColor="#6666FF"
+            borderWidth={1}
+            backgroundColor="transparent"
+            minWidth="100%"
+          >
             <ThemedText
               style={{
                 fontSize: 16,
                 fontWeight: "500",
                 textAlign: "center",
+                color: "#6666FF",
               }}
             >
-              fooode_hqchfspri | 0901234567
+              Tiêu chuẩn - 17:15
             </ThemedText>
-          </XStack>
-          <YStack marginTop={20}>
-            <YStack gap={"$3"}>
-              <XStack gap={"$3"} position="relative" alignItems="center">
-                <FontAwesome6 name="clock" size={24} color="black" />
-
-                <ThemedText
-                  style={{
-                    fontSize: 16,
-                    fontWeight: "500",
-                    textAlign: "center",
-                  }}
-                >
-                  Giao ngay
-                </ThemedText>
-                <XStack position="absolute" right="0">
-                  <ThemedText
-                    style={{
-                      fontSize: 16,
-                      fontWeight: "500",
-                      textAlign: "center",
-                      color: "#6666FF",
-                    }}
-                  >
-                    Đổi sang giờ hẹn
-                  </ThemedText>
-                </XStack>
-              </XStack>
-              <CustomButton
-                paddingVertical={15}
-                borderColor="#6666FF"
-                borderWidth={1}
-                backgroundColor="transparent"
-                minWidth="100%"
-              >
-                <ThemedText
-                  style={{
-                    fontSize: 16,
-                    fontWeight: "500",
-                    textAlign: "center",
-                    color: "#6666FF",
-                  }}
-                >
-                  Tiêu chuẩn - 17:15
-                </ThemedText>
-              </CustomButton>
-            </YStack>
-          </YStack>
+          </CustomButton>
         </YStack>
 
         <YStack backgroundColor="white" gap="$3" borderRadius={8}>
@@ -157,18 +140,10 @@ export default function ConfirmOrderScreen() {
                   source={item.image}
                   resizeMode="cover"
                   borderRadius={8}
-                  style={{
-                    width: 60,
-                    height: 60,
-                  }}
+                  style={{ width: 60, height: 60 }}
                 />
                 <YStack gap={20}>
-                  <ThemedText
-                    style={{
-                      fontSize: 16,
-                      fontWeight: "500",
-                    }}
-                  >
+                  <ThemedText style={{ fontSize: 16, fontWeight: "500" }}>
                     {item.quantity} x {item.name}
                   </ThemedText>
                   <ThemedText
@@ -179,18 +154,11 @@ export default function ConfirmOrderScreen() {
                       color: "#A0A0A0",
                     }}
                   >
-                    ít bún
+                    {item.note || "ít bún"}
                   </ThemedText>
                 </YStack>
-
                 <YStack position="absolute" right={0}>
-                  <ThemedText
-                    style={{
-                      fontSize: 16,
-                      fontWeight: "500",
-                      textAlign: "center",
-                    }}
-                  >
+                  <ThemedText style={{ fontSize: 16, fontWeight: "500" }}>
                     {formatCurrency(item.price * (item.quantity ?? 1))}
                   </ThemedText>
                 </YStack>
@@ -199,143 +167,43 @@ export default function ConfirmOrderScreen() {
           ))}
         </YStack>
 
-        <YStack
-          backgroundColor="white"
-          gap={8}
-          paddingHorizontal="$2"
-          paddingVertical="$2"
-          borderRadius={8}
-        >
-          <XStack>
-            <ThemedText
-              style={{
-                fontSize: 16,
-                fontWeight: "bold",
-                textAlign: "center",
-              }}
-            >
-              Chi tiết thanh toán
-            </ThemedText>
-          </XStack>
-
+        {/* Chi tiết thanh toán */}
+        <YStack backgroundColor="white" gap={8} padding="$2" borderRadius={8}>
           <XStack justifyContent="space-between">
-            <ThemedText
-              style={{
-                fontSize: 16,
-                fontWeight: "500",
-                textAlign: "center",
-              }}
-            >
+            <ThemedText style={{ fontSize: 16, fontWeight: "500" }}>
               Tổng giá trị món
             </ThemedText>
-            <ThemedText
-              style={{
-                fontSize: 16,
-                fontWeight: "500",
-                textAlign: "center",
-              }}
-            >
+            <ThemedText style={{ fontSize: 16, fontWeight: "500" }}>
               {formatCurrency(total)}
             </ThemedText>
           </XStack>
           <XStack justifyContent="space-between">
-            <ThemedText
-              style={{
-                fontSize: 16,
-                fontWeight: "500",
-                textAlign: "center",
-              }}
-            >
+            <ThemedText style={{ fontSize: 16, fontWeight: "500" }}>
               Phí giao hàng
             </ThemedText>
-            <ThemedText
-              style={{
-                fontSize: 16,
-                fontWeight: "500",
-                textAlign: "center",
-              }}
-            >
+            <ThemedText style={{ fontSize: 16, fontWeight: "500" }}>
               {formatCurrency(14000)}
             </ThemedText>
           </XStack>
           <XStack justifyContent="space-between">
-            <ThemedText
-              style={{
-                fontSize: 16,
-                fontWeight: "500",
-                textAlign: "center",
-              }}
-            >
+            <ThemedText style={{ fontSize: 16, fontWeight: "500" }}>
               Tổng cộng
             </ThemedText>
-            <ThemedText
-              style={{
-                fontSize: 16,
-                fontWeight: "500",
-                textAlign: "center",
-              }}
-            >
+            <ThemedText style={{ fontSize: 16, fontWeight: "500" }}>
               {formatCurrency(total + 14000)}
             </ThemedText>
           </XStack>
         </YStack>
 
-        <XStack gap={10} alignItems="center" justifyContent="center">
-          <CustomButton
-            borderColor="#6666FF"
-            borderWidth={1}
-            backgroundColor="transparent"
-            width={180}
-          >
-            <ThemedText
-              style={{
-                fontSize: 16,
-                fontWeight: "500",
-                textAlign: "center",
-                color: "#6666FF",
-              }}
-            >
-              Tiền Mặt
-            </ThemedText>
-          </CustomButton>
-          <CustomButton
-            borderColor="#6666FF"
-            borderWidth={1}
-            backgroundColor="transparent"
-            width={180}
-            // minWidth="50%"
-          >
-            <ThemedText
-              style={{
-                fontSize: 16,
-                fontWeight: "500",
-                textAlign: "center",
-                color: "#6666FF",
-              }}
-            >
-              Chuyển khoản
-            </ThemedText>
-          </CustomButton>
-        </XStack>
-
+        {/* Nút Đặt đơn */}
         <XStack>
           <CustomButton
             paddingVertical={15}
             backgroundColor="#6666FF"
             textfontweight="600"
             minWidth="100%"
-            onPress={() => {
-              alert("Đặt hàng thành công!");
-              useCartStore.getState().clearCart();
-              router.push({
-                pathname: "/(features)/cart/qrscreen",
-                params: { total: String(total + 14000) },
-              });
-
-              setTimeout(() => {
-                router.push("/");
-              }, 4000);
-            }}
+            disabled={loading}
+            onPress={handlePlaceOrder}
           >
             <ThemedText
               style={{
@@ -345,7 +213,9 @@ export default function ConfirmOrderScreen() {
                 color: "white",
               }}
             >
-              Đặt đơn - {formatCurrency(total + 14000)}
+              {loading
+                ? "Đang xử lý..."
+                : `Đặt đơn - ${formatCurrency(total + 14000)}`}
             </ThemedText>
           </CustomButton>
         </XStack>

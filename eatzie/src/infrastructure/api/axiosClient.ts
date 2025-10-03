@@ -1,13 +1,12 @@
 import { useAuthStore } from "@/applicaton/stores/authStores";
-import axios from "axios";
+
+import { ApiResponse } from "@/types/axios";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { storage } from "../storage/tokenStorage";
 
 export const api = axios.create({
-  baseURL: process.env.EXPO_PUBLIC_API_URL || "http://192.168.1.6:7121/api",
-  headers: {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-  },
+  baseURL: process.env.EXPO_PUBLIC_API_URL || "http://192.168.0.190:7121/api",
+
   timeout: 10000,
 });
 
@@ -50,3 +49,44 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+export async function get<T>(
+  url: string,
+  config?: AxiosRequestConfig
+): Promise<T> {
+  const { data }: any = await api.get<T>(url, config);
+  return data;
+}
+
+export async function post<T>(
+  url: string,
+  body?: any,
+  config?: AxiosRequestConfig
+): Promise<T> {
+  try {
+    const response = await api.post(url, body, config);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function putRaw<T>(
+  url: string,
+  body?: any,
+  config?: AxiosRequestConfig
+): Promise<ApiResponse<T>> {
+  try {
+    console.log("➡️ PUT request:", url, body, config); // log URL + payload
+    const response: AxiosResponse<ApiResponse<T>> = await api.put(
+      url,
+      body,
+      config
+    );
+    console.log("⬅️ PUT response:", response.data);
+    return response.data;
+  } catch (error: any) {
+    console.error(" PUT error:", error.response?.data || error.message);
+    throw error;
+  }
+}

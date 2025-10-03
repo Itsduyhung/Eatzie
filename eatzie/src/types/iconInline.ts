@@ -20,7 +20,10 @@ export type InstallType = {
   title: string;
   items: {
     content: string;
-    path: string;
+    route: {
+      path: string;
+      title: string;
+    };
     language?: boolean;
   }[];
 };
