@@ -30,7 +30,12 @@ const SettingAuth = () => {
                   <YStack key={index}>
                     <CustomButton
                       backgroundColor="#FFFFFF"
-                      onPress={() => router.push(item.path as any)}
+                      onPress={() => {
+                        router.push({
+                          pathname: item.route.path as any,
+                          params: { title: item.route.title },
+                        });
+                      }}
                       paddingVertical="$4"
                       marginHorizontal="$2"
                     >

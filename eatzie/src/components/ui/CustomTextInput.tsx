@@ -22,6 +22,7 @@ type CustomInputProps = {
   marginHorizontal?: number;
   marginLeft?: number;
   marginRight?: number;
+  onSubmitEditing?: () => void;
 };
 
 export function CustomInputText({
@@ -45,6 +46,7 @@ export function CustomInputText({
   marginHorizontal,
   marginLeft,
   marginRight,
+  onSubmitEditing,
 }: CustomInputProps) {
   return (
     <XStack
@@ -62,6 +64,7 @@ export function CustomInputText({
       marginHorizontal={marginHorizontal}
       marginLeft={marginLeft}
       marginRight={marginRight}
+      paddingRight={suffixIcon ? 10 : 0}
     >
       <Input
         editable={editable}
@@ -78,6 +81,7 @@ export function CustomInputText({
         color="black"
         fontSize={16}
         focusStyle={focusStyle === "none" ? {} : undefined}
+        onSubmitEditing={onSubmitEditing}
       />
       {!!suffixIcon && suffixIcon}
     </XStack>

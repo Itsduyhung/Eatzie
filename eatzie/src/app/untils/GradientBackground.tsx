@@ -21,7 +21,7 @@ export const HeaderGradientBackground = ({
       start={[1, 0]}
       end={[0, 1]}
       style={[{ width: "100%" }, style]}
-      paddingBottom="50"
+      paddingBottom="20"
       {...rest}
     >
       <StatusBar

@@ -15,7 +15,7 @@ export const foodCategoryData: FoodCategory[] = [
     comment: "20+",
     items: [
       {
-        id: "1-1",
+        id: "10",
         name: "Phở Tái",
         price: 45000,
         salePrice: 40,
@@ -40,7 +40,7 @@ export const foodCategoryData: FoodCategory[] = [
         ],
       },
       {
-        id: "1-2",
+        id: "8",
         name: "Phở Bò Viên",
         price: 48000,
         salePrice: 4,

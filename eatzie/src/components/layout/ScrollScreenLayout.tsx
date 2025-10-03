@@ -1,16 +1,21 @@
-import { isColorDark } from "@/app/untils/isColorDark";
-import { usePathname } from "expo-router";
-import type { StatusBarStyle } from "expo-status-bar";
 import { StatusBar } from "expo-status-bar";
-import React, { ReactNode, useMemo } from "react";
-import type { ImageSourcePropType } from "react-native";
-import { StyleSheet } from "react-native";
+import React, { ReactNode, useState } from "react";
+import {
+  ImageSourcePropType,
+  LayoutChangeEvent,
+  StyleSheet,
+} from "react-native";
 import Animated, {
+  Extrapolation,
+  interpolate,
   useAnimatedScrollHandler,
+  useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { XStack, YStack } from "tamagui";
+
+import { usePathname } from "expo-router";
 import { CartFooter } from "../footer/CardFooter";
 import { SizableImage } from "../ui/SizableImageProps";
 import { ThemedScreen } from "./ThemedScreen";
@@ -22,7 +27,7 @@ type Props = {
   backgroundColor?: string;
   headerBackgroundColor?: string;
   centerContent?: boolean;
-  statusBarStyle?: StatusBarStyle;
+  statusBarStyle?: "light" | "dark";
   backgroundImage?: ImageSourcePropType;
   headerLeftIcons?: ReactNode[];
   headerRightIcons?: ReactNode[];
@@ -42,29 +47,112 @@ export const ScrollScreenLayout = ({
 }: Props) => {
   const insets = useSafeAreaInsets();
   const scrollY = useSharedValue(0);
+  const pathname = usePathname();
+
+  const [headerHeight, setHeaderHeight] = useState(0);
+
+  const showCartFooterRoutes = ["/cartScreen", "/checkout"];
+  const shouldShowCartFooter = showCartFooterRoutes.includes(pathname);
 
   const scrollHandler = useAnimatedScrollHandler((event) => {
     scrollY.value = event.contentOffset.y;
   });
 
-  const pathname = usePathname();
-  const showCartFooterRoutes = ["/cartScreen", "/checkout"];
-  const shouldShowCartFooter = showCartFooterRoutes.includes(pathname);
+  const headerTranslateStyle = useAnimatedStyle(() => {
+    const translateY = interpolate(
+      scrollY.value,
+      [0, 100],
+      [0, -50],
+      Extrapolation.CLAMP
+    );
+    return { transform: [{ translateY }] };
+  });
 
-  const computedStatusBarStyle: StatusBarStyle | undefined = useMemo(() => {
-    if (statusBarStyle) return statusBarStyle;
-    if (headerBackgroundColor)
-      return isColorDark(headerBackgroundColor) ? "light" : "dark";
-    return undefined;
-  }, [statusBarStyle, headerBackgroundColor]);
+  const onHeaderLayout = (e: LayoutChangeEvent) => {
+    setHeaderHeight(e.nativeEvent.layout.height);
+  };
 
   return (
     <ThemedScreen backgroundColor={backgroundColor} padding="$0">
-      {headerBackgroundColor && (
-        <StatusBar
-          style={computedStatusBarStyle}
-          backgroundColor={headerBackgroundColor}
-        />
+      <StatusBar translucent backgroundColor="transparent" />
+
+      {(backgroundImage ||
+        gradientWrapper ||
+        header ||
+        headerLeftIcons.length ||
+        headerRightIcons.length) && (
+        <Animated.View
+          onLayout={onHeaderLayout}
+          style={[
+            {
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              zIndex: 10,
+              backgroundColor: headerBackgroundColor ?? "transparent",
+            },
+            headerTranslateStyle,
+          ]}
+        >
+          {backgroundImage ? (
+            <YStack position="relative">
+              <SizableImage
+                style={{
+                  height: 200,
+                  width: "100%",
+                }}
+                source={backgroundImage}
+                resizeMode="cover"
+              />
+              <XStack
+                position="absolute"
+                top={60}
+                left={0}
+                right={0}
+                paddingHorizontal="$4"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <XStack gap="$2">
+                  {headerLeftIcons.map((icon, index) => (
+                    <YStack key={index}>{icon}</YStack>
+                  ))}
+                </XStack>
+
+                <XStack gap="$3">
+                  {headerRightIcons.map((icon, index) => (
+                    <YStack key={index}>{icon}</YStack>
+                  ))}
+                </XStack>
+              </XStack>
+            </YStack>
+          ) : gradientWrapper ? (
+            gradientWrapper(header)
+          ) : (
+            <YStack paddingHorizontal="$3" paddingTop={insets.top}>
+              <XStack alignItems="flex-start">
+                <XStack gap="$2" flexShrink={0}>
+                  {headerLeftIcons.map((icon, index) => (
+                    <YStack key={index}>{icon}</YStack>
+                  ))}
+                </XStack>
+
+                {!!header && (
+                  <YStack flex={1} marginHorizontal="$1">
+                    {header}
+                  </YStack>
+                )}
+
+                <XStack gap="$2" flexShrink={0}>
+                  {headerRightIcons.map((icon, index) => (
+                    <YStack key={index}>{icon}</YStack>
+                  ))}
+                </XStack>
+              </XStack>
+            </YStack>
+          )}
+        </Animated.View>
       )}
 
       <Animated.ScrollView
@@ -73,75 +161,17 @@ export const ScrollScreenLayout = ({
         keyboardShouldPersistTaps="handled"
         automaticallyAdjustKeyboardInsets={false}
         contentInsetAdjustmentBehavior="never"
+        bounces={true}
+        overScrollMode="always"
         contentContainerStyle={[
           styles.scrollContent,
           {
-            paddingBottom: insets.bottom,
+            paddingTop: headerHeight + 16,
+            paddingBottom: insets.bottom + 24,
             justifyContent: centerContent ? "center" : "flex-start",
           },
         ]}
       >
-        {backgroundImage ? (
-          <YStack position="relative">
-            <SizableImage
-              style={{
-                height: 200,
-                width: "100%",
-                marginTop: 0,
-              }}
-              source={backgroundImage}
-              resizeMode="cover"
-            />
-            <XStack
-              position="absolute"
-              top={60}
-              left={0}
-              right={0}
-              paddingHorizontal="$4"
-              justifyContent="space-between"
-              alignItems="center"
-            >
-              <XStack gap="$2">
-                {headerLeftIcons.map((icon, index) => (
-                  <YStack key={index}>{icon}</YStack>
-                ))}
-              </XStack>
-
-              <XStack gap="$3">
-                {headerRightIcons.map((icon, index) => (
-                  <YStack key={index}>{icon}</YStack>
-                ))}
-              </XStack>
-            </XStack>
-          </YStack>
-        ) : gradientWrapper ? (
-          gradientWrapper(header)
-        ) : header ? (
-          <YStack
-            style={{
-              backgroundColor: headerBackgroundColor,
-              paddingTop: insets.top,
-              paddingHorizontal: 0,
-            }}
-          >
-            <XStack alignItems="center">
-              <XStack>
-                {headerLeftIcons.map((icon, index) => (
-                  <YStack key={index}>{icon}</YStack>
-                ))}
-              </XStack>
-
-              <YStack flex={1}>{header}</YStack>
-
-              <XStack>
-                {headerRightIcons.map((icon, index) => (
-                  <YStack key={index}>{icon}</YStack>
-                ))}
-              </XStack>
-            </XStack>
-          </YStack>
-        ) : null}
-
         {children}
       </Animated.ScrollView>
 

@@ -1,4 +1,3 @@
-// src/components/ui/FavoriteButton.tsx
 import { FontAwesome } from "@expo/vector-icons";
 import { useState } from "react";
 import { Pressable } from "react-native";
