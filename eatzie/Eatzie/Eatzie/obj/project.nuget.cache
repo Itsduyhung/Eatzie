@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "ampOc29QUjc=",
+  "dgSpecHash": "BDtDZ2NkTms=",
   "success": true,
-  "projectFilePath": "C:\\testhung\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Eatzie.csproj",
+  "projectFilePath": "C:\\wordem\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Eatzie.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\HIEU\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\HIEU\\.nuget\\packages\\cloudinarydotnet\\1.27.6\\cloudinarydotnet.1.27.6.nupkg.sha512",

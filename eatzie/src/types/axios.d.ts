@@ -1,5 +1,10 @@
-import 'axios';
+import "axios";
 
-declare module "axios" {
-  export interface AxiosResponse<T = any> extends Promise<T> {}
+declare module "axios" {}
+
+export interface ApiResponse<T = any> {
+  message: string;
+  statusCode: number;
+  isSuccess: boolean;
+  data: T | null;
 }

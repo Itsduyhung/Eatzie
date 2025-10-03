@@ -1,12 +1,10 @@
+import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native";
-import { Text } from "tamagui";
 
 export function ClearButton({ onClear }: { onClear: () => void }) {
   return (
     <TouchableOpacity onPress={onClear}>
-      <Text color="red" fontSize={12}>
-        Xóa
-      </Text>
+      <Ionicons name="trash-outline" size={18} color="black" />
     </TouchableOpacity>
   );
 }

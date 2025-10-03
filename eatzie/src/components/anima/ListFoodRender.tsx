@@ -19,8 +19,6 @@ export const FoodCard = ({ item }: Props) => {
     <Pressable
       key={item.id}
       onPress={() =>
-        // item.path &&
-        // router.push(item.path as any) &&
         router.push({
           pathname: "/(features)/food/contentfood",
           params: {

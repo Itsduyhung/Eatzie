@@ -1,7 +1,7 @@
 import { ScrollScreenLayout } from "@/components/layout/ScrollScreenLayout";
-import { ChevronRight } from "@tamagui/lucide-icons";
-import { useState } from "react";
-import { Dimensions, Image, TouchableOpacity } from "react-native";
+import { ChevronRight, Moon, Sun } from "@tamagui/lucide-icons";
+import { useEffect, useRef, useState } from "react";
+import { Animated, Image, TouchableOpacity } from "react-native";
 import { Text, View, XStack, YStack } from "tamagui";
 import { HeaderGradientBackground } from "../untils/GradientBackground";
 
@@ -55,104 +55,153 @@ const BXHScreen = () => {
   const [selectedTab, setSelectedTab] = useState(0);
   const [selectedCategory, setSelectedCategory] =
     useState<CategoryKey>("Lượt đánh giá");
-  const screenWidth = Dimensions.get("window").width;
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
+
+  const bgAnim = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    Animated.timing(bgAnim, {
+      toValue: isDarkTheme ? 1 : 0,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+  }, [isDarkTheme]);
+
+  const bgColor = bgAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["#FFFFFF", "#1C1C1E"],
+  });
+
+  const textColor = isDarkTheme ? "#FFD700" : "#111";
+  const tabSelectedColor = isDarkTheme ? "#FFD700" : "#5B5FEF";
+  const categorySelectedBg = isDarkTheme ? "#FFD700" : "#5B5FEF";
+  const categoryUnselectedBg = isDarkTheme ? "#2C2C2E" : "#F2F4F7";
+  const borderColor = isDarkTheme ? "#3C3C3C" : "#E5E7EB";
+
   let ranking = rankingData[tabs[selectedTab]];
-  if (selectedCategory === "Lượt xem") {
-    ranking = [...ranking].reverse();
-  }
+  if (selectedCategory === "Lượt xem") ranking = [...ranking].reverse();
+
   return (
     <ScrollScreenLayout
       gradientWrapper={(children) => (
         <HeaderGradientBackground>{children}</HeaderGradientBackground>
       )}
     >
-      <YStack background="#FFFFFF" flex={1} padding={20}>
-        {/* Title with trophy icon */}
-        <XStack alignItems="center" marginBottom={16}>
-          <Image
-            source={require("../../assets/icons/trophy.png")}
-            style={{ width: 28, height: 28, marginRight: 8 }}
-          />
-          <Text fontSize={26} fontWeight="700" color="#111">
-            Bảng xếp hạng
-          </Text>
+      <Animated.View style={{ flex: 1, padding: 20, backgroundColor: bgColor }}>
+        <XStack
+          alignItems="center"
+          justifyContent="space-between"
+          marginBottom={16}
+        >
+          <XStack alignItems="center">
+            <Image
+              source={require("../../assets/icons/trophy.png")}
+              style={{ width: 28, height: 28, marginRight: 8 }}
+            />
+            <Text fontSize={26} fontWeight="700" color={textColor}>
+              Bảng xếp hạng
+            </Text>
+          </XStack>
+          <TouchableOpacity onPress={() => setIsDarkTheme(!isDarkTheme)}>
+            {isDarkTheme ? (
+              <Sun color="#FFD700" width={28} height={28} />
+            ) : (
+              <Moon color="#111" width={28} height={28} />
+            )}
+          </TouchableOpacity>
         </XStack>
-        {/* Danh mục */}
+
         <XStack alignItems="center" justifyContent="center" marginBottom={16}>
-          {categories.map((cat) => (
-            <TouchableOpacity
-              key={cat.label}
-              onPress={() => setSelectedCategory(cat.label)}
-              activeOpacity={0.8}
-            >
-              <YStack
-                width={90}
-                height={90}
-                borderRadius={16}
-                backgroundColor={
-                  selectedCategory === cat.label ? "#E5E7EB" : "#F2F4F7"
-                }
-                alignItems="center"
-                justifyContent="center"
-                marginHorizontal={12}
-                borderWidth={selectedCategory === cat.label ? 2 : 0}
-                borderColor={
-                  selectedCategory === cat.label ? "#5B5FEF" : "transparent"
-                }
+          {categories.map((cat) => {
+            const isSelected = selectedCategory === cat.label;
+            return (
+              <TouchableOpacity
+                key={cat.label}
+                onPress={() => setSelectedCategory(cat.label)}
+                activeOpacity={0.8}
               >
-                <Image
-                  source={cat.icon}
-                  style={{ width: 36, height: 36, marginBottom: 8 }}
-                  resizeMode="contain"
-                />
-                <Text fontSize={13} color="#888" textAlign="center">
-                  {cat.label}
-                </Text>
-              </YStack>
-            </TouchableOpacity>
-          ))}
-        </XStack>
-        {/* Tabs */}
-        <XStack marginBottom={16}>
-          {tabs.map((tab, idx) => (
-            <TouchableOpacity
-              key={tab}
-              onPress={() => setSelectedTab(idx)}
-              style={{ flex: 1, alignItems: "center" }}
-            >
-              <YStack alignItems="center" width="100%">
-                <Text
-                  fontSize={15}
-                  fontWeight={selectedTab === idx ? "700" : "400"}
-                  color={selectedTab === idx ? "#5B5FEF" : "#111"}
+                <YStack
+                  width={90}
+                  height={90}
+                  borderRadius={16}
+                  backgroundColor={
+                    isSelected ? categorySelectedBg : categoryUnselectedBg
+                  }
+                  alignItems="center"
+                  justifyContent="center"
+                  marginHorizontal={12}
+                  borderWidth={isSelected ? 2 : 0}
+                  borderColor={isSelected ? "#3B3FCF" : "transparent"}
                 >
-                  {tab}
-                </Text>
-                {selectedTab === idx && (
                   <Image
-                    source={require("../../assets/icons/hinhthoi.png")}
-                    style={{ width: 16, height: 8, marginTop: 2 }}
+                    source={cat.icon}
+                    style={{
+                      width: 36,
+                      height: 36,
+                      marginBottom: 8,
+                      tintColor: isSelected ? "#fff" : undefined,
+                    }}
                     resizeMode="contain"
                   />
-                )}
-              </YStack>
-            </TouchableOpacity>
-          ))}
+                  <Text
+                    fontSize={13}
+                    fontWeight={isSelected ? "700" : "400"}
+                    color={isSelected ? "#fff" : "#888"}
+                    textAlign="center"
+                  >
+                    {cat.label}
+                  </Text>
+                </YStack>
+              </TouchableOpacity>
+            );
+          })}
         </XStack>
-        {/* Đường kẻ ngang phân cách */}
+
+        <XStack marginBottom={16}>
+          {tabs.map((tab, idx) => {
+            const isSelected = selectedTab === idx;
+            return (
+              <TouchableOpacity
+                key={tab}
+                onPress={() => setSelectedTab(idx)}
+                style={{ flex: 1, alignItems: "center" }}
+              >
+                <YStack alignItems="center" width="100%">
+                  <Text
+                    fontSize={15}
+                    fontWeight={isSelected ? "700" : "400"}
+                    color={isSelected ? tabSelectedColor : textColor}
+                  >
+                    {tab}
+                  </Text>
+                  {isSelected && (
+                    <Image
+                      source={require("../../assets/icons/hinhthoi.png")}
+                      style={{ width: 16, height: 8, marginTop: 2 }}
+                      resizeMode="contain"
+                    />
+                  )}
+                </YStack>
+              </TouchableOpacity>
+            );
+          })}
+        </XStack>
+
         <View
-          style={{ height: 1, backgroundColor: "#E5E7EB", marginBottom: 4 }}
+          style={{
+            height: 1,
+            backgroundColor: borderColor,
+            marginBottom: 4,
+          }}
         />
-        {/* Danh sách xếp hạng */}
+
         <YStack>
-          {ranking.map((item: { rank: number; name: string }, idx: number) => (
+          {ranking.map((item, idx) => (
             <XStack
               key={item.rank + "-" + item.name}
               alignItems="center"
               paddingVertical={10}
               borderBottomWidth={idx < ranking.length - 1 ? 1 : 0}
-              borderColor="#E5E7EB"
-              space
+              borderColor={borderColor}
             >
               {idx < 3 ? (
                 <Image
@@ -170,14 +219,14 @@ const BXHScreen = () => {
                   {idx + 1}
                 </Text>
               )}
-              <Text flex={1} fontSize={16} fontWeight="500" color="#111">
+              <Text flex={1} fontSize={16} fontWeight="500" color={textColor}>
                 {item.name}
               </Text>
-              <ChevronRight size={18} color="#888" />
+              <ChevronRight size={18} color={textColor} />
             </XStack>
           ))}
         </YStack>
-      </YStack>
+      </Animated.View>
     </ScrollScreenLayout>
   );
 };

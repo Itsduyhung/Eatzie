@@ -53,12 +53,17 @@ export const SettingData: InstallType[] = [
     items: [
       {
         content: "Thông tin",
-        path: "/profile",
+        route: {
+          path: "/(features)/profile/userInfo",
+          title: "Thông tin người dùng",
+        },
+
         language: false,
       },
       {
         content: "Mật khẩu",
-        path: "/loading",
+        route: { path: "/loading", title: "Mật khẩu" },
+
         language: false,
       },
     ],

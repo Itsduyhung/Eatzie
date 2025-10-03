@@ -1,14 +1,23 @@
 import { useAuthStore } from "@/applicaton/stores/authStores";
+import { Profile, ProfileService } from "@/domain/service/ProfileService";
 import { UserRound } from "@tamagui/lucide-icons";
 import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import { Avatar, XStack, YStack } from "tamagui";
 import { CustomButton } from "../ui/CustomButton";
 
 export const HeaderProfile = () => {
   const router = useRouter();
-  const user = useAuthStore((state) => state.user);
+  const { isAuthenticated, user } = useAuthStore();
+  const [profile, setProfile] = useState<Profile | null>(null);
+
+  useEffect(() => {
+    if (user?.userId) {
+      ProfileService.getProfile(Number(user.userId)).then(setProfile);
+    }
+  }, [user]);
   const checkAuthUI = () =>
-    !user && (
+    !isAuthenticated && (
       <CustomButton
         backgroundColor="#9B59B6"
         paddingHorizontal="$3"
@@ -17,14 +26,13 @@ export const HeaderProfile = () => {
         textfontsize="$4"
         textfontweight="$4"
         position="absolute"
-        bottom={-25}
+        bottom={0}
         right={16}
         onPress={() => router.push("/(auth)/login1")}
       >
         Đăng nhập / Đăng kí
       </CustomButton>
     );
-
   return (
     <YStack
       paddingHorizontal="$4"
@@ -35,7 +43,7 @@ export const HeaderProfile = () => {
     >
       <XStack
         position="absolute"
-        bottom={-30}
+        bottom={0}
         left={16}
         width={48}
         height={48}
@@ -46,10 +54,10 @@ export const HeaderProfile = () => {
         borderWidth={1}
         borderColor="$gray5"
       >
-        {user?.userId === "8" ? (
+        {isAuthenticated ? (
           <Avatar circular size="$6">
-            <Avatar.Image src="http://picsum.photos/200/300" />
-            <Avatar.Fallback bc="red" />
+            <Avatar.Image src={profile?.avatar} />
+            <Avatar.Fallback backgroundColor="$gray6" />
           </Avatar>
         ) : (
           <UserRound color={"$blue2Dark"} size={35} />

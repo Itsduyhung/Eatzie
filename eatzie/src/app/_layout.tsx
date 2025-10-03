@@ -106,6 +106,27 @@ const RootLayout = () => {
                       name="(features)/search/searchcategories"
                       options={{ headerShown: false }}
                     />
+                    <Stack.Screen
+                      name="(features)/search/foodsearchresult"
+                      options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                      name="(features)/profile/userInfo"
+                      options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                      name="(features)/profile/setAva"
+                      options={{ headerShown: false }}
+                    />
+
+                    <Stack.Screen
+                      name="(features)/profile/setName"
+                      options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                      name="(features)/profile/setPhone"
+                      options={{ headerShown: false }}
+                    />
                   </Stack>
                 </ThemeProvider>
               </Theme>

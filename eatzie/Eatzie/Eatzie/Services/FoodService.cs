@@ -211,8 +211,6 @@ public class FoodService : IFoodService
         return true;
     }
 
-    // --- Các phương thức CRUD cho Food - Restaurant đã được sửa lỗi ---
-
     public async Task<BaseAPIResponse> GetFoodDetailsAsync(int foodId)
     {
         var food = await _foodRepository.GetFoodByIdAsync(foodId);
@@ -237,6 +235,11 @@ public class FoodService : IFoodService
             .Select(rf => rf.Restaurant.Name)
             .FirstOrDefaultAsync();
 
+        var RestaurantId = await _context.RestaurantFoods
+            .Where(rf => rf.FoodId == foodId)
+            .Select(rf => rf.Restaurant.Id)
+            .FirstOrDefaultAsync();
+
         var responseDto = new FoodBriefResponse
         {
             Id = food.Id,
@@ -246,6 +249,7 @@ public class FoodService : IFoodService
             ImageUrl = food.ImageUrl ?? string.Empty,
             IsVegetarian = food.IsVegetarian,
             CreatedAt = food.CreatedAt,
+            RestaurantId = RestaurantId,
             RestaurantName = restaurantName,
             TotalViews = viewsCount,
             AverageRating = Math.Round(averageRating, 2)
