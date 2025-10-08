@@ -73,7 +73,7 @@ export const ScrollScreenLayout = ({
   };
 
   return (
-    <ThemedScreen backgroundColor={backgroundColor} padding="$0">
+    <ThemedScreen backgroundColor={backgroundColor}>
       <StatusBar translucent backgroundColor="transparent" />
 
       {(backgroundImage ||
@@ -96,7 +96,7 @@ export const ScrollScreenLayout = ({
           ]}
         >
           {backgroundImage ? (
-            <YStack position="relative">
+            <YStack position="relative" backgroundColor="red">
               <SizableImage
                 style={{
                   height: 200,
@@ -104,6 +104,7 @@ export const ScrollScreenLayout = ({
                 }}
                 source={backgroundImage}
                 resizeMode="cover"
+                borderRadius={0}
               />
               <XStack
                 position="absolute"
@@ -166,7 +167,7 @@ export const ScrollScreenLayout = ({
         contentContainerStyle={[
           styles.scrollContent,
           {
-            paddingTop: headerHeight + 16,
+            paddingTop: headerHeight,
             paddingBottom: insets.bottom + 24,
             justifyContent: centerContent ? "center" : "flex-start",
           },

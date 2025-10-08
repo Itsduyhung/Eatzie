@@ -15,8 +15,7 @@ export const HeaderSetting = ({ nameTitle }: HeaderSettingProps) => {
   return (
     <YStack
       width="100%"
-      paddingTop={insets.top}
-      height={insets.top + 56}
+      height={insets.top}
       backgroundColor="white"
       justifyContent="center"
     >

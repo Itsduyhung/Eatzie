@@ -1,32 +1,26 @@
 import { ThemedText } from "@/app/hooks/ThemedTextColor";
 import { CartItem } from "@/components/anima/CartShop";
-import { CartFooter } from "@/components/footer/CardFooter";
-import { ScrollScreenLayout } from "@/components/layout/ScrollScreenLayout";
-import { BackButton } from "@/components/ui/BackButton";
 import { CustomButton } from "@/components/ui/CustomButton";
 import { useCartStore } from "@/stores/useCartStore";
 import { X } from "@tamagui/lucide-icons";
-import { useRouter } from "expo-router";
 import { Pressable } from "react-native";
-import { Separator, XStack, YStack } from "tamagui";
+import { Separator, Text, XStack, YStack } from "tamagui";
 
 export default function CartScreen() {
   const cart = useCartStore((s) => s.cart);
+  const clearCart = useCartStore((s) => s.clearCart);
   const total = useCartStore((s) => s.total)();
   const itemCount = useCartStore((s) => s.itemCount)();
-  const clearCart = useCartStore((s) => s.clearCart);
-  const router = useRouter();
 
   return (
-    <ScrollScreenLayout headerLeftIcons={[<BackButton key="back" />]}>
+    <YStack pb="$8">
       <XStack
         alignItems="center"
         justifyContent="space-between"
         paddingHorizontal="$4"
-        paddingTop="$4"
+        paddingTop="$3"
         paddingBottom="$2"
-        marginTop="$10"
-        position="relative"
+        marginTop="$2"
       >
         <CustomButton
           borderRadius={4}
@@ -40,39 +34,30 @@ export default function CartScreen() {
           Xóa tất cả
         </CustomButton>
 
-        <ThemedText
-          style={{
-            fontSize: 16,
-            fontWeight: "900",
-            position: "absolute",
-            left: "50%",
-            transform: [{ translateX: -10 }, { translateY: 5 }],
-          }}
-        >
-          Giỏ hàng
-        </ThemedText>
+        <Text fontSize="$5" fontWeight="700" color="black">
+          Giỏ hàng ({itemCount})
+        </Text>
 
-        <Pressable
-          onPress={() => router.back()}
-          hitSlop={10}
-          style={{
-            padding: 8,
-            borderRadius: 999,
-          }}
-        >
-          <X size={20} color="#000" />
+        <Pressable hitSlop={10} style={{ padding: 8, borderRadius: 999 }}>
+          <X size={25} color="#000" />
         </Pressable>
       </XStack>
-
       <Separator marginBottom="$2" />
-
-      <YStack gap="$2" px="$4" pb="$10">
-        {cart.map((item) => (
-          <CartItem key={item.id} item={item} />
-        ))}
+      <YStack gap="$2" px="$4" pb="$6">
+        {cart.length > 0 ? (
+          cart.map((item) => <CartItem key={item.id} id={item.id} />)
+        ) : (
+          <ThemedText
+            style={{
+              textAlign: "center",
+              marginTop: 40,
+              fontWeight: "500",
+            }}
+          >
+            Giỏ hàng trống
+          </ThemedText>
+        )}
       </YStack>
-
-      <CartFooter />
-    </ScrollScreenLayout>
+    </YStack>
   );
 }

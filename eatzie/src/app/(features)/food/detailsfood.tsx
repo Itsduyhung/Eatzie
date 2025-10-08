@@ -1,44 +1,58 @@
-import {
-  foodCategoryData,
-  foodCategoryData1,
-} from "@/app/constant/FoodCategoryData";
 import { ThemedText } from "@/app/hooks/ThemedTextColor";
 import { cartRef } from "@/components/anima/cartRef";
 import { useFlyToCart } from "@/components/anima/useFlyToCart";
-import { Rating } from "@/components/feedback/Rating";
 import { CartFooter } from "@/components/footer/CardFooter";
 import { ScrollScreenLayout } from "@/components/layout/ScrollScreenLayout";
 import { BackButton } from "@/components/ui/BackButton";
 import { CustomButton } from "@/components/ui/CustomButton";
+import { StatItem } from "@/components/ui/StatItem";
+import { useFoodStore } from "@/stores/FoodStore";
 import { useCartStore } from "@/stores/useCartStore";
-import { FoodItem } from "@/types/foodCategory";
 import { formatCurrency } from "@/utils/formatCurrency";
-import { FontAwesome5 } from "@expo/vector-icons";
+import { Feather, FontAwesome5 } from "@expo/vector-icons";
+import { Eye, Star } from "@tamagui/lucide-icons";
 import { useLocalSearchParams } from "expo-router";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text, XStack, YStack } from "tamagui";
 
+const FoodText = ({
+  children,
+  size,
+  weight,
+  color,
+}: {
+  children: React.ReactNode;
+  size: number;
+  weight: "400" | "700";
+  color?: string;
+}) => (
+  <ThemedText style={{ fontSize: size, fontWeight: weight, color }}>
+    {children}
+  </ThemedText>
+);
+
 const DetailsFood = () => {
   const { id } = useLocalSearchParams();
+  const foodId = Number(id);
+  const { foods, loading, error, fetchFood } = useFoodStore();
+  const item = foods[foodId];
 
   const addToCart = useCartStore((state) => state.addToCart);
   const { flyToCart } = useFlyToCart();
-  const buttonRefs = useRef<Record<string, View | null>>({});
+  const buttonRefs = useRef<Record<number, View | null>>({});
   const insets = useSafeAreaInsets();
 
-  const category =
-    foodCategoryData.find((f) => f.items.some((item) => item.id === id)) ??
-    foodCategoryData1.find((f) => f.items.some((item) => item.id === id));
-  const item = category?.items.find((item) => item.id === id);
-  const image = item?.image;
+  useEffect(() => {
+    if (foodId) fetchFood(foodId);
+  }, [foodId, fetchFood]);
 
-  if (!item || !category) {
-    return <Text>Không tìm thấy món ăn</Text>;
-  }
+  if (loading[foodId]) return <Text>Đang tải...</Text>;
+  if (error[foodId]) return <Text>{error[foodId]}</Text>;
+  if (!item) return <Text>Không tìm thấy món ăn</Text>;
 
-  const handleAddToCart = (item: FoodItem) => {
+  const handleAddToCart = (item: (typeof foods)[number]) => {
     const ref = buttonRefs.current[item.id];
 
     ref?.measureInWindow?.((x, y, width, height) => {
@@ -55,104 +69,62 @@ const DetailsFood = () => {
 
   return (
     <ScrollScreenLayout
-      backgroundImage={image as any}
+      backgroundImage={{ uri: item.image as any }}
       headerLeftIcons={[<BackButton key="back" />]}
       headerRightIcons={[<FontAwesome5 name="share" size={20} key="share" />]}
     >
       <YStack backgroundColor="white" paddingHorizontal="$4">
-        <YStack paddingTop={15}>
-          <XStack gap="$2" justifyContent="flex-start" alignItems="center">
-            <ThemedText
-              key={item.id}
-              style={{
-                fontSize: 20,
-                fontWeight: "700",
-                textAlign: "center",
-              }}
-            >
-              {item.name}
-            </ThemedText>
-          </XStack>
+        <YStack paddingTop={15} gap="$3">
+          <FoodText size={22} weight="700">
+            {item.name}
+          </FoodText>
 
-          <YStack position="relative" width="100%" gap="$3">
-            <XStack marginTop="$3" alignItems="center" gap="$4" width="100%">
-              <XStack alignItems="center" gap="$1">
-                <ThemedText
-                  style={{
-                    fontSize: 12,
-                    fontWeight: "700",
-                    color: "#989898",
-                  }}
-                >
-                  {item.decription}
-                </ThemedText>
+          <FoodText size={20} weight="700" color="#6666FF">
+            {formatCurrency(item.price)}
+          </FoodText>
+
+          <FoodText size={14} weight="400" color="gray">
+            {item.description}
+          </FoodText>
+          <YStack justifyContent="center" alignItems="center" gap="$2">
+            <XStack marginTop="$2" alignItems="center" gap="$4">
+              <StatItem
+                icon={<Star size={16} color="#6666FF" />}
+                value={item.rating}
+                label="Rating"
+              />
+
+              <YStack width={1} backgroundColor="black" alignSelf="stretch" />
+
+              <StatItem
+                icon={<Eye size={16} color="#6666FF" />}
+                value={`${item.views.toLocaleString()}k`}
+                label="Views"
+              />
+            </XStack>
+
+            <CustomButton>
+              <XStack alignItems="center" width="100%" gap="$2">
+                <FoodText size={15} weight="400">
+                  Xem đánh giá
+                </FoodText>
+                <Feather name="arrow-right" size={16} color="black" />
               </XStack>
-            </XStack>
-
-            <XStack alignItems="center" gap="$3" flexWrap="wrap">
-              <ThemedText
-                style={{
-                  fontSize: 13,
-                  fontWeight: "700",
-                  color: "#989898",
-                }}
-              >
-                {item.salePrice} đã bán
-              </ThemedText>
-
-              <YStack width={1} height={12} backgroundColor="#c0c0c0" />
-
-              <ThemedText
-                style={{
-                  fontSize: 13,
-                  fontWeight: "700",
-                  color: "#989898",
-                }}
-              >
-                {item.likes} lượt thích
-              </ThemedText>
-            </XStack>
-            <XStack
-              width="full"
-              alignItems="center"
-              marginTop="$2"
-              position="relative"
-            >
-              <ThemedText
-                style={{
-                  fontSize: 15,
-                  fontWeight: "700",
-                  color: "#6666FF",
-                }}
-              >
-                {formatCurrency(item.price)}
-              </ThemedText>
-              <XStack position="absolute" right={0}>
-                <CustomButton
-                  ref={(ref) => {
-                    if (ref) buttonRefs.current[item.id] = ref;
-                  }}
-                  borderRadius={4}
-                  backgroundColor="#6666FF"
-                  textfontsize="$4"
-                  textfontweight="600"
-                  paddingHorizontal={8}
-                  paddingVertical={1}
-                  paddingBottom={4}
-                  onPress={() => handleAddToCart(item)}
-                >
-                  +
-                </CustomButton>
-              </XStack>
-            </XStack>
+            </CustomButton>
           </YStack>
+          <CustomButton
+            ref={(ref) => {
+              if (ref) buttonRefs.current[item.id] = ref;
+            }}
+            borderRadius={20}
+            backgroundColor="#6666FF"
+            textfontsize="$4"
+            textfontweight="600"
+            onPress={() => handleAddToCart(item)}
+          >
+            Thêm vào giỏ hàng
+          </CustomButton>
         </YStack>
-
-        {/* Optional: Section for more food items */}
-        <Text fontSize="$5" fontWeight="600" marginTop="$4">
-          Danh sách món ăn
-        </Text>
-        <Rating id={item.id} />
       </YStack>
 
       <CartFooter />

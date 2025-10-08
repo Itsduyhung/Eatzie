@@ -50,4 +50,6 @@ export interface FoodItemD {
   rating: number;
   restaurantName?: string | null;
   address?: string | null;
+  restaurantId?: number;
+  note?: string;
 }

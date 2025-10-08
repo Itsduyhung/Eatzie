@@ -1,4 +1,3 @@
-import React from "react";
 import { Dimensions, FlatList, Platform, View } from "react-native";
 import { YStack } from "tamagui";
 import { SizableImage } from "../ui/SizableImageProps";
@@ -31,7 +30,7 @@ export const BannerCarousel = () => {
   const imageHeight = itemWidth / aspectRatio;
 
   return (
-    <YStack marginTop={-32} zIndex={10}>
+    <YStack marginTop={0} zIndex={10}>
       <FlatList
         data={banners}
         horizontal

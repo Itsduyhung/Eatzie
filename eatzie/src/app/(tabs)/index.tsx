@@ -1,4 +1,3 @@
-// app/(tabs)/home.tsx
 import React from "react";
 import { YStack } from "tamagui";
 
@@ -18,7 +17,7 @@ const HomeTab = () => {
         <HeaderGradientBackground>{children}</HeaderGradientBackground>
       )}
     >
-      <YStack backgroundColor="#F5F5F5" marginTop={16}>
+      <YStack backgroundColor="#F5F5F5">
         <BannerCarousel />
       </YStack>
 

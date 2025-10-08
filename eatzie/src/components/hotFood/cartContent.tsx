@@ -52,7 +52,7 @@ export const FoodCard = ({
       key={item.id}
       onPress={() =>
         router.push({
-          pathname: "/(features)/food/contentfood",
+          pathname: "/(features)/food/detailsfood",
           params: { id: item.id },
         })
       }

@@ -4,7 +4,7 @@ import { FoodItemD } from "@/types/foodCategory";
 export function mapFoodItemToCard(item: FoodSearchResult): FoodItemD {
   return {
     id: item.id,
-    name: item.restaurantName ?? item.content ?? "Tên món ăn",
+    name: item.content ?? item.content ?? "Tên món ăn",
     description: item.description ?? "",
     image: item.imageUrl,
     price: item.price,
@@ -13,5 +13,6 @@ export function mapFoodItemToCard(item: FoodSearchResult): FoodItemD {
     rating: item.averageRating,
     restaurantName: item.restaurantName,
     address: item.address,
+    restaurantId: item.restaurantId,
   };
 }

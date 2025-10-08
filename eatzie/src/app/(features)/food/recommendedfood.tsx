@@ -1,32 +1,26 @@
 import { FlashFoodList } from "@/components/flastList/FlashListCard";
-import { SearchService } from "@/domain/service/SearchService";
-import { FoodItemD } from "@/types/foodCategory";
 
-import React, { useEffect, useState } from "react";
+import { useFoodStore } from "@/stores/FoodStore";
+import { FoodItemD } from "@/types/foodCategory";
+import { useEffect } from "react";
 import { Spinner, YStack } from "tamagui";
 
+const recommendedIds = [12, 14, 16, 18, 20]; // ID món ăn đề xuất
+
 const RecommentdedFoodScreen = () => {
-  const [foods, setFoods] = useState<FoodItemD[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { foods, loading, fetchFood } = useFoodStore();
+
+  const foodList: FoodItemD[] = recommendedIds
+    .map((id) => foods[id])
+    .filter(Boolean) as FoodItemD[];
+
+  const isLoading = recommendedIds.some((id) => loading[id]);
 
   useEffect(() => {
-    async function fetchFoods() {
-      try {
-        const ids = [12, 14, 16, 18, 20];
-        const results = await Promise.all(
-          ids.map((id) => SearchService.getFoodId(id))
-        );
-        setFoods(results);
-      } catch (err) {
-        console.error(" Error fetching foods:", err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchFoods();
-  }, []);
+    recommendedIds.forEach((id) => fetchFood(id));
+  }, [fetchFood]);
 
-  if (loading) {
+  if (isLoading) {
     return (
       <YStack f={1} jc="center" ai="center">
         <Spinner size="large" />
@@ -37,7 +31,7 @@ const RecommentdedFoodScreen = () => {
   return (
     <FlashFoodList
       title="Món ăn đề xuất cho bạn hôm nay"
-      data={foods}
+      data={foodList}
       cardWidth={250}
       hasDetailFoodCard={true}
       paddingRight={50}
