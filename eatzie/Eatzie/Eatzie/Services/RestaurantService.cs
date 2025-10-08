@@ -241,4 +241,27 @@ public class RestaurantService : IRestaurantService
             Message = "Xóa nhà hàng thành công."
         };
     }
+    public async Task<BaseAPIResponse> GetAllFoodRestaurantsByIdAsync(int restaurantId)
+    {
+        var foods = await _context.RestaurantFoods
+            .Where(rf => rf.RestaurantId == restaurantId)
+            .Select(rf => new FoodBriefResponse
+            {
+                Id = rf.Food.Id,
+                Content = rf.Food.Content,
+                Description = rf.Food.Description,
+                Price = rf.Food.Price,
+                ImageUrl = rf.Food.ImageUrl,
+                IsVegetarian = rf.Food.IsVegetarian,
+                CreatedAt = rf.Food.CreatedAt
+            })
+            .ToListAsync();
+
+        return new BaseAPIResponse
+        {
+            IsSuccess = true,
+            StatusCode = 200,
+            Data = foods
+        };
+    }
 }

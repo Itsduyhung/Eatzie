@@ -1,5 +1,6 @@
-﻿using Eatzie.Helpers;
-using Eatzie.DTOs.Request;
+﻿using Eatzie.DTOs.Request;
+using Eatzie.Helpers;
+using Eatzie.Models;
 public interface IRestaurantService
 {
     Task<BaseAPIResponse> CreateRestaurantAsync(int userId, RestaurantRequest dto);
@@ -7,4 +8,5 @@ public interface IRestaurantService
     Task<BaseAPIResponse> GetAllRestaurantsAsync();
     Task<BaseAPIResponse> UpdateRestaurantAsync(int userId, int restaurantId, RestaurantRequest dto);
     Task<BaseAPIResponse> DeleteRestaurantAsync(int userId, int restaurantId);
+    Task<BaseAPIResponse> GetAllFoodRestaurantsByIdAsync(int restaurantId);
 }
