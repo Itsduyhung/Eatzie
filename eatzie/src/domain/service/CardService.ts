@@ -7,7 +7,9 @@ export interface AddCartItemInput {
 }
 
 export class CartService {
-  static async addToCart(item: AddCartItemInput): Promise<ApiResponse<null>> {
-    return post<ApiResponse<null>>("/Cart/add", item);
+  static async addToCart(
+    items: AddCartItemInput[]
+  ): Promise<ApiResponse<null>> {
+    return post<ApiResponse<null>>("/Cart/add", { items });
   }
 }

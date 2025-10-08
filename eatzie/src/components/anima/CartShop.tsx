@@ -1,58 +1,91 @@
 import { ThemedText } from "@/app/hooks/ThemedTextColor";
 import { useCartStore } from "@/stores/useCartStore";
-import { FoodItem } from "@/types/foodCategory";
-import { formatCurrency } from "@/utils/formatCurrency";
-import { useRouter } from "expo-router";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Pressable, TextInput, View } from "react-native";
 import { XStack, YStack } from "tamagui";
+
+import { useFoodStore } from "@/stores/FoodStore";
+import { FoodItemD } from "@/types/foodCategory";
+import { formatCurrency } from "@/utils/formatCurrency";
+import { useRouter } from "expo-router";
 import { CustomButton } from "../ui/CustomButton";
 import { SizableImage } from "../ui/SizableImageProps";
 import { cartRef } from "./cartRef";
 import { useFlyToCart } from "./useFlyToCart";
 
 type Props = {
-  item: FoodItem;
+  id: number;
 };
 
-export const CartItem = ({ item }: Props) => {
+export const CartItem = ({ id }: Props) => {
   const router = useRouter();
-  const addToCart = useCartStore((state) => state.addToCart);
-  const increaseQuantity = useCartStore((state) => state.increaseQuantity);
-  const decreaseQuantity = useCartStore((state) => state.decreaseQuantity);
-  const updateNote = useCartStore((state) => state.updateNote);
 
-  const cartItem = useCartStore((state) =>
-    state.cart.find((i) => i.id === item.id)
-  );
+  const food = useFoodStore((s) => s.foods[id]);
+  const fetchFood = useFoodStore((s) => s.fetchFood);
+
+  useEffect(() => {
+    if (!food) fetchFood(id).catch(() => {});
+  }, [id, food, fetchFood]);
+
+  const cartItem = useCartStore((s) => s.cart.find((i) => i.id === id));
   const quantity = cartItem?.quantity ?? 0;
   const note = cartItem?.note ?? "";
 
+  const addToCart = useCartStore((s) => s.addToCart);
+  const increaseQuantity = useCartStore((s) => s.increaseQuantity);
+  const decreaseQuantity = useCartStore((s) => s.decreaseQuantity);
+  const updateNote = useCartStore((s) => s.updateNote);
+
+  // --- Fly to cart animation ---
   const { flyToCart } = useFlyToCart();
-  const buttonRefs = useRef<Record<string, View | null>>({});
+  const buttonRefs = useRef<Record<number, View | null>>({});
+
+  // --- Local note state ---
+  const [localNote, setLocalNote] = useState(note);
+  useEffect(() => setLocalNote(note), [note]);
+
+  const displayItem: FoodItemD | undefined = food;
+
+  const safeAddOrIncrease = () => {
+    if (!displayItem) return;
+    if (quantity > 0) increaseQuantity(id);
+    else addToCart({ ...displayItem, note: "" });
+  };
 
   const handleAddToCart = () => {
-    const ref = buttonRefs.current[item.id];
-    ref?.measureInWindow?.((x, y, width, height) => {
-      const start = { x: x + width / 2, y: y + height / 2 };
-      cartRef.current?.measureInWindow?.((endX, endY, endW, endH) => {
-        const end = { x: endX + endW / 2, y: endY + endH / 2 };
-        flyToCart(start, end);
-      });
-    });
+    const ref = buttonRefs.current[id];
 
-    if (quantity === 0) {
-      addToCart({ ...item, note: "" });
+    if (ref?.measureInWindow && cartRef.current?.measureInWindow) {
+      ref.measureInWindow((x, y, w, h) => {
+        cartRef.current?.measureInWindow((endX, endY, endW, endH) => {
+          flyToCart(
+            { x: x + w / 2, y: y + h / 2 },
+            { x: endX + endW / 2, y: endY + endH / 2 }
+          );
+          safeAddOrIncrease();
+        });
+      });
     } else {
-      increaseQuantity(item.id);
+      safeAddOrIncrease();
     }
   };
 
   const handleDecrease = () => {
-    if (quantity > 0) {
-      decreaseQuantity(item.id);
-    }
+    if (quantity > 0) decreaseQuantity(id);
   };
+
+  const handleNoteChange = (text: string) => {
+    setLocalNote(text);
+    updateNote(id, text);
+  };
+
+  if (!displayItem) {
+    return (
+      <YStack padding="$3">
+        <ThemedText color="$gray10Dark">Đang tải món ăn...</ThemedText>
+      </YStack>
+    );
+  }
 
   return (
     <YStack gap={1}>
@@ -60,13 +93,13 @@ export const CartItem = ({ item }: Props) => {
         onPress={() =>
           router.push({
             pathname: "/(features)/food/detailsfood",
-            params: { id: item.id },
+            params: { id },
           })
         }
       >
         <XStack padding="$3" gap="$3">
           <SizableImage
-            source={item.image}
+            source={{ uri: displayItem.image as any }}
             resizeMode="cover"
             borderRadius={8}
             style={{ width: 60, height: 60 }}
@@ -74,19 +107,19 @@ export const CartItem = ({ item }: Props) => {
 
           <YStack flex={1} justifyContent="space-between">
             <ThemedText fontWeight="700" fontSize="$5">
-              {item.name}
+              {displayItem.name}
             </ThemedText>
 
-            {!!item.description && (
+            {!!displayItem.description && (
               <ThemedText fontSize="$2" color="$gray10Dark">
-                {item.description}
+                {displayItem.description}
               </ThemedText>
             )}
 
             <TextInput
               placeholder="Thêm ghi chú..."
-              value={note}
-              onChangeText={(text) => updateNote(item.id, text)}
+              value={localNote}
+              onChangeText={handleNoteChange}
               style={{
                 fontSize: 13,
                 color: "#555",
@@ -103,7 +136,7 @@ export const CartItem = ({ item }: Props) => {
               marginTop="$2"
             >
               <ThemedText fontWeight="700" fontSize="$4" color="#6666FF">
-                {formatCurrency(item.price)}
+                {formatCurrency(displayItem.price)}
               </ThemedText>
 
               <XStack alignItems="center" gap="$2">
@@ -133,8 +166,8 @@ export const CartItem = ({ item }: Props) => {
                 )}
 
                 <CustomButton
-                  ref={(ref) => {
-                    if (ref) buttonRefs.current[item.id] = ref;
+                  ref={(ref: any) => {
+                    if (ref) buttonRefs.current[id] = ref;
                   }}
                   backgroundColor="#6666FF"
                   borderRadius={4}

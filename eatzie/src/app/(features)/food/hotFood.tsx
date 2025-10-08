@@ -2,7 +2,7 @@ import { FlashFoodList } from "@/components/flastList/FlashListCard";
 import { SearchService } from "@/domain/service/SearchService";
 import { FoodItemD } from "@/types/foodCategory";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Spinner, YStack } from "tamagui";
 
 const HotFoodScreen = () => {

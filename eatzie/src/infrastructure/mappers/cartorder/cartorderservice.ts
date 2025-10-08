@@ -9,30 +9,21 @@ export const CartOrderService = {
 
     if (cart.length === 0) throw new Error("Giỏ hàng trống");
 
-    const items: AddCartItemInput[] = cart.map((item) => {
-      console.log(item.id);
-      return {
-        foodId: Number(item.id),
-        quantity: item.quantity ?? 1,
-      };
-    });
-    for (const item of items) {
-      let attempt = 0;
-      let success = false;
+    const items: AddCartItemInput[] = cart.map((item) => ({
+      foodId: Number(item.id),
+      quantity: item.quantity ?? 1,
+    }));
 
-      while (attempt <= retryCount && !success) {
-        try {
-          await CartService.addToCart(item);
-          success = true;
-        } catch (err) {
-          attempt++;
-          console.error(
-            `Failed to add item ${item.foodId}, attempt ${attempt}`,
-            err
-          );
-          if (attempt > retryCount) {
-            throw new Error(`Không thể thêm món ${item.foodId} vào giỏ`);
-          }
+    let attempt = 0;
+    while (attempt <= retryCount) {
+      try {
+        await CartService.addToCart(items);
+        return true;
+      } catch (err) {
+        attempt++;
+        console.error(`Failed to add cart (attempt ${attempt})`, err);
+        if (attempt > retryCount) {
+          throw new Error("Không thể thêm các món vào giỏ sau nhiều lần thử");
         }
       }
     }

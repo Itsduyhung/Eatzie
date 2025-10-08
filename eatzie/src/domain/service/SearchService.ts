@@ -15,6 +15,7 @@ export interface FoodSearchResult {
   restaurantName: string | null;
   value?: number;
   price: number;
+  restaurantId?: number;
 }
 
 export class SearchService {

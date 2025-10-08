@@ -1,104 +1,76 @@
 // app/(tabs)/test.tsx
-import {
-  foodCategoryData,
-  foodCategoryData1,
-} from "@/app/constant/FoodCategoryData";
 import { ThemedText } from "@/app/hooks/ThemedTextColor";
-import { FoodCardContent } from "@/components/anima/CardFood";
-import { FavoriteButton } from "@/components/FavoriteButton";
-import FlashListFavoritesFood from "@/components/FlashListFavoritesFood";
 import { CartFooter } from "@/components/footer/CardFooter";
 import { ScrollScreenLayout } from "@/components/layout/ScrollScreenLayout";
-import { RatingStars } from "@/components/RatingStars";
 import { BackButton } from "@/components/ui/BackButton";
+import { useRestaurantStore } from "@/stores/restaurantStore";
 import { EvilIcons, FontAwesome5 } from "@expo/vector-icons";
-import { BadgeCheck } from "@tamagui/lucide-icons";
 import { useLocalSearchParams } from "expo-router";
+import { useEffect } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text, XStack, YStack } from "tamagui";
 
 const ContentFood = () => {
   const { id } = useLocalSearchParams();
-  const item =
-    foodCategoryData.find((f) => f.id === id) ??
-    foodCategoryData1.find((f) => f.id === id);
-  const image = item?.imageClick;
+  const restaurantId = Number(id);
   const insets = useSafeAreaInsets();
 
-  if (!item) return <Text>Không tìm thấy món ăn</Text>;
+  const { restaurants, loading, error, fetchRestaurant } = useRestaurantStore();
+  const item = restaurants[restaurantId];
+
+  useEffect(() => {
+    if (restaurantId) fetchRestaurant(restaurantId);
+  }, [restaurantId, fetchRestaurant]);
+
+  if (loading) return <Text>Đang tải...</Text>;
+  if (error) return <Text>{error}</Text>;
+  if (!item) return <Text>Không tìm thấy nhà hàng</Text>;
+
+  const isOpen = item.status === "Open";
+  const displayStatus = isOpen ? "Đang mở cửa" : "Đã đóng cửa";
 
   return (
     <ScrollScreenLayout
-      backgroundImage={image as any}
+      backgroundImage={{ uri: item.image as any }}
       headerLeftIcons={[<BackButton key="back" />]}
       headerRightIcons={[
         <EvilIcons key="search" name="search" size={26} color="black" />,
-        <FontAwesome5 name="share" size={20} key="share" />,
+        <FontAwesome5 key="share" name="share" size={20} />,
       ]}
     >
-      <YStack gap="$4">
-        <YStack
-          paddingHorizontal="$3"
-          paddingVertical={15}
-          backgroundColor="white"
-        >
-          <XStack gap="$2" justifyContent="flex-start" alignItems="center">
-            <BadgeCheck size={18} color="#4F46E5" />
-            <ThemedText
-              key={item.id}
-              style={{
-                fontSize: 20,
-                fontWeight: "700",
-                textAlign: "center",
-              }}
-            >
-              {item.nameFood}
-            </ThemedText>
-          </XStack>
+      <YStack
+        gap="$4"
+        paddingHorizontal="$3"
+        paddingVertical={15}
+        backgroundColor="white"
+        alignItems="center"
+      >
+        <ThemedText style={{ fontSize: 22, fontWeight: "700" }}>
+          {item.name}
+        </ThemedText>
 
-          <YStack position="relative" width="100%">
-            <XStack marginTop="$3" alignItems="center" gap="$4" width="100%">
-              <XStack alignItems="center" gap="$1">
-                <RatingStars value={item.rating} />
+        <XStack alignItems="center" justifyContent="space-between">
+          <ThemedText
+            style={{
+              fontSize: 14,
+              fontWeight: "600",
+              color: isOpen ? "#16A34A" : "#EF4444", // xanh nếu mở, đỏ nếu đóng
+            }}
+          >
+            {displayStatus}
+          </ThemedText>
+        </XStack>
 
-                <ThemedText
-                  style={{
-                    fontSize: 14,
-                    fontWeight: "600",
-                    textAlign: "center",
-                  }}
-                >
-                  {item.rating}
-                </ThemedText>
-
-                <ThemedText
-                  style={{
-                    fontSize: 14,
-                    fontWeight: "600",
-                    textAlign: "center",
-                  }}
-                >
-                  ({item.comment} Bình luận)
-                </ThemedText>
-              </XStack>
-            </XStack>
-            <YStack
-              position="absolute"
-              right={0}
-              top="50%"
-              transform={[{ translateY: -6 }]}
-            >
-              <FavoriteButton key="favorite" />,
-            </YStack>
-          </YStack>
+        <YStack marginTop={4}>
+          <ThemedText
+            style={{ fontSize: 14, fontWeight: "400", lineHeight: 20 }}
+          >
+            {item.description}
+          </ThemedText>
         </YStack>
-
-        <YStack width="100%">
-          <FlashListFavoritesFood id={item.id} />
-        </YStack>
-
-        <FoodCardContent id={item.id} />
       </YStack>
+
+      {/* Footer */}
       <CartFooter />
     </ScrollScreenLayout>
   );
