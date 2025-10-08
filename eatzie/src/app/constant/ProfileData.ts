@@ -12,17 +12,16 @@ export const ProfileData: IconInline[] = [
       name: "file-document-multiple-outline",
       size: 24,
     },
-    path: "/loading",
+    path: "/(features)/profile/userDiet",
     title: "Hồ sơ vị giác",
   },
   {
     iconComponent: MaterialCommunityIcons,
-
     iconProps: {
       name: "bookmark-outline",
       size: 24,
     },
-    path: "/loading",
+    path: "/(features)/profile/savedFood",
     title: "Món ăn đã lưu gần đây",
   },
   {

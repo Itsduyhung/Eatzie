@@ -42,7 +42,7 @@ export default function TabLayout() {
       <Tabs
         screenOptions={({ route }) => ({
           headerShown: false,
-          freezeOnBlur: true, // ✅ Quan trọng: giữ trạng thái khi mất focus
+          freezeOnBlur: true,
           tabBarStyle: {
             height: 50,
             paddingBottom: 5,
@@ -56,7 +56,13 @@ export default function TabLayout() {
       >
         <Tabs.Screen name="index" options={{ title: "Home" }} />
         <Tabs.Screen name="order" options={{ title: "My Orders" }} />
-        <Tabs.Screen name="like" options={{ title: "Likes" }} />
+        <Tabs.Screen 
+          name="like" 
+          options={{ 
+            title: "Like",
+            href: null
+          }} 
+        />
         <Tabs.Screen name="notification" options={{ title: "Notifications" }} />
         <Tabs.Screen name="account" options={{ title: "Me" }} />
       </Tabs>

@@ -1,5 +1,7 @@
 import { get, putRaw } from "@/infrastructure/api/axiosClient";
 import { ApiResponse } from "@/types/axios";
+import { UserDietService } from "./UserDietService";
+import { UserDiet } from "@/types/userDiet.types";
 
 export interface Profile {
   id: number;
@@ -9,11 +11,12 @@ export interface Profile {
   address: string;
   avatar: string;
   createdAt?: string;
+  userDiet?: UserDiet; // Thêm thông tin hồ sơ vị giác
 }
 
-type ProfileUpdateData = Partial<Omit<Profile, "id" | "createdAt">>;
+type ProfileUpdateData = Partial<Omit<Profile, "id" | "createdAt" | "userDiet">>;
 
-export const fieldLabels: Record<keyof Profile, string> = {
+export const fieldLabels: Record<keyof Omit<Profile, 'userDiet'>, string> = {
   id: "Id",
   fullname: "Fullname",
   email: "Email",
@@ -36,9 +39,17 @@ export class ProfileService {
   static async getProfile(id: number): Promise<Profile | null> {
     try {
       const profile = await get<Profile>(`/Profile/${id}`);
+      
+      // Lấy thông tin hồ sơ vị giác
+      const userDiet = await UserDietService.getUserDiet(id);
+      
+      if (profile) {
+        profile.userDiet = userDiet || undefined;
+      }
+      
       return profile;
     } catch (error) {
-      console.error(" Error fetching profile:", error);
+      console.error("❌ Error fetching profile:", error);
       return null;
     }
   }
@@ -127,21 +138,68 @@ export class ProfileService {
     return resp;
   }
 
-  // static async setProfile(
-  //   id: number,
-  //   updateData: Partial<Profile>
-  // ): Promise<ApiResponse<null>> {
-  //   const formData = new FormData();
+  // Methods for UserDiet management
+  static async updateUserDiet(
+    userId: number,
+    updateData: Partial<UserDiet>
+  ): Promise<ApiResponse<any>> {
+    try {
+      const response = await UserDietService.updateUserDiet({
+        userId,
+        ...updateData
+      });
+      console.log("✅ Update user diet response:", response);
+      return response;
+    } catch (error) {
+      console.error("❌ Error updating user diet:", error);
+      throw error;
+    }
+  }
 
-  //   (Object.keys(updateData) as (keyof Profile)[]).forEach((key) => {
-  //     const value = updateData[key];
-  //     const fieldName = fieldLabels[key];
+  static async updateAllergicFood(
+    userId: number,
+    allergicFood: string
+  ): Promise<ApiResponse<any>> {
+    try {
+      const response = await UserDietService.updateAllergicFood(userId, allergicFood);
+      console.log("✅ Update allergic food response:", response);
+      return response;
+    } catch (error) {
+      console.error("❌ Error updating allergic food:", error);
+      throw error;
+    }
+  }
 
-  //     if (fieldName && value !== undefined && value !== null) {
-  //       formData.append(fieldName, String(value));
-  //     }
-  //   });
+  static async updateFavoriteFood(
+    userId: number,
+    favoriteFood: string
+  ): Promise<ApiResponse<any>> {
+    try {
+      const response = await UserDietService.updateFavoriteFood(userId, favoriteFood);
+      console.log("✅ Update favorite food response:", response);
+      return response;
+    } catch (error) {
+      console.error("❌ Error updating favorite food:", error);
+      throw error;
+    }
+  }
 
-  //   return await putRaw<null>(`/Profile/${id}`, formData);
-  // }
+  static async updateSpendingRange(
+    userId: number,
+    minSpending: number,
+    maxSpending: number
+  ): Promise<ApiResponse<any>> {
+    try {
+      const response = await UserDietService.updateSpendingRange(
+        userId,
+        minSpending,
+        maxSpending
+      );
+      console.log("✅ Update spending range response:", response);
+      return response;
+    } catch (error) {
+      console.error("❌ Error updating spending range:", error);
+      throw error;
+    }
+  }
 }

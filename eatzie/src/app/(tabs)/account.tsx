@@ -24,17 +24,19 @@ const AccountTab = () => {
           <YStack padding="$6" gap="$3">
             {ProfileData.map((item, index) => {
               const Icon = item.iconComponent as React.ComponentType<any>;
-
+              let onPress;
+              if (item.path === "/(features)/profile/userDiet") {
+                onPress = () => router.push({ pathname: item.path as any, params: { title: item.title } });
+              } else if (item.path === "/(features)/profile/savedFood") {
+                onPress = () => router.push({ pathname: item.path as any, params: { title: item.title } });
+              } else {
+                onPress = () => router.push({ pathname: "/(features)/profile/settingprofile", params: { title: item.title } });
+              }
               return (
                 <CustomButton
                   key={index}
                   backgroundColor="#FFFFFF"
-                  onPress={() => {
-                    router.push({
-                      pathname: "/(features)/profile/settingprofile",
-                      params: { title: item.title },
-                    });
-                  }}
+                  onPress={onPress}
                   paddingVertical="$4"
                 >
                   <XStack

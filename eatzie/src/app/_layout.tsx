@@ -115,6 +115,10 @@ const RootLayout = () => {
                       options={{ headerShown: false }}
                     />
                     <Stack.Screen
+                      name="(features)/profile/userDiet"
+                      options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
                       name="(features)/profile/setAva"
                       options={{ headerShown: false }}
                     />
@@ -125,6 +129,10 @@ const RootLayout = () => {
                     />
                     <Stack.Screen
                       name="(features)/profile/setPhone"
+                      options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                      name="(features)/profile/savedFood"
                       options={{ headerShown: false }}
                     />
                   </Stack>
