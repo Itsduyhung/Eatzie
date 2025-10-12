@@ -7,7 +7,7 @@ const { width: screenWidth } = Dimensions.get("window");
 const banners = [
   {
     id: "1",
-    image: require("@/assets/banner/banner1.png"),
+    image: require("@/assets/banner/banner3.jpg"),
   },
   {
     id: "2",
@@ -15,7 +15,7 @@ const banners = [
   },
   {
     id: "3",
-    image: require("@/assets/banner/banner3.jpg"),
+    image: require("@/assets/banner/banner1.png"),
   },
 ];
 

@@ -1,4 +1,5 @@
 ﻿using Eatzie.Data;
+using Eatzie.DTOs.Request;
 using Eatzie.DTOs.Response;
 using Eatzie.Helpers;
 using Eatzie.Interfaces.IRepository;
@@ -17,7 +18,7 @@ namespace Eatzie.Services
         private readonly ICartRepository _cartRepo = cartRepo;
         private readonly ApplicationDbContext _dbContext = db;
 
-        public async Task<BaseAPIResponse> CreateOrderAsync(int userId, decimal totalPrice)
+        public async Task<BaseAPIResponse> CreateOrderAsync(int userId,CreateOrderRequest request, int OrderId)
         {
             var cartItems = await _cartRepo.GetCartItemsAsync(userId);
             if (cartItems == null || !cartItems.Any())
@@ -30,23 +31,46 @@ namespace Eatzie.Services
                 FoodId = item.FoodId,
                 Quantity = item.Quantity,
                 UnitPrice = item.Food!.Price,
-                Note = null
+                Note = request.Note
             }).ToList();
 
             var newOrder = new OrderEntity
             {
                 UserId = userId,
+                Id = OrderId,
                 CreatedAt = DateTime.UtcNow,
-                Status = "Đang xử lý",
-                TotalAmount = totalPrice,
+                Status = "Chờ xác nhận",
+                TotalAmount = request.TotalPrice,
                 OrderDetails = orderDetails
+            };
+
+            var Order = new OrderResponse
+            {
+                OrderId = OrderId,
+                Status = "Chờ xác nhận",
+                TotalAmount = request.TotalPrice,
+                CreatedAt = DateTime.UtcNow,
+                Items = orderDetails.Select(od => new OrderItemResponse
+                {
+                    FoodId = od.FoodId,
+                    Quantity = od.Quantity,
+                    Price = (decimal)od.UnitPrice,
+                    Note = od.Note,
+                    //FoodName = od.Food?.Content ?? string.Empty,
+                    //ImageUrl = od.Food?.ImageUrl ?? string.Empty
+                }).ToList()
             };
 
             await _orderRepo.AddOrderAsync(newOrder);
             await _cartRepo.RemoveCartItemsAsync(cartItems);
             await _dbContext.SaveChangesAsync();
 
-            return new BaseAPIResponse("Tạo đơn hàng thành công.", 201, true);
+            return new BaseAPIResponse
+            {
+                IsSuccess = true,
+                StatusCode = 200,
+                Data = Order
+            };
         }
 
 
@@ -58,7 +82,7 @@ namespace Eatzie.Services
             {
                 OrderId = o.Id,
                 CreatedAt = o.CreatedAt,
-                TotalAmount = (double)o.TotalAmount,
+                TotalAmount = o.TotalAmount,
                 Status = o.Status,
                 Items = o.OrderDetails.Select(d => new OrderItemResponse
                 {
@@ -81,7 +105,7 @@ namespace Eatzie.Services
             {
                 OrderId = order.Id,
                 CreatedAt = order.CreatedAt,
-                TotalAmount = (double)order.TotalAmount,
+                TotalAmount = order.TotalAmount,
                 Status = order.Status,
                 Items = order.OrderDetails.Select(d => new OrderItemResponse
                 {

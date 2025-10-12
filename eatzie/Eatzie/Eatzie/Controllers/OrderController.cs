@@ -21,8 +21,10 @@ namespace Eatzie.Controllers
         {
             var userId = GetUserIdFromToken.ExtractUserId(HttpContext);
             if (userId == null) return Unauthorized();
+            int OrderId = _context.Orders.OrderByDescending(o => o.Id).Select(o => o.Id).FirstOrDefault() + 1;
 
-            var result = await _service.CreateOrderAsync(userId.Value, request.TotalPrice);
+
+            var result = await _service.CreateOrderAsync(userId.Value, request ,OrderId);
             return StatusCode(result.StatusCode, result);
         }
         [HttpPatch("{orderId}/status")]

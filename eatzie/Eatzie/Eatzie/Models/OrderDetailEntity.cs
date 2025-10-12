@@ -1,11 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Eatzie.Models
 {
     public class OrderDetailEntity
     {
         public int Id { get; set; }
-
+        [JsonIgnore]
         public int OrderId { get; set; }
         [Column("FoodId")]
 

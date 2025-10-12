@@ -253,7 +253,9 @@ public class RestaurantService : IRestaurantService
                 Price = rf.Food.Price,
                 ImageUrl = rf.Food.ImageUrl,
                 IsVegetarian = rf.Food.IsVegetarian,
-                CreatedAt = rf.Food.CreatedAt
+                CreatedAt = rf.Food.CreatedAt,
+                RestaurantName = rf.Restaurant.Name,
+                RestaurantId = rf.RestaurantId,
             })
             .ToListAsync();
 
