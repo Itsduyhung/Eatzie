@@ -4,5 +4,7 @@
     {
         public string Content { get; set; }
         public int Rating { get; set; }
+        public IFormFile? Image { get; set; }
+
     }
 }

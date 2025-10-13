@@ -9,6 +9,7 @@
         public double Rating { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool IsResolved { get; set; }
+        public string? Image { get; set; }
     }
 
 }

@@ -1,4 +1,5 @@
-﻿using Eatzie.Data;
+﻿using CloudinaryDotNet.Actions;
+using Eatzie.Data;
 using Eatzie.DTOs.Request;
 using Eatzie.DTOs.Response;
 using Eatzie.Enum;
@@ -149,25 +150,54 @@ public class FoodService : IFoodService
         return new BaseAPIResponse("View has been counted.", 200, true);
     }
 
-    public async Task<BaseAPIResponse> CreateFeedbackAsync(int userId, int foodId, FeedbackRequest request)
+    public async Task<BaseAPIResponse> CreateFeedbackAsync(int userId, int foodId, FeedbackRequest request, int FeedbackId)
     {
+        // Kiểm tra món ăn tồn tại
         var food = await _foodRepository.GetFoodByIdAsync(foodId);
         if (food == null)
         {
             return new BaseAPIResponse("Món ăn không tồn tại.", 404, false);
         }
 
+        string imageUrl = null;
+
+        if (request.Image != null && request.Image.Length > 0)
+        {
+            imageUrl = await _photoService.UploadPhotoAsync(request.Image);
+        }
+
         var feedback = new FeedbackEntity
         {
+            Id = FeedbackId,
             UserId = userId,
             Food_id = foodId,
             Content = request.Content,
             Rating = request.Rating,
+            Image = imageUrl,
             CreatedAt = DateTime.UtcNow,
             IsResolved = false
         };
+
+        var newFeedback = new FeedbackResponse
+        {
+            Id = feedback.Id,
+            UserId = feedback.UserId,
+            Food_id = feedback.Food_id,
+            Content = feedback.Content,
+            Rating = feedback.Rating,
+            Image = feedback.Image,
+            CreatedAt = feedback.CreatedAt,
+            IsResolved = feedback.IsResolved
+        };
+
         await _feedbackRepo.AddAsync(feedback);
-        return new BaseAPIResponse("Thêm Feedback thành công.", 201, true);
+        return new BaseAPIResponse
+        {
+            Message = "Thêm Feedback thành công!",
+            IsSuccess = true,
+            StatusCode = 200,
+            Data = newFeedback
+        };
     }
 
     public async Task<List<FeedbackResponse>> GetFeedbacksByFoodIdAsync(int foodId)
@@ -183,7 +213,8 @@ public class FoodService : IFoodService
                 Content = f.Content,
                 Rating = f.Rating,
                 CreatedAt = f.CreatedAt,
-                IsResolved = f.IsResolved
+                IsResolved = f.IsResolved,
+                Image = f.Image
             }).ToListAsync();
 
         return feedbacks;
@@ -193,9 +224,15 @@ public class FoodService : IFoodService
     {
         var feedback = await _context.FeedbackEntitys.FirstOrDefaultAsync(f => f.Id == feedbackId);
         if (feedback == null || feedback.UserId != userId) return false;
+        string imageUrl = null;
 
+        if (request.Image != null && request.Image.Length > 0)
+        {
+            imageUrl = await _photoService.UploadPhotoAsync(request.Image);
+        }
         feedback.Content = request.Content;
         feedback.Rating = request.Rating;
+        feedback.Image = imageUrl;
         //feedback.IsResolved = request.IsResolved;
         await _context.SaveChangesAsync();
         return true;

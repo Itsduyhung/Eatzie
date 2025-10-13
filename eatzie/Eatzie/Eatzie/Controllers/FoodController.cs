@@ -1,4 +1,5 @@
-﻿using Eatzie.DTOs.Request;
+﻿using Eatzie.Data;
+using Eatzie.DTOs.Request;
 using Eatzie.Helpers;
 using Eatzie.Interfaces.IService;
 using Eatzie.Services;
@@ -10,9 +11,10 @@ namespace Eatzie.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class FoodController(IFoodService service) : ControllerBase
+    public class FoodController(IFoodService service, ApplicationDbContext context) : ControllerBase
     {
         private readonly IFoodService _service = service;
+        private readonly ApplicationDbContext _context = context;
 
         [HttpGet("suggest")]
         public async Task<IActionResult> SuggestFoods()
@@ -59,15 +61,15 @@ namespace Eatzie.Controllers
         }
 
         [HttpPost("{foodId}/feedback")]
-        public async Task<IActionResult> AddFeedback(int foodId, [FromBody] FeedbackRequest request)
+        public async Task<IActionResult> AddFeedback(int foodId, [FromForm] FeedbackRequest request)
         {
             var userId = GetUserIdFromToken.ExtractUserId(HttpContext);
             if (userId == null)
             {
                 return StatusCode(401, new BaseAPIResponse("Token không hợp lệ.", 401, false));
             }
-
-            var response = await _service.CreateFeedbackAsync(userId.Value, foodId, request);
+            int FeedbackId = _context.FeedbackEntitys.OrderByDescending(o => o.Id).Select(o => o.Id).FirstOrDefault() + 1;
+            var response = await _service.CreateFeedbackAsync(userId.Value, foodId, request, FeedbackId);
             return StatusCode(response.StatusCode, response);
         }
         [HttpGet("{foodId}/feedbacks")]
@@ -77,7 +79,7 @@ namespace Eatzie.Controllers
             return Ok(feedbacks);
         }
         [HttpPut("feedback/{feedbackId}")]
-        public async Task<IActionResult> UpdateFeedback(int feedbackId, [FromBody] FeedbackRequest request)
+        public async Task<IActionResult> UpdateFeedback(int feedbackId, [FromForm] FeedbackRequest request)
         {
             var userId = GetUserIdFromToken.ExtractUserId(HttpContext);
             if (userId == null) return Unauthorized("Token không hợp lệ.");
