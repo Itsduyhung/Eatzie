@@ -1,5 +1,6 @@
 import { AddCartItemInput, CartService } from "@/domain/service/CardService";
 import { OrderService, PriceAllFoods } from "@/domain/service/OrderService";
+import { useOrderStore } from "@/stores/orderStore";
 import { useCartStore } from "@/stores/useCartStore";
 import { ToastAndroid } from "react-native";
 
@@ -33,15 +34,58 @@ export const CartOrderService = {
 
   createOrder: async () => {
     const getTotal = useCartStore.getState().total;
-    const totalPrice: PriceAllFoods = { price: getTotal() };
+    const totalPrice: PriceAllFoods = { price: getTotal(), note: "string" };
 
-    if (totalPrice.price <= 0)
+    console.log("[createOrder] Tổng giá trị giỏ hàng:", totalPrice.price);
+
+    if (totalPrice.price <= 0) {
+      console.error("[createOrder] Tổng giá trị đơn hàng không hợp lệ");
       throw new Error("Tổng giá trị đơn hàng không hợp lệ");
+    }
 
     try {
-      await OrderService.createOrder(totalPrice);
+      console.log("[createOrder] Gọi OrderService.createOrder...");
+      const orderCreateRes = await OrderService.createOrder(totalPrice);
+      console.log("[createOrder] Response từ server:", orderCreateRes.data);
+
+      const items = orderCreateRes.data?.items || [];
+      const itemsId: number[] = items.map((item) => item.foodId);
+
+      console.log("[createOrder] Items mapping:", items);
+      console.log("[createOrder] ItemsId mapping:", itemsId);
+
+      if (orderCreateRes.data?.orderId === undefined) {
+        console.error("[createOrder] Order ID is undefined sau khi tạo đơn");
+        throw new Error("Order ID is undefined after order creation");
+      }
+
+      useOrderStore.setState({
+        orderId: orderCreateRes.data.orderId,
+        status: orderCreateRes.data.status,
+        items,
+        itemsId,
+        createdAt: orderCreateRes.data.createdAt,
+      });
+
+      console.log(
+        "[createOrder] State useOrderStore đã cập nhật:",
+        useOrderStore.getState()
+      );
+
+      console.log(
+        "[createOrder] Xóa giỏ hàng sau khi tạo đơn:",
+        orderCreateRes.data.orderId
+      );
+      useCartStore
+        .getState()
+        .clearCartAfterOrder(
+          orderCreateRes.data.orderId,
+          orderCreateRes.data.createdAt
+        );
+
+      console.log("[createOrder] Hoàn tất createOrder thành công");
     } catch (err) {
-      console.error("Failed to create order", err);
+      console.error("[createOrder] Failed to create order:", err);
       throw new Error("Tạo đơn hàng thất bại");
     }
 
@@ -54,8 +98,6 @@ export const CartOrderService = {
 
       await CartOrderService.addCartItems();
       await CartOrderService.createOrder();
-
-      useCartStore.getState().clearCart();
 
       ToastAndroid.show("Đặt hàng thành công!", ToastAndroid.SHORT);
       return true;

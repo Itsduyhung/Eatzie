@@ -31,7 +31,7 @@ export const CartFooter = () => {
     <>
       {isVisible && (
         <BottomSheet visible={isVisible} onClose={closeSheet}>
-          <CartScreen />
+          <CartScreen onClose={closeSheet} />
         </BottomSheet>
       )}
 

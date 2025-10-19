@@ -1,9 +1,10 @@
 import { ThemedText } from "@/app/hooks/ThemedTextColor";
+import { useFoodStore } from "@/stores/FoodStore";
 import { useCartStore } from "@/stores/useCartStore";
-import { FoodItem } from "@/types/foodCategory";
+import { FoodItemD } from "@/types/foodCategory";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { useRouter } from "expo-router";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Pressable, View } from "react-native";
 import { XStack, YStack } from "tamagui";
 import { CustomButton } from "../ui/CustomButton";
@@ -12,24 +13,43 @@ import { cartRef } from "./cartRef";
 import { useFlyToCart } from "./useFlyToCart";
 
 type Props = {
-  item: FoodItem;
+  id: number;
 };
 
-export const FoodCardItem = ({ item }: Props) => {
+export const FoodCardItem = ({ id }: Props) => {
   const router = useRouter();
-  const addToCart = useCartStore((state) => state.addToCart);
-  const increaseQuantity = useCartStore((state) => state.increaseQuantity);
-  const decreaseQuantity = useCartStore((state) => state.decreaseQuantity);
-  const quantity = useCartStore((state) => {
-    const found = state.cart.find((i) => i.id === item.id);
-    return found?.quantity ?? 0;
-  });
+
+  const food = useFoodStore((s) => s.foods[id]);
+  const fetchFood = useFoodStore((s) => s.fetchFood);
+
+  useEffect(() => {
+    if (!food) {
+      fetchFood(id).catch(() => {});
+    }
+  }, [id, food, fetchFood]);
+
+  const cartItem = useCartStore((s) => s.cart.find((i) => i.id === id));
+  const quantity = cartItem?.quantity ?? 0;
+
+  const addToCart = useCartStore((s) => s.addToCart);
+  const increaseQuantity = useCartStore((s) => s.increaseQuantity);
+  const decreaseQuantity = useCartStore((s) => s.decreaseQuantity);
 
   const { flyToCart } = useFlyToCart();
-  const buttonRefs = useRef<Record<string, View | null>>({});
+  const buttonRefs = useRef<Record<number, View | null>>({});
+
+  const item: FoodItemD | undefined = food;
+
+  if (!item) {
+    return (
+      <YStack padding="$3">
+        <ThemedText>Đang tải món ăn...</ThemedText>
+      </YStack>
+    );
+  }
 
   const handleAddToCart = () => {
-    const ref = buttonRefs.current[item.id];
+    const ref = buttonRefs.current[id];
 
     ref?.measureInWindow?.((x, y, width, height) => {
       const start = { x: x + width / 2, y: y + height / 2 };
@@ -69,16 +89,11 @@ export const FoodCardItem = ({ item }: Props) => {
         backgroundColor="white"
         paddingBottom="$1.5"
       >
-        <XStack
-          alignItems="center"
-          backgroundColor="#F5F5F5"
-          borderRadius={10}
-          overflow="hidden"
-        >
+        <XStack alignItems="center" overflow="hidden">
           <SizableImage
-            source={item.image}
+            source={{ uri: item.image as any }}
             resizeMode="cover"
-            borderRadius={1}
+            borderRadius={10}
             style={{ width: 80, height: 80 }}
           />
 
@@ -122,6 +137,7 @@ export const FoodCardItem = ({ item }: Props) => {
                       paddingHorizontal={8}
                       paddingVertical={2}
                       onPress={handleDecrease}
+                      hitSlop={10}
                     >
                       -
                     </CustomButton>
@@ -150,6 +166,7 @@ export const FoodCardItem = ({ item }: Props) => {
                   paddingHorizontal={8}
                   paddingVertical={1}
                   paddingBottom={4}
+                  hitSlop={10}
                   onPress={handleAddToCart}
                 >
                   +

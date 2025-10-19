@@ -14,10 +14,13 @@ export const useThemedTextColor = () => {
 
 export const ThemedText = (props: TextProps) => {
   const { textColor } = useThemedTextColor();
-  return <Text {...props} color={textColor} />;
+  const mergedColor = props.color ?? textColor;
+  return <Text {...props} color={mergedColor} />;
 };
 
 export const ThemedSizableText = (props: SizableTextProps) => {
   const { textColor } = useThemedTextColor();
-  return <SizableText {...props} color={textColor} />;
+  const mergedColor = props.color ?? textColor;
+
+  return <SizableText {...props} color={mergedColor} />;
 };

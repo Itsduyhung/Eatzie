@@ -6,5 +6,5 @@ export interface ApiResponse<T = any> {
   message: string;
   statusCode: number;
   isSuccess: boolean;
-  data: T | null;
+  data: T | null | undefined;
 }

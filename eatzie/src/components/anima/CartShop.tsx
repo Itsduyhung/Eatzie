@@ -36,11 +36,9 @@ export const CartItem = ({ id }: Props) => {
   const decreaseQuantity = useCartStore((s) => s.decreaseQuantity);
   const updateNote = useCartStore((s) => s.updateNote);
 
-  // --- Fly to cart animation ---
   const { flyToCart } = useFlyToCart();
   const buttonRefs = useRef<Record<number, View | null>>({});
 
-  // --- Local note state ---
   const [localNote, setLocalNote] = useState(note);
   useEffect(() => setLocalNote(note), [note]);
 
@@ -184,14 +182,6 @@ export const CartItem = ({ id }: Props) => {
           </YStack>
         </XStack>
       </Pressable>
-
-      <View
-        style={{
-          height: 1,
-          backgroundColor: "#E0E0E0",
-          marginHorizontal: 12,
-        }}
-      />
     </YStack>
   );
 };
