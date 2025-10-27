@@ -5,6 +5,8 @@ import {
   LayoutChangeEvent,
   StyleSheet,
 } from "react-native";
+import { BlurView } from "expo-blur";
+
 import Animated, {
   Extrapolation,
   interpolate,
@@ -14,11 +16,13 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { XStack, YStack } from "tamagui";
-
 import { usePathname } from "expo-router";
+
 import { CartFooter } from "../footer/CardFooter";
 import { SizableImage } from "../ui/SizableImageProps";
 import { ThemedScreen } from "./ThemedScreen";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { HeaderIconButton } from "../ui/HeaderIconButton";
 
 type Props = {
   children: ReactNode;
@@ -48,10 +52,13 @@ export const ScrollScreenLayout = ({
   const insets = useSafeAreaInsets();
   const scrollY = useSharedValue(0);
   const pathname = usePathname();
-
   const [headerHeight, setHeaderHeight] = useState(0);
 
-  const showCartFooterRoutes = ["/cartScreen", "/checkout"];
+  const showCartFooterRoutes = [
+    "/cartScreen",
+    "/checkout",
+    "/food/contentfood",
+  ];
   const shouldShowCartFooter = showCartFooterRoutes.includes(pathname);
 
   const scrollHandler = useAnimatedScrollHandler((event) => {
@@ -74,7 +81,11 @@ export const ScrollScreenLayout = ({
 
   return (
     <ThemedScreen backgroundColor={backgroundColor}>
-      <StatusBar translucent backgroundColor="transparent" />
+      <StatusBar
+        translucent
+        backgroundColor="transparent"
+        style={statusBarStyle}
+      />
 
       {(backgroundImage ||
         gradientWrapper ||
@@ -82,6 +93,7 @@ export const ScrollScreenLayout = ({
         headerLeftIcons.length ||
         headerRightIcons.length) && (
         <Animated.View
+          pointerEvents="box-none"
           onLayout={onHeaderLayout}
           style={[
             {
@@ -96,7 +108,7 @@ export const ScrollScreenLayout = ({
           ]}
         >
           {backgroundImage ? (
-            <YStack position="relative" backgroundColor="red">
+            <YStack position="relative">
               <SizableImage
                 style={{
                   height: 200,
@@ -114,16 +126,17 @@ export const ScrollScreenLayout = ({
                 paddingHorizontal="$4"
                 justifyContent="space-between"
                 alignItems="center"
+                pointerEvents="box-none"
               >
                 <XStack gap="$2">
                   {headerLeftIcons.map((icon, index) => (
-                    <YStack key={index}>{icon}</YStack>
+                    <HeaderIconButton key={index}>{icon}</HeaderIconButton>
                   ))}
                 </XStack>
 
                 <XStack gap="$3">
                   {headerRightIcons.map((icon, index) => (
-                    <YStack key={index}>{icon}</YStack>
+                    <HeaderIconButton key={index}>{icon}</HeaderIconButton>
                   ))}
                 </XStack>
               </XStack>
@@ -156,25 +169,27 @@ export const ScrollScreenLayout = ({
         </Animated.View>
       )}
 
-      <Animated.ScrollView
-        onScroll={scrollHandler}
-        scrollEventThrottle={16}
-        keyboardShouldPersistTaps="handled"
-        automaticallyAdjustKeyboardInsets={false}
-        contentInsetAdjustmentBehavior="never"
-        bounces={true}
-        overScrollMode="always"
-        contentContainerStyle={[
-          styles.scrollContent,
-          {
-            paddingTop: headerHeight,
-            paddingBottom: insets.bottom + 24,
-            justifyContent: centerContent ? "center" : "flex-start",
-          },
-        ]}
-      >
-        {children}
-      </Animated.ScrollView>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <Animated.ScrollView
+          onScroll={scrollHandler}
+          scrollEventThrottle={16}
+          keyboardShouldPersistTaps="handled"
+          automaticallyAdjustKeyboardInsets={false}
+          contentInsetAdjustmentBehavior="never"
+          bounces={true}
+          overScrollMode="always"
+          contentContainerStyle={[
+            styles.scrollContent,
+            {
+              paddingTop: headerHeight,
+              paddingBottom: insets.bottom + (shouldShowCartFooter ? 80 : 24),
+              justifyContent: centerContent ? "center" : "flex-start",
+            },
+          ]}
+        >
+          {children}
+        </Animated.ScrollView>
+      </GestureHandlerRootView>
 
       {shouldShowCartFooter && <CartFooter />}
     </ThemedScreen>

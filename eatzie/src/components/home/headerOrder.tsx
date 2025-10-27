@@ -1,16 +1,14 @@
-// components/HeaderWithTabs.tsx
+import React from "react";
 import { ThemedText } from "@/app/hooks/ThemedTextColor";
 import { FontAwesome } from "@expo/vector-icons";
-import React from "react";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ScrollView, Text, XStack, YStack } from "tamagui";
+import { Tabs, Text, YStack, XStack, ScrollView } from "tamagui";
 
 const TAB_ITEMS = [
-  "Đang đến",
-  "Deal đã mua",
-  "Lịch sử",
-  "Đánh giá",
-  "Đơn nháp",
+  { key: "coming", label: "Đang đến" },
+  { key: "deal", label: "Deal đã mua" },
+  { key: "history", label: "Lịch sử" },
+  { key: "review", label: "Đánh giá" },
+  { key: "draft", label: "Đơn nháp" },
 ];
 
 type Props = {
@@ -19,10 +17,9 @@ type Props = {
 };
 
 export const HeaderWithTabs = ({ activeTab, setActiveTab }: Props) => {
-  const insets = useSafeAreaInsets();
-
   return (
-    <YStack pt={insets.top + 10} px="$3" bg="white">
+    <YStack bg="white" px="$3">
+      {/* Header */}
       <XStack
         position="relative"
         alignItems="center"
@@ -37,7 +34,6 @@ export const HeaderWithTabs = ({ activeTab, setActiveTab }: Props) => {
             position: "absolute",
             left: 0,
             right: 0,
-            textAlignVertical: "center",
           }}
         >
           Đơn hàng
@@ -48,37 +44,79 @@ export const HeaderWithTabs = ({ activeTab, setActiveTab }: Props) => {
         </XStack>
       </XStack>
 
+      {/* Tabs */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <XStack gap="$5" pb="$1">
-          {TAB_ITEMS.map((tab) => {
-            const isActive = activeTab === tab;
-            return (
-              <YStack
-                key={tab}
-                alignItems="center"
-                onPress={() => setActiveTab(tab)}
-                pressStyle={{ opacity: 0.7 }}
-              >
-                <Text
-                  fontSize="$5"
-                  fontWeight="600"
-                  color={isActive ? "#f94c43" : "#555"}
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          orientation="horizontal"
+          flexDirection="column"
+          flex={1}
+          backgroundColor="white"
+        >
+          <Tabs.List
+            backgroundColor="white"
+            justifyContent="space-around"
+            borderBottomWidth={1}
+            borderBottomColor="#eee"
+          >
+            {TAB_ITEMS.map((tab) => {
+              const isActive = activeTab === tab.key;
+              return (
+                <Tabs.Tab
+                  key={tab.key}
+                  value={tab.key}
+                  onPress={() => setActiveTab(tab.key)}
+                  unstyled
+                  backgroundColor="transparent"
+                  hoverStyle={{ backgroundColor: "transparent" }}
+                  focusStyle={{ backgroundColor: "transparent" }}
+                  pressStyle={{ opacity: 0.7 }}
+                  {...{
+                    "data-[state=active]": {
+                      backgroundColor: "transparent", // ✅ tắt active background
+                    },
+                  }}
                 >
-                  {tab}
-                </Text>
-                {isActive && (
-                  <YStack
-                    h={3}
-                    w="80%"
-                    bg="#f94c43"
-                    borderRadius={9999}
-                    mt="$1"
-                  />
-                )}
-              </YStack>
-            );
-          })}
-        </XStack>
+                  <YStack alignItems="center">
+                    <Text
+                      fontSize="$5"
+                      fontWeight="600"
+                      color={isActive ? "#43f970ff" : "#555"}
+                    >
+                      {tab.label}
+                    </Text>
+                    {isActive && (
+                      <YStack
+                        mt="$1"
+                        height={3}
+                        width="60%"
+                        backgroundColor="#f94c43"
+                        borderRadius={9999}
+                      />
+                    )}
+                  </YStack>
+                </Tabs.Tab>
+              );
+            })}
+          </Tabs.List>
+
+          {/* Tab content */}
+          {TAB_ITEMS.map((tab) => (
+            <Tabs.Content
+              key={tab.key}
+              value={tab.key}
+              flex={1}
+              alignItems="center"
+              justifyContent="center"
+              paddingVertical="$4"
+            >
+              <Text fontSize="$6" color="#333">
+                {tab.label} content
+              </Text>
+            </Tabs.Content>
+          ))}
+        </Tabs>
       </ScrollView>
     </YStack>
   );

@@ -9,8 +9,8 @@ export function BackButton() {
     <PressableIcon
       icon={ChevronLeft}
       onPress={() => router.back()}
-      defaultColor="black"
-      pressColor="#f87171" 
+      defaultColor="white"
+      pressColor="#f3b8b8ff"
     />
   );
 }

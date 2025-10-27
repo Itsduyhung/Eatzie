@@ -135,6 +135,14 @@ const RootLayout = () => {
                       name="(features)/profile/savedFood"
                       options={{ headerShown: false }}
                     />
+                    <Stack.Screen
+                      name="(features)/feedback/postf"
+                      options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                      name="(features)/feedback/ratingScreen"
+                      options={{ headerShown: false }}
+                    />
                   </Stack>
                 </ThemeProvider>
               </Theme>
