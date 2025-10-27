@@ -4715,11 +4715,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\neweat\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Eatzie.csproj",
+      "projectUniqueName": "C:\\lldod\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Eatzie.csproj",
       "projectName": "Eatzie",
-      "projectPath": "C:\\neweat\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Eatzie.csproj",
+      "projectPath": "C:\\lldod\\Eatzie\\eatzie\\Eatzie\\Eatzie\\Eatzie.csproj",
       "packagesPath": "C:\\Users\\HIEU\\.nuget\\packages\\",
-      "outputPath": "C:\\neweat\\Eatzie\\eatzie\\Eatzie\\Eatzie\\obj\\",
+      "outputPath": "C:\\lldod\\Eatzie\\eatzie\\Eatzie\\Eatzie\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\HIEU\\AppData\\Roaming\\NuGet\\NuGet.Config"

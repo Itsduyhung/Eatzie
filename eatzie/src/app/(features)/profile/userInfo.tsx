@@ -2,7 +2,6 @@ import { useAuthStore } from "@/applicaton/stores/authStores";
 import { HeaderSetting } from "@/components/home/HeaderSetting";
 import { ScrollScreenLayout } from "@/components/layout/ScrollScreenLayout";
 import { CustomButton } from "@/components/ui/CustomButton";
-import { ProfileService } from "@/domain/service/ProfileService";
 import { useProfileStore } from "@/stores/profileStore";
 import { ChevronRight } from "@tamagui/lucide-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -88,24 +87,31 @@ const ProfileGroup = ({ items }: { items: ItemDef[] }) => {
 };
 
 const ProfileScreen = () => {
-  const { user } = useAuthStore();
-  const { profile, setProfile } = useProfileStore();
-  const { title } = useLocalSearchParams();
   const router = useRouter();
+  const { title } = useLocalSearchParams();
+  const { user } = useAuthStore();
+
+  const userId = user?.userId ? Number(user.userId) : undefined;
+
+  const profile = useProfileStore((s) => s.profile);
+  const loadingProfile = useProfileStore((s) => s.loading);
+  const fetchProfile = useProfileStore((s) => s.fetchProfile);
 
   useEffect(() => {
-    if (user?.userId) {
-      ProfileService.getProfile(Number(user.userId)).then(setProfile);
+    if (userId) {
+      fetchProfile(userId);
     }
-  }, [user]);
+  }, [userId]);
 
-  if (!profile) {
+  const isLoading = userId ? loadingProfile[userId] : false;
+
+  if (!profile || isLoading) {
     return (
       <ScrollScreenLayout
         header={<HeaderSetting nameTitle={title as string} />}
         headerBackgroundColor="white"
       >
-        <Text p="$4">⏳ Đang tải...</Text>
+        <Text p="$4">⏳ Đang tải thông tin...</Text>
       </ScrollScreenLayout>
     );
   }
@@ -166,8 +172,6 @@ const ProfileScreen = () => {
       key: "email",
       label: "Email",
       value: profile.email,
-      editable: false,
-      onPress: undefined,
     },
   ];
 

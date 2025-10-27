@@ -6,9 +6,13 @@ import { useThemedTextColor } from "@/app/hooks/ThemedTextColor";
 
 type HeaderSettingProps = {
   nameTitle: string;
+  order?: boolean;
 };
 
-export const HeaderSetting = ({ nameTitle }: HeaderSettingProps) => {
+export const HeaderSetting = ({
+  nameTitle,
+  order = false,
+}: HeaderSettingProps) => {
   const insets = useSafeAreaInsets();
   const { textColor } = useThemedTextColor();
 
@@ -25,11 +29,13 @@ export const HeaderSetting = ({ nameTitle }: HeaderSettingProps) => {
         justifyContent="center"
         position="relative"
       >
-        <XStack position="absolute" left="$3">
-          <BackButton />
-        </XStack>
+        {!order && (
+          <XStack position="absolute" left="$3">
+            <BackButton />
+          </XStack>
+        )}
 
-        <Text fontSize="$6" fontWeight="700" color={textColor}>
+        <Text fontSize="$7" fontWeight="700" color={textColor}>
           {nameTitle}
         </Text>
       </XStack>

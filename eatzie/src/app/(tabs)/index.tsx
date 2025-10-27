@@ -22,7 +22,6 @@ const HomeTab = () => {
       </YStack>
 
       <YStack width="100%" paddingHorizontal="$2" marginTop="$3">
-        {/* <FlashCardRender /> */}
         <RecommentdedFoodScreen />
       </YStack>
 

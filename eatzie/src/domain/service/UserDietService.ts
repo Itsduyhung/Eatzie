@@ -13,13 +13,19 @@ export class UserDietService {
       console.log(`🔍 Calling GET /UserDiet/${userId}`);
       const response = await get<ApiResponse<UserDiet>>(`/UserDiet/${userId}`);
       console.log("✅ UserDietService.getUserDiet API Response:", response);
-      
+
       if (response.isSuccess && response.data) {
-        console.log("✅ UserDietService.getUserDiet: Data found:", response.data);
+        console.log(
+          "✅ UserDietService.getUserDiet: Data found:",
+          response.data
+        );
         return response.data;
       }
-      
-      console.log("⚠️ UserDietService.getUserDiet: API call not successful or no data.", response);
+
+      console.log(
+        "⚠️ UserDietService.getUserDiet: API call not successful or no data.",
+        response
+      );
       return null;
     } catch (error) {
       console.error("❌ Error getting user diet:", error);
@@ -32,7 +38,9 @@ export class UserDietService {
    * @param updateData - Dữ liệu cập nhật
    * @returns Promise<ApiResponse<any>>
    */
-  static async updateUserDiet(updateData: UserDietUpdateRequest): Promise<ApiResponse<any>> {
+  static async updateUserDiet(
+    updateData: UserDietUpdateRequest
+  ): Promise<ApiResponse<any>> {
     try {
       const response = await putRaw<any>("/UserDiet/update-full", updateData);
       console.log("✅ Update user diet response:", response);
@@ -49,11 +57,14 @@ export class UserDietService {
    * @param allergicFood - Danh sách thức ăn dị ứng
    * @returns Promise<ApiResponse<any>>
    */
-  static async updateAllergicFood(userId: number, allergicFood: string): Promise<ApiResponse<any>> {
+  static async updateAllergicFood(
+    userId: number,
+    allergicFood: string
+  ): Promise<ApiResponse<any>> {
     try {
       const response = await putRaw<any>("/UserDiet/allergic-food", {
         userId,
-        allergicFood
+        allergicFood,
       });
       console.log("✅ Update allergic food response:", response);
       return response;
@@ -69,11 +80,14 @@ export class UserDietService {
    * @param favoriteFood - Danh sách thức ăn yêu thích
    * @returns Promise<ApiResponse<any>>
    */
-  static async updateFavoriteFood(userId: number, favoriteFood: string): Promise<ApiResponse<any>> {
+  static async updateFavoriteFood(
+    userId: number,
+    favoriteFood: string
+  ): Promise<ApiResponse<any>> {
     try {
       const response = await putRaw<any>("/UserDiet/favorite-food", {
         userId,
-        favoriteFood
+        favoriteFood,
       });
       console.log("✅ Update favorite food response:", response);
       return response;
@@ -91,15 +105,15 @@ export class UserDietService {
    * @returns Promise<ApiResponse<any>>
    */
   static async updateSpendingRange(
-    userId: number, 
-    minSpending: number, 
+    userId: number,
+    minSpending: number,
     maxSpending: number
   ): Promise<ApiResponse<any>> {
     try {
       const response = await putRaw<any>("/UserDiet/spending-range", {
         userId,
         minSpending,
-        maxSpending
+        maxSpending,
       });
       console.log("✅ Update spending range response:", response);
       return response;

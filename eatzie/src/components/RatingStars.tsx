@@ -1,4 +1,3 @@
-// src/components/ui/RatingStars.tsx
 import { FontAwesome } from "@expo/vector-icons";
 import { XStack } from "tamagui";
 

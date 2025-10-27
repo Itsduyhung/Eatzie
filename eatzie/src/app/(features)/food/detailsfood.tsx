@@ -11,9 +11,9 @@ import { useCartStore } from "@/stores/useCartStore";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { Feather, FontAwesome5 } from "@expo/vector-icons";
 import { Eye, Star } from "@tamagui/lucide-icons";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useRef } from "react";
-import { View } from "react-native";
+import { Pressable, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text, XStack, YStack } from "tamagui";
 
@@ -34,10 +34,14 @@ const FoodText = ({
 );
 
 const DetailsFood = () => {
+  const router = useRouter();
   const { id } = useLocalSearchParams();
   const foodId = Number(id);
-  const { foods, loading, error, fetchFood } = useFoodStore();
-  const item = foods[foodId];
+  const isLoading = useFoodStore((s) => s.loading[foodId]);
+  const error = useFoodStore((s) => s.error[foodId]);
+  const fetchFood = useFoodStore((s) => s.fetchFood);
+  const food = useFoodStore((s) => s.foods);
+  const item = food[foodId];
 
   const addToCart = useCartStore((state) => state.addToCart);
   const { flyToCart } = useFlyToCart();
@@ -45,14 +49,16 @@ const DetailsFood = () => {
   const insets = useSafeAreaInsets();
 
   useEffect(() => {
-    if (foodId) fetchFood(foodId);
-  }, [foodId, fetchFood]);
+    if (foodId && !item && !isLoading) {
+      fetchFood(foodId);
+    }
+  }, [foodId, item, isLoading, fetchFood]);
 
-  if (loading[foodId]) return <Text>Đang tải...</Text>;
-  if (error[foodId]) return <Text>{error[foodId]}</Text>;
+  if (isLoading) return <Text>Đang tải...</Text>;
+  if (error) return <Text>{error[foodId]}</Text>;
   if (!item) return <Text>Không tìm thấy món ăn</Text>;
 
-  const handleAddToCart = (item: (typeof foods)[number]) => {
+  const handleAddToCart = (item: (typeof food)[number]) => {
     const ref = buttonRefs.current[item.id];
 
     ref?.measureInWindow?.((x, y, width, height) => {
@@ -71,10 +77,16 @@ const DetailsFood = () => {
     <ScrollScreenLayout
       backgroundImage={{ uri: item.image as any }}
       headerLeftIcons={[<BackButton key="back" />]}
-      headerRightIcons={[<FontAwesome5 name="share" size={20} key="share" />]}
+      headerRightIcons={[
+        <FontAwesome5 name="share" color="white" size={16} key="share" />,
+      ]}
     >
-      <YStack backgroundColor="white" paddingHorizontal="$4">
-        <YStack paddingTop={15} gap="$3">
+      <YStack
+        backgroundColor="white"
+        paddingHorizontal="$4"
+        paddingVertical="$3"
+      >
+        <YStack gap="$3">
           <FoodText size={22} weight="700">
             {item.name}
           </FoodText>
@@ -103,7 +115,15 @@ const DetailsFood = () => {
               />
             </XStack>
 
-            <CustomButton>
+            <CustomButton
+              hitSlop={10}
+              onPress={() => {
+                router.push({
+                  pathname: "/(features)/feedback/ratingScreen",
+                  params: { id: item.id, title: "Xem đánh giá" },
+                });
+              }}
+            >
               <XStack alignItems="center" width="100%" gap="$2">
                 <FoodText size={15} weight="400">
                   Xem đánh giá
@@ -125,6 +145,32 @@ const DetailsFood = () => {
             Thêm vào giỏ hàng
           </CustomButton>
         </YStack>
+      </YStack>
+      <YStack
+        justifyContent="center"
+        alignItems="center"
+        backgroundColor="white"
+        paddingHorizontal="$4"
+        paddingVertical="$4"
+        marginTop="$3"
+      >
+        <Pressable
+          key={item.restaurantId}
+          hitSlop={10}
+          onPress={() => {
+            router.push({
+              pathname: "/(features)/food/contentfood",
+              params: { id: item.restaurantId },
+            });
+          }}
+        >
+          <XStack alignItems="center" gap="$2">
+            <FoodText size={16} weight="700">
+              {item.restaurantName}
+            </FoodText>
+            <Feather name="arrow-right" size={16} color="black" />
+          </XStack>
+        </Pressable>
       </YStack>
 
       <CartFooter />

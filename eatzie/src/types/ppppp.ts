@@ -1,5 +1,3 @@
-// types/input/CustomPasswordProps.ts
-
 import { FieldInputProps, FieldMetaProps } from "formik";
 import {
   NativeSyntheticEvent,
