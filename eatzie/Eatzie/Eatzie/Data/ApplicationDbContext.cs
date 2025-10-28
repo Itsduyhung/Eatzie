@@ -23,6 +23,7 @@ namespace Eatzie.Data
         public DbSet<RestaurantFoodEntity> RestaurantFoods { get; set; }
         public DbSet<FoodCategoryEntity> FoodCategories { get; set; }
         public DbSet<FoodCategoryItemEntity> FoodCategoryItems { get; set; }
+        public DbSet<PaymentEntity> Payments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -43,6 +44,7 @@ namespace Eatzie.Data
             modelBuilder.ApplyConfiguration(new RestaurantFoodConfiguration());
             modelBuilder.ApplyConfiguration(new FoodCategoryConfiguration());
             modelBuilder.ApplyConfiguration(new FoodCategoryItemConfiguration());
+            modelBuilder.ApplyConfiguration(new PaymentConfiguration());
         }
     }
 }

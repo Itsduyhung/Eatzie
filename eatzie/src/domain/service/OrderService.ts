@@ -7,30 +7,29 @@ import {
 } from "@/types/order.types";
 
 export interface PriceAllFoods {
+  totalPrice: number;
+  note?: string;
+}
+
+export interface OrderItem {
+  foodId: number;
+  quantity: number;
   price: number;
-  note: string;
+  note?: string;
+  foodName?: string;
+  imageUrl?: string;
+}
+
+export interface OrderData {
+  orderId: number;
+  createdAt: string;
+  totalAmount: number;
+  status: string;
+  items: OrderItem[];
 }
 
 export class OrderService {
-  static async createOrder(
-    price: PriceAllFoods
-  ): Promise<ApiResponse<OrderCreateResProps>> {
-    const response: ApiResponse<OrderCreateResRawProps> = await post(
-      "/Order/create",
-      price
-    );
-    if (response.data) {
-      const mappedData: OrderCreateResProps = mapOrderRawToDomain(
-        response.data
-      );
-      return { ...response, data: mappedData };
-    }
-    return { ...response, data: undefined };
-  }
-
-  static async getOrderById(
-    id: number
-  ): Promise<ApiResponse<OrderCreateResProps>> {
-    return get<ApiResponse<OrderCreateResProps>>(`/Order/${id}`);
+  static async createOrder(price: PriceAllFoods): Promise<ApiResponse<OrderData>> {
+    return post<ApiResponse<OrderData>>("/Order/create", price);
   }
 }

@@ -19,5 +19,6 @@ namespace Eatzie.Models
         public UserEntity? User { get; set; }
 
         public ICollection<OrderDetailEntity> OrderDetails { get; set; } = new List<OrderDetailEntity>();
+        public ICollection<PaymentEntity> Payments { get; set; } = new List<PaymentEntity>();
     }
 }

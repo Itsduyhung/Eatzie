@@ -34,15 +34,17 @@ export default function ConfirmOrderScreen() {
     setLoading(true);
 
     try {
-      if (selectedKey === "cod") {
-        await CartOrderService.placeOrder();
-        router.push({
-          pathname: "/",
-          params: { total: String(total) },
-        });
-      } else if (selectedKey === "online") {
-        router.push("/(features)/cart/qrscreen");
-      }
+      const result = await CartOrderService.placeOrder();
+      
+      // Navigate to payment screen with order and payment info
+      router.push({
+        pathname: "/(features)/cart/qrscreen",
+        params: { 
+          total: String(total + deliveryFee),
+          orderId: String(result.orderId),
+          paymentCode: result.paymentCode
+        },
+      });
     } catch (err: any) {
       alert(err.message || "Đặt hàng thất bại");
     } finally {

@@ -31,7 +31,7 @@ namespace Eatzie.Services
                 FoodId = item.FoodId,
                 Quantity = item.Quantity,
                 UnitPrice = item.Food!.Price,
-                Note = request.Note
+                Note = request.Note ?? string.Empty
             }).ToList();
 
             var newOrder = new OrderEntity
