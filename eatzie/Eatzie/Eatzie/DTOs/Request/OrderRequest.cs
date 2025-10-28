@@ -1,8 +1,13 @@
-﻿namespace Eatzie.DTOs.Request
+﻿using Newtonsoft.Json;
+
+namespace Eatzie.DTOs.Request
 {
     public class CreateOrderRequest
     {
+        [JsonProperty("totalPrice")]
         public decimal TotalPrice { get; set; }
-        public string Note { get; set; }
+        
+        [JsonProperty("note")]
+        public string? Note { get; set; }
     }
 }

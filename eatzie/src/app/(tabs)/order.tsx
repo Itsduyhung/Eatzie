@@ -65,7 +65,7 @@ export default function TabsWithContent() {
           {[1].map((item, idx) => (
             <XStack key={idx} alignItems="center" mb="$3" mt="$3">
               <Image
-                source={require("../../assets/icons/bunbohue.jpg")}
+                source={require("../../assets/icons/bun-pho.png")}
                 width={120}
                 height={120}
                 borderRadius={8}

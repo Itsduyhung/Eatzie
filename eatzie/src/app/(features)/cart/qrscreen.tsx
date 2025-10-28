@@ -7,9 +7,9 @@ import { useLocalSearchParams } from "expo-router";
 import { Separator, XStack, YStack } from "tamagui";
 
 export default function QrScreen() {
-  const { total } = useLocalSearchParams();
+  const { total, orderId, paymentCode } = useLocalSearchParams();
   const totalNumber = Number(total || 0);
-  const orderId = Math.floor(Math.random() * 100000000000000); // Random mã đơn
+  const displayOrderId = orderId || Math.floor(Math.random() * 100000000000000);
 
   return (
     <ScrollScreenLayout headerLeftIcons={[<BackButton key="back" />]}>
@@ -28,7 +28,7 @@ export default function QrScreen() {
                 color: "#333",
               }}
             >
-              Thanh toán đơn hàng {orderId}
+              Thanh toán đơn hàng #{displayOrderId}
             </ThemedText>
 
             <XStack alignItems="flex-end" gap="$2">
