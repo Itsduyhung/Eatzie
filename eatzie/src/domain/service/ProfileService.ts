@@ -2,6 +2,7 @@ import { get, putRaw } from "@/infrastructure/api/axiosClient";
 import { ApiResponse } from "@/types/axios";
 import { UserDietService } from "./UserDietService";
 import { UserDiet } from "@/types/userDiet.types";
+import { guessMimeTypeFromUri } from "@/app/untils/file";
 
 export interface Profile {
   id: number;
@@ -14,9 +15,11 @@ export interface Profile {
   userDiet?: UserDiet; // Thêm thông tin hồ sơ vị giác
 }
 
-type ProfileUpdateData = Partial<Omit<Profile, "id" | "createdAt" | "userDiet">>;
+type ProfileUpdateData = Partial<
+  Omit<Profile, "id" | "createdAt" | "userDiet">
+>;
 
-export const fieldLabels: Record<keyof Omit<Profile, 'userDiet'>, string> = {
+export const fieldLabels: Record<keyof Omit<Profile, "userDiet">, string> = {
   id: "Id",
   fullname: "Fullname",
   email: "Email",
@@ -26,27 +29,17 @@ export const fieldLabels: Record<keyof Omit<Profile, 'userDiet'>, string> = {
   createdAt: "Created At",
 };
 
-function guessMimeTypeFromUri(uri: string) {
-  const ext = uri.split(".").pop()?.split("?")[0]?.toLowerCase();
-  if (!ext) return "image/jpeg";
-  if (ext === "png") return "image/png";
-  if (ext === "jpg" || ext === "jpeg") return "image/jpeg";
-  if (ext === "webp") return "image/webp";
-  return "application/octet-stream";
-}
-
 export class ProfileService {
   static async getProfile(id: number): Promise<Profile | null> {
     try {
       const profile = await get<Profile>(`/Profile/${id}`);
-      
-      // Lấy thông tin hồ sơ vị giác
+
       const userDiet = await UserDietService.getUserDiet(id);
-      
+
       if (profile) {
         profile.userDiet = userDiet || undefined;
       }
-      
+
       return profile;
     } catch (error) {
       console.error("❌ Error fetching profile:", error);
@@ -71,7 +64,7 @@ export class ProfileService {
     console.log("📸 Uploading avatar file:", fileObj);
 
     const resp = await putRaw<any>(`/Profile/${id}`, formData);
-    console.log("✅ Upload response:", resp);
+    console.log(" Upload response:", resp);
 
     return resp;
   }
@@ -146,7 +139,7 @@ export class ProfileService {
     try {
       const response = await UserDietService.updateUserDiet({
         userId,
-        ...updateData
+        ...updateData,
       });
       console.log("✅ Update user diet response:", response);
       return response;
@@ -161,7 +154,10 @@ export class ProfileService {
     allergicFood: string
   ): Promise<ApiResponse<any>> {
     try {
-      const response = await UserDietService.updateAllergicFood(userId, allergicFood);
+      const response = await UserDietService.updateAllergicFood(
+        userId,
+        allergicFood
+      );
       console.log("✅ Update allergic food response:", response);
       return response;
     } catch (error) {
@@ -175,7 +171,10 @@ export class ProfileService {
     favoriteFood: string
   ): Promise<ApiResponse<any>> {
     try {
-      const response = await UserDietService.updateFavoriteFood(userId, favoriteFood);
+      const response = await UserDietService.updateFavoriteFood(
+        userId,
+        favoriteFood
+      );
       console.log("✅ Update favorite food response:", response);
       return response;
     } catch (error) {

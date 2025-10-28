@@ -21,7 +21,7 @@ export const useRestaurantStore = create<RestaurantState>((set, get) => ({
 
     try {
       set({ loading: true, error: null });
-      const restaurant = await RestaurantService.getById(id);
+      const restaurant = await RestaurantService.getRestaurantById(id);
       set((state) => ({
         restaurants: { ...state.restaurants, [id]: restaurant },
       }));

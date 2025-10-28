@@ -37,14 +37,12 @@ api.interceptors.response.use(
       !originalRequest.url?.includes("/SignIn/signin")
     ) {
       originalRequest._retry = true;
-      try {
-        const token = await storage.getItem("token");
-        originalRequest.headers.Authorization = `Bearer ${token}`;
-        return api(originalRequest);
-      } catch (err) {
-        await useAuthStore.getState().logout();
-        return Promise.reject(err);
-      }
+      
+      // If we get a 401, the token is invalid or expired
+      // For now, we'll just log out the user and redirect to login
+      console.error("Authentication failed - redirecting to login");
+      await useAuthStore.getState().logout();
+      return Promise.reject(error);
     }
     return Promise.reject(error);
   }

@@ -5,7 +5,7 @@ import { useCartStore } from "@/stores/useCartStore";
 import { ToastAndroid } from "react-native";
 
 export const CartOrderService = {
-  addCartItems: async (retryCount = 2) => {
+  addCartItems: async () => {
     const cart = useCartStore.getState().cart;
 
     if (cart.length === 0) throw new Error("Giỏ hàng trống");
@@ -15,21 +15,14 @@ export const CartOrderService = {
       quantity: item.quantity ?? 1,
     }));
 
-    let attempt = 0;
-    while (attempt <= retryCount) {
-      try {
-        await CartService.addToCart(items);
-        return true;
-      } catch (err) {
-        attempt++;
-        console.error(`Failed to add cart (attempt ${attempt})`, err);
-        if (attempt > retryCount) {
-          throw new Error("Không thể thêm các món vào giỏ sau nhiều lần thử");
-        }
-      }
+    try {
+      await CartService.addToCart(items);
+      return true;
+    } catch (err) {
+      console.error("Failed to add cart items", err);
+      // Re-throw to let the caller handle (axios will handle auth errors)
+      throw err;
     }
-
-    return true;
   },
 
   createOrder: async () => {
@@ -90,22 +83,24 @@ export const CartOrderService = {
     try {
       console.log("Place order processing..");
 
+      // Step 1: Add items to server cart (requires authentication)
       await CartOrderService.addCartItems();
-      const orderId = await CartOrderService.createOrder();
 
+      // Step 2: Create order from server cart
+      const orderId = await CartOrderService.createOrder();
       if (!orderId) {
         throw new Error("Không lấy được mã đơn hàng");
       }
 
-      // Get total amount including delivery fee
+      // Step 3: Get total amount including delivery fee
       const total = useCartStore.getState().total();
       const deliveryFee = 14000;
       const totalAmount = total + deliveryFee;
 
-      // Create payment link
+      // Step 4: Create payment link
       const payment = await CartOrderService.createPayment(orderId, totalAmount);
 
-      // Clear cart after creating order (before payment)
+      // Step 5: Clear cart after creating order (before payment)
       useCartStore.getState().clearCart();
 
       ToastAndroid.show("Đặt hàng thành công!", ToastAndroid.SHORT);
@@ -118,7 +113,11 @@ export const CartOrderService = {
       };
     } catch (err: any) {
       console.error("Place order failed", err);
-      ToastAndroid.show(err.message || "Đặt hàng thất bại", ToastAndroid.SHORT);
+      // Show error message (axios interceptor will handle logout/redirect on 401)
+      const errorMessage = err.response?.status === 401 
+        ? "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại."
+        : err.message || "Đặt hàng thất bại";
+      ToastAndroid.show(errorMessage, ToastAndroid.SHORT);
       throw err;
     }
   },

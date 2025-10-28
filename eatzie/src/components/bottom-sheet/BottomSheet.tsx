@@ -54,7 +54,7 @@ export function BottomSheet({
     .onEnd(() => {
       if (translateY.value > SCREEN_HEIGHT - height / 3) {
         translateY.value = withTiming(SCREEN_HEIGHT, { duration: 250 });
-        runOnJS(onClose)(); // Gọi đóng khi kéo xuống quá xa
+        runOnJS(onClose)(); 
       } else {
         translateY.value = withSpring(SCREEN_HEIGHT - height, {
           damping: 18,
@@ -79,7 +79,7 @@ export function BottomSheet({
 
   return (
     <>
-      {/* Backdrop mờ nền, bấm để đóng */}
+     
       <BottomSheetBackdrop animatedStyle={backdropOpacity} onPress={onClose} />
 
       <GestureDetector gesture={panGesture}>
