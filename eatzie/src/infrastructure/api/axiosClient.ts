@@ -1,8 +1,14 @@
-import { useAuthStore } from "@/applicaton/stores/authStores";
-
 import { ApiResponse } from "@/types/axios";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { storage } from "../storage/tokenStorage";
+import { router } from "expo-router";
+
+// Callback to handle logout - will be set by auth store after initialization
+let logoutCallback: (() => void | Promise<void>) | null = null;
+
+export const setLogoutCallback = (callback: () => void | Promise<void>) => {
+  logoutCallback = callback;
+};
 
 export const api = axios.create({
   baseURL: process.env.EXPO_PUBLIC_API_URL || "http://10.0.2.2:5237/api",
@@ -39,9 +45,17 @@ api.interceptors.response.use(
       originalRequest._retry = true;
       
       // If we get a 401, the token is invalid or expired
-      // For now, we'll just log out the user and redirect to login
+      // Clear token from storage and call logout callback if available
       console.error("Authentication failed - redirecting to login");
-      await useAuthStore.getState().logout();
+      await storage.removeItem("token");
+      
+      // Call logout callback if it's been registered
+      if (logoutCallback) {
+        await logoutCallback();
+      } else {
+        // Fallback: redirect to login if callback is not set
+        router.push("/(auth)/login");
+      }
       return Promise.reject(error);
     }
     return Promise.reject(error);

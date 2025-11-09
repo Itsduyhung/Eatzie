@@ -12,9 +12,6 @@ import { useCartStore } from "@/stores/useCartStore";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { CartItems } from "@/components/cart/CartItems";
 import { OrderSummary } from "@/components/cart/OrderSummary";
-import { TriangularCornerButton } from "@/components/ui/AgonButton";
-
-import { paymentOptions } from "@/types/pay/methodPay";
 
 export default function ConfirmOrderScreen() {
   const { title } = useLocalSearchParams();
@@ -27,9 +24,8 @@ export default function ConfirmOrderScreen() {
   const deliveryFee = 14000;
 
   const [loading, setLoading] = useState(false);
-  const [selectedKey, setSelectedKey] = useState<string>("online");
 
-  const handlePlaceOrder = async (selectedKey: string) => {
+  const handlePlaceOrder = async () => {
     if (loading) return;
     setLoading(true);
 
@@ -85,30 +81,19 @@ export default function ConfirmOrderScreen() {
         <OrderSummary cart={cart} total={total} deliveryFee={deliveryFee} />
 
         <YStack
-          gap="$5"
+          gap="$3"
           backgroundColor="white"
           paddingHorizontal="$2"
           paddingVertical="$3"
           borderRadius={8}
         >
-          <XStack flexDirection="row" justifyContent="space-between">
-            {paymentOptions.map((option) => (
-              <TriangularCornerButton
-                key={option.key}
-                onPress={() => setSelectedKey(option.key)}
-                borderColor={selectedKey === option.key ? "#6666FF" : "#ccc"}
-                backgroundColor="transparent"
-                triangleSize={25}
-                selected={selectedKey === option.key}
-                style={{ flex: 1, marginHorizontal: 5 }}
-              >
-                <YStack>
-                  <ThemedText style={{ fontSize: 11, fontWeight: "500" }}>
-                    {option.label}
-                  </ThemedText>
-                </YStack>
-              </TriangularCornerButton>
-            ))}
+          <XStack gap="$2" alignItems="center">
+            <ThemedText style={{ fontSize: 14, fontWeight: "500" }}>
+              Phương thức thanh toán:
+            </ThemedText>
+            <ThemedText style={{ fontSize: 14, fontWeight: "600", color: "#6666FF" }}>
+              QR / Ngân hàng
+            </ThemedText>
           </XStack>
 
           <XStack>
@@ -118,7 +103,7 @@ export default function ConfirmOrderScreen() {
               textfontweight="600"
               minWidth="100%"
               disabled={loading}
-              onPress={() => handlePlaceOrder(selectedKey)}
+              onPress={handlePlaceOrder}
             >
               <ThemedText
                 style={{
