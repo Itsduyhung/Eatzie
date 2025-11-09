@@ -1,5 +1,6 @@
 import { User } from "@/domain/model/User";
 import { AuthService } from "@/domain/service/AuthService";
+import { setLogoutCallback } from "@/infrastructure/api/axiosClient";
 import { storage } from "@/infrastructure/storage/tokenStorage";
 import { LoginResponse } from "@/types/login/login";
 import { getUserFromPayload, getValidPayLoad } from "@/utils/jwt";
@@ -92,3 +93,9 @@ export const useAuthStore = create<AuthState>()(
     }
   )
 );
+
+// Register logout callback with axios client to break circular dependency
+// This allows axios interceptor to call logout without creating a circular import
+setLogoutCallback(() => {
+  useAuthStore.getState().logout();
+});
