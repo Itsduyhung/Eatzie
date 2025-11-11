@@ -1,6 +1,10 @@
+import { useAuthStore } from "@/applicaton/stores/authStores";
+import { useNotificationStore } from "@/stores/notificationStore";
+import { useNotificationPolling } from "@/utils/signalR";
 import { Feather, Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   FlatList,
   Image,
   StyleSheet,
@@ -9,99 +13,95 @@ import {
   View,
 } from "react-native";
 
-type Notification = {
-  id: string;
-  name: string;
-  avatar: string | { uri: string } | number;
-  time: string;
-  content: string;
-  unread: boolean;
+const formatTime = (dateString: string): string => {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  if (diffMins < 1) return "Vừa xong";
+  if (diffMins < 60) return `${diffMins} phút trước`;
+  if (diffHours < 24) return `${diffHours} giờ trước`;
+  if (diffDays < 7) return `${diffDays} ngày trước`;
+
+  return date.toLocaleDateString("vi-VN", {
+    day: "2-digit",
+    month: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 };
 
-const notifications: Notification[] = [
-  {
-    id: "1",
-    name: "Mixue",
-    avatar: require("../../assets/images/mixue-logo_brandlogos.net_wijie.png"),
-    time: "17:06",
-    content: "Đơn hàng của bạn đã giao thành công. Cảm ơn bạn đã đặt Mixue!",
-    unread: false,
-  },
-  {
-    id: "2",
-    name: "KFC",
-    avatar: {
-      uri: "https://1000logos.net/wp-content/uploads/2017/03/KFC-Logo.png",
-    },
-    time: "16:45",
-    content: "Nhập mã KFCDEAL để nhận ngay ưu đãi 30% cho đơn hàng hôm nay!",
-    unread: false,
-  },
-  {
-    id: "3",
-    name: "Hight Land",
-    avatar: require("../../assets/images/highlands_coffee-logo.png"),
-    time: "15:20",
-    content:
-      "Bạn vừa nhận được mã giảm giá 20k cho mọi thức uống tại Highlands Coffee.",
-    unread: false,
-  },
-  {
-    id: "4",
-    name: "Lotteria",
-    avatar: require("../../assets/images/lotteria-brandlogo.net.png"),
-    time: "14:10",
-    content:
-      "Đơn hàng Lotteria của bạn đã được xác nhận và đang chuẩn bị giao.",
-    unread: false,
-  },
-  {
-    id: "5",
-    name: "StarBuck",
-    avatar: require("../../assets/images/starbucks_1992ΓÇô2011-logo_brandlogos.net_mrr9i.png"),
-    time: "13:30",
-    content:
-      "StarBuck tặng bạn mã FREESHIP cho đơn hàng đầu tiên trong tuần này!",
-    unread: false,
-  },
-];
-
-const unreadNotifications: Notification[] = [
-  {
-    id: "6",
-    name: "KFC",
-    avatar: {
-      uri: "https://1000logos.net/wp-content/uploads/2017/03/KFC-Logo.png",
-    },
-    time: "18:30",
-    content: "Bạn có đơn hàng mới từ KFC! Đặt ngay để nhận ưu đãi đặc biệt.",
-    unread: true,
-  },
-];
-
 export default function NotificationScreen() {
-  const [tab, setTab] = useState("all");
+  const [tab, setTab] = useState<"all" | "unread">("all");
+  const { user, isAuthenticated } = useAuthStore();
+  const userId = user ? Number(user.userId) : null;
 
-  const renderItem = ({ item }: { item: Notification }) => (
-    <View style={styles.itemContainer}>
-      <Image
-        source={
-          typeof item.avatar === "string" ? { uri: item.avatar } : item.avatar
-        }
-        style={styles.avatar}
-      />
-      <View style={{ flex: 1 }}>
-        <View style={styles.row}>
-          <Text style={styles.name}>{item.name}</Text>
-          {item.unread && <View style={styles.dot} />}
-          <Text style={styles.time}>{item.time}</Text>
+  const {
+    notifications,
+    unreadNotifications,
+    unreadCount,
+    loading,
+    fetchNotifications,
+    fetchUnreadNotifications,
+    markAsRead,
+    markAllAsRead,
+  } = useNotificationStore();
+
+  // Poll for new notifications every 10 seconds when tab is focused
+  useNotificationPolling(userId, isAuthenticated, 10000);
+
+  useEffect(() => {
+    if (userId && isAuthenticated) {
+      fetchNotifications(userId);
+      fetchUnreadNotifications(userId);
+    }
+  }, [userId, isAuthenticated]);
+
+  const handleMarkAsRead = async (notificationId: number) => {
+    await markAsRead(notificationId);
+  };
+
+  const handleMarkAllAsRead = async () => {
+    if (userId) {
+      await markAllAsRead(userId);
+    }
+  };
+
+  const renderItem = ({ item }: { item: any }) => {
+    const avatarSource = item.avatarUrl
+      ? { uri: item.avatarUrl }
+      : require("../../assets/images/mixue-logo_brandlogos.net_wijie.png");
+
+    return (
+      <TouchableOpacity
+        style={styles.itemContainer}
+        onPress={() => !item.isRead && handleMarkAsRead(item.id)}
+      >
+        <Image source={avatarSource} style={styles.avatar} />
+        <View style={{ flex: 1 }}>
+          <View style={styles.row}>
+            <Text style={styles.name}>{item.title}</Text>
+            {!item.isRead && <View style={styles.dot} />}
+            <Text style={styles.time}>{formatTime(item.createdAt)}</Text>
+          </View>
+          <Text style={styles.content}>{item.content}</Text>
         </View>
-        <Text style={styles.content}>{item.content}</Text>
-      </View>
-    </View>
-  );
+      </TouchableOpacity>
+    );
+  };
 
   const data = tab === "all" ? notifications : unreadNotifications;
+
+  if (!isAuthenticated || !userId) {
+    return (
+      <View style={[styles.container, styles.centerContainer]}>
+        <Text style={styles.emptyText}>Vui lòng đăng nhập để xem thông báo</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -109,6 +109,14 @@ export default function NotificationScreen() {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Thông báo</Text>
         <View style={styles.headerIcons}>
+          {unreadCount > 0 && tab === "all" && (
+            <TouchableOpacity
+              onPress={handleMarkAllAsRead}
+              style={{ marginRight: 16 }}
+            >
+              <Text style={styles.markAllText}>Đọc tất cả</Text>
+            </TouchableOpacity>
+          )}
           <TouchableOpacity style={{ marginRight: 16 }}>
             <Feather name="settings" size={22} color="#222" />
           </TouchableOpacity>
@@ -124,7 +132,7 @@ export default function NotificationScreen() {
           onPress={() => setTab("all")}
         >
           <Text style={[styles.tabText, tab === "all" && styles.tabTextActive]}>
-            Tất cả (5)
+            Tất cả ({notifications.length})
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -134,19 +142,38 @@ export default function NotificationScreen() {
           <Text
             style={[styles.tabText, tab === "unread" && styles.tabTextActive]}
           >
-            Chưa đọc(1)
+            Chưa đọc ({unreadCount})
           </Text>
         </TouchableOpacity>
       </View>
       {/* Notification List */}
-      <FlatList
-        data={data}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
-        contentContainerStyle={{ paddingBottom: 16 }}
-        showsVerticalScrollIndicator={false}
-      />
+      {loading && notifications.length === 0 ? (
+        <View style={styles.centerContainer}>
+          <ActivityIndicator size="large" color="#5B5FEF" />
+        </View>
+      ) : data.length === 0 ? (
+        <View style={styles.centerContainer}>
+          <Text style={styles.emptyText}>
+            {tab === "all" ? "Chưa có thông báo nào" : "Không có thông báo chưa đọc"}
+          </Text>
+        </View>
+      ) : (
+        <FlatList
+          data={data}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderItem}
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
+          contentContainerStyle={{ paddingBottom: 16 }}
+          showsVerticalScrollIndicator={false}
+          refreshing={loading}
+          onRefresh={() => {
+            if (userId) {
+              fetchNotifications(userId);
+              fetchUnreadNotifications(userId);
+            }
+          }}
+        />
+      )}
     </View>
   );
 }
@@ -239,5 +266,20 @@ const styles = StyleSheet.create({
     backgroundColor: "#E5E7EB",
     marginVertical: 2,
     marginLeft: 60,
+  },
+  centerContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  emptyText: {
+    color: "#888",
+    fontSize: 16,
+    textAlign: "center",
+  },
+  markAllText: {
+    color: "#5B5FEF",
+    fontSize: 14,
+    fontWeight: "500",
   },
 });

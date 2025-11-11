@@ -9,11 +9,13 @@ namespace Eatzie.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IPhotoService _photoService;
+        private readonly INotificationService _notificationService;
 
-        public UserService(IUserRepository userRepository, IPhotoService photoService)
+        public UserService(IUserRepository userRepository, IPhotoService photoService, INotificationService notificationService)
         {
             _userRepository = userRepository;
             _photoService = photoService;
+            _notificationService = notificationService;
         }
 
         public async Task<ProfileResponse?> GetProfileAsync(int id)
@@ -54,6 +56,23 @@ namespace Eatzie.Services
             }
 
             await _userRepository.UpdateAsync(user);
+
+            // Create notification after successful profile update
+            try
+            {
+                await _notificationService.CreateNotificationAsync(
+                    userId: user.Id,
+                    title: "Cập nhật hồ sơ thành công",
+                    content: ($"{(string.IsNullOrWhiteSpace(user.Fullname) ? "Bạn" : user.Fullname)} vừa cập nhật thông tin hồ sơ của mình."),
+                    type: "success",
+                    avatarUrl: user.Avatar
+                );
+            }
+            catch
+            {
+                // swallow to not block profile update
+            }
+
             return true;
         }
     }

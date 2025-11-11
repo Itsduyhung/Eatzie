@@ -11,7 +11,7 @@ export const setLogoutCallback = (callback: () => void | Promise<void>) => {
 };
 
 export const api = axios.create({
-  baseURL: process.env.EXPO_PUBLIC_API_URL || "http://10.0.2.2:5237/api",
+  baseURL: process.env.EXPO_PUBLIC_API_URL || "http://192.168.1.4/api",
 
   timeout: 10000,
 });

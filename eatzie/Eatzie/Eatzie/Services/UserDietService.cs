@@ -1,17 +1,33 @@
 ﻿using Eatzie.Data;
 using Eatzie.DTOs.Request;
 using Eatzie.DTOs.Response;
+using Eatzie.Hubs;
 using Eatzie.Interfaces.IRepository;
 using Eatzie.Interfaces.IService;
 using Eatzie.Models;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Eatzie.Services
 {
-    public class UserDietService(IUserDietRepository userDietRepository, ApplicationDbContext context) : IUserDietService
+    public class UserDietService : IUserDietService
     {
-        private readonly ApplicationDbContext _context = context;
-        private readonly IUserDietRepository _userDietRepository = userDietRepository;
+        private readonly ApplicationDbContext _context;
+        private readonly IUserDietRepository _userDietRepository;
+        private readonly INotificationService _notificationService;
+        private readonly IHubContext<NotificationHub> _hubContext;
+
+        public UserDietService(
+            IUserDietRepository userDietRepository,
+            ApplicationDbContext context,
+            INotificationService notificationService,
+            IHubContext<NotificationHub> hubContext)
+        {
+            _context = context;
+            _userDietRepository = userDietRepository;
+            _notificationService = notificationService;
+            _hubContext = hubContext;
+        }
 
         /// <summary>
         /// API for Type Diet
@@ -147,7 +163,32 @@ namespace Eatzie.Services
             existing.Max_spending = request.MaxSpending ?? existing.Max_spending;
             existing.Diet_type = request.DietType ?? existing.Diet_type;
 
-            return await _userDietRepository.UpdateAsync(existing);
+            var updated = await _userDietRepository.UpdateAsync(existing);
+
+            // Send notification via SignalR
+            try
+            {
+                var user = await _context.UserEntitys.FindAsync(request.UserId);
+                var userName = user?.Fullname ?? "Bạn";
+
+                var notification = await _notificationService.CreateNotificationAsync(
+                    userId: request.UserId,
+                    title: "Hồ sơ vị giác đã được cập nhật",
+                    content: $"{userName} đã cập nhật hồ sơ vị giác của mình thành công. Chúng tôi sẽ đề xuất món ăn phù hợp hơn với sở thích của bạn!",
+                    type: "success",
+                    avatarUrl: user?.Avatar
+                );
+
+                // Send real-time notification via SignalR
+                await _hubContext.Clients.Group($"user_{request.UserId}").SendAsync("ReceiveNotification", notification);
+            }
+            catch (Exception ex)
+            {
+                // Log error but don't fail the update
+                Console.WriteLine($"Error sending notification: {ex.Message}");
+            }
+
+            return updated;
         }
     }
 }

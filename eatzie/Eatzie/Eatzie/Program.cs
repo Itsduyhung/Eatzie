@@ -1,5 +1,6 @@
 ﻿using Eatzie.Data;
 using Eatzie.Helpers;
+using Eatzie.Hubs;
 using Eatzie.Interfaces;
 using Eatzie.Interfaces.IRepository;
 using Eatzie.Interfaces.IService;
@@ -25,7 +26,7 @@ builder.Services.Configure<PayOSSettings>(
     builder.Configuration.GetSection("PayOSSettings"));
 
 // 2.PostgreSQL
-var connectionString = "Host=localhost;Port=5432;Database=eatzie;Username=postgres;Password=123123;";
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
@@ -58,9 +59,25 @@ builder.Services.AddScoped<IFoodViewRepository, FoodViewRepository>();
 builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 
 builder.Services.AddControllers()
                  .AddNewtonsoftJson();
+
+// 3.5. SignalR Configuration
+builder.Services.AddSignalR();
+
+// 3.6. CORS Configuration - Cho phép React Native/Expo app kết nối
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
 // 4.JWT Authentication
 builder.Services.AddAuthentication(options =>
@@ -132,9 +149,13 @@ if (app.Environment.IsProduction())
     app.UseHttpsRedirection();
 }
 
+// CORS phải được gọi TRƯỚC UseAuthentication và UseAuthorization
+app.UseCors("AllowAll");
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<NotificationHub>("/notificationHub");
 
 app.Run();
