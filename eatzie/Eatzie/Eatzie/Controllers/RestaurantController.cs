@@ -88,6 +88,13 @@ public class RestaurantController : ControllerBase
         return Ok(response);
     }
 
+    [HttpGet("has")]
+    public async Task<IActionResult> UserHasRestaurant([FromQuery] int userId)
+    {
+        var response = await _restaurantService.UserHasRestaurantAsync(userId);
+        return StatusCode(response.StatusCode, response);
+    }
+
     //[HttpDelete("{id}")]
     //[Authorize]
     //public async Task<IActionResult> DeleteRestaurant(int id)
