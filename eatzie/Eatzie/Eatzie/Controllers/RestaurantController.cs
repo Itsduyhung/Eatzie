@@ -95,6 +95,13 @@ public class RestaurantController : ControllerBase
         return StatusCode(response.StatusCode, response);
     }
 
+    [HttpGet("by-user/{userId}")]
+    public async Task<IActionResult> GetRestaurantsByUserId(int userId)
+    {
+        var response = await _restaurantService.GetRestaurantsByUserIdAsync(userId);
+        return StatusCode(response.StatusCode, response);
+    }
+
     //[HttpDelete("{id}")]
     //[Authorize]
     //public async Task<IActionResult> DeleteRestaurant(int id)

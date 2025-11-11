@@ -7,4 +7,5 @@ public interface IRestaurantRepository
     Task<bool> UpdateRestaurantAsync(RestaurantEntity restaurant);
     Task<bool> DeleteRestaurantAsync(RestaurantEntity restaurant);
     Task<bool> UserHasRestaurantAsync(int userId);
+    Task<List<RestaurantEntity>> GetRestaurantsByUserIdAsync(int userId);
 }
