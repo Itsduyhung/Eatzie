@@ -10,4 +10,5 @@ public interface IRestaurantService
     Task<BaseAPIResponse> DeleteRestaurantAsync(int userId, int restaurantId);
     Task<BaseAPIResponse> GetAllFoodRestaurantsByIdAsync(int restaurantId);
     Task<BaseAPIResponse> UserHasRestaurantAsync(int userId);
+    Task<BaseAPIResponse> GetRestaurantsByUserIdAsync(int userId);
 }

@@ -43,4 +43,11 @@ public class RestaurantRepository : IRestaurantRepository
     {
         return await _context.Restaurants.AnyAsync(r => r.UserId == userId);
     }
+
+    public async Task<List<RestaurantEntity>> GetRestaurantsByUserIdAsync(int userId)
+    {
+        return await _context.Restaurants
+            .Where(r => r.UserId == userId)
+            .ToListAsync();
+    }
 }

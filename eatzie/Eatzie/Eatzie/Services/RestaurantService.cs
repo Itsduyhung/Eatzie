@@ -277,4 +277,18 @@ public class RestaurantService : IRestaurantService
             Data = foods
         };
     }
+
+    public async Task<BaseAPIResponse> GetRestaurantsByUserIdAsync(int userId)
+    {
+        var restaurants = await _restaurantRepository.GetRestaurantsByUserIdAsync(userId);
+
+        var responseData = restaurants.Select(r => MapToResponseDto(r)).ToList();
+
+        return new BaseAPIResponse
+        {
+            IsSuccess = true,
+            StatusCode = (int)HttpStatusCode.OK,
+            Data = responseData
+        };
+    }
 }
