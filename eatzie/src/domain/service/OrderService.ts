@@ -32,4 +32,8 @@ export class OrderService {
   static async createOrder(price: PriceAllFoods): Promise<ApiResponse<OrderData>> {
     return post<ApiResponse<OrderData>>("/Order/create", price);
   }
+
+  static async getOrderDetail(orderId: number): Promise<ApiResponse<OrderData>> {
+    return get<ApiResponse<OrderData>>(`/Order/${orderId}`);
+  }
 }

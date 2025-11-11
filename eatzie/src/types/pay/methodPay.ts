@@ -4,5 +4,6 @@ export type PaymentOption = {
 };
 
 export const paymentOptions: PaymentOption[] = [
+  { key: "cod", label: "Thanh toán khi nhận hàng" },
   { key: "online", label: "QR / Ngân hàng" },
 ];
