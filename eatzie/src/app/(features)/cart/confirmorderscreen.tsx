@@ -1,6 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useMemo, useState } from "react";
+import { Linking } from "react-native";
 import { XStack, YStack } from "tamagui";
 
 import { ThemedText } from "@/app/hooks/ThemedTextColor";
@@ -32,13 +33,16 @@ export default function ConfirmOrderScreen() {
     try {
       const result = await CartOrderService.placeOrder();
       
-      // Navigate to payment screen with order and payment info
+      // Navigate to payment screen first (don't auto-open browser)
+      // User can choose to open payment link from QR screen
       router.push({
         pathname: "/(features)/cart/qrscreen",
         params: { 
           total: String(total + deliveryFee),
           orderId: String(result.orderId),
-          paymentCode: result.paymentCode
+          paymentCode: result.paymentCode || "",
+          paymentLink: result.paymentLink || "",
+          qrCode: result.qrCode || undefined // QR code từ PayOS response (base64)
         },
       });
     } catch (err: any) {

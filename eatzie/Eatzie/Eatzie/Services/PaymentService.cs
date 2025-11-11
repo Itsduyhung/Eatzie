@@ -188,7 +188,8 @@ namespace Eatzie.Services
                         Status = newPayment.Status,
                         Amount = newPayment.Amount,
                         CreatedAt = newPayment.CreatedAt,
-                        PaidAt = newPayment.PaidAt
+                        PaidAt = newPayment.PaidAt,
+                        QrCode = payOSResponse?.data?.qrCode // Lấy QR code từ PayOS response
                     }
                 };
             }
@@ -230,23 +231,57 @@ namespace Eatzie.Services
                     };
                 }
 
-                // Call PayOS API to verify payment
+                // Call PayOS API to verify payment using PayOSCode (orderCode)
+                // PayOS API endpoint: GET /v2/payment-requests/{orderCode}
                 _httpClient.DefaultRequestHeaders.Clear();
                 _httpClient.DefaultRequestHeaders.Add("x-client-id", _payOSSettings.ClientId);
                 _httpClient.DefaultRequestHeaders.Add("x-api-key", _payOSSettings.ApiKey);
 
-                var response = await _httpClient.GetAsync($"{_payOSSettings.BaseUrl}/payment-requests/{paymentCode}");
+                // Use PayOSCode (orderCode) instead of paymentCode
+                var payOSCode = payment.PayOSCode;
+                if (string.IsNullOrEmpty(payOSCode))
+                {
+                    return new BaseAPIResponse("Không tìm thấy PayOS Code.", 404, false);
+                }
+
+                Console.WriteLine($"🔍 Verifying payment with PayOS API: orderCode={payOSCode}");
+
+                // PayOS API endpoint requires /v2 prefix
+                var verifyEndpoint = $"{_payOSSettings.BaseUrl}/v2/payment-requests/{payOSCode}";
+                var response = await _httpClient.GetAsync(verifyEndpoint);
                 var responseContent = await response.Content.ReadAsStringAsync();
+
+                Console.WriteLine($"PayOS Verify Response Status: {response.StatusCode}");
+                Console.WriteLine($"PayOS Verify Response Body: {responseContent}");
 
                 if (!response.IsSuccessStatusCode)
                 {
+                    Console.WriteLine($"⚠️ PayOS API verification failed: {response.StatusCode} - {responseContent}");
                     return new BaseAPIResponse("Không thể xác minh thanh toán.", 500, false);
                 }
 
                 var verifyResponse = JsonConvert.DeserializeObject<PayOSPaymentLinkResponse>(responseContent);
 
-                if (verifyResponse?.data?.status == "PAID")
+                // Check if PayOS returned an error
+                if (verifyResponse != null && !string.IsNullOrEmpty(verifyResponse.code) && verifyResponse.code != "00")
                 {
+                    Console.WriteLine($"⚠️ PayOS API returned error: Code={verifyResponse.code}, Desc={verifyResponse.desc}");
+                    return new BaseAPIResponse($"PayOS API error: {verifyResponse.desc}", 400, false);
+                }
+
+                // Check payment status and amountPaid
+                var payOSStatus = verifyResponse?.data?.status;
+                var payOSAmount = verifyResponse?.data?.amount ?? 0;
+                var payOSAmountPaid = verifyResponse?.data?.amountPaid ?? 0;
+
+                Console.WriteLine($"📊 PayOS Status: {payOSStatus}, Amount: {payOSAmount}, AmountPaid: {payOSAmountPaid}");
+
+                // Payment is successful if status is PAID OR amountPaid >= amount
+                bool isPaid = (payOSStatus == "PAID") || (payOSAmountPaid > 0 && payOSAmountPaid >= payOSAmount);
+
+                if (isPaid)
+                {
+                    Console.WriteLine($"✅ Payment verified as PAID by PayOS API");
                     payment.Status = "PAID";
                     payment.PaidAt = DateTime.UtcNow;
 
@@ -255,6 +290,7 @@ namespace Eatzie.Services
                     if (order != null)
                     {
                         order.Status = "Đã thanh toán";
+                        Console.WriteLine($"✅ Order {payment.OrderId} status updated to 'Đã thanh toán'");
                     }
 
                     await _paymentRepo.UpdatePaymentAsync(payment);
@@ -274,15 +310,185 @@ namespace Eatzie.Services
                             Status = payment.Status,
                             Amount = payment.Amount,
                             CreatedAt = payment.CreatedAt,
+                            PaidAt = payment.PaidAt,
+                            QrCode = null // QR code không có trong payment record, chỉ có khi tạo payment
+                        }
+                    };
+                }
+
+                Console.WriteLine($"⏳ Payment still pending. Status: {payOSStatus}, AmountPaid: {payOSAmountPaid}/{payOSAmount}");
+                return new BaseAPIResponse("Thanh toán chưa hoàn tất.", 400, false);
+            }
+            catch (Exception ex)
+            {
+                return new BaseAPIResponse($"Lỗi khi xác minh thanh toán: {ex.Message}", 500, false);
+            }
+        }
+
+        public async Task<BaseAPIResponse> VerifyPaymentByOrderIdAsync(int orderId)
+        {
+            try
+            {
+                var payment = await _paymentRepo.GetPaymentByOrderIdAsync(orderId);
+                if (payment == null)
+                {
+                    return new BaseAPIResponse("Không tìm thấy thanh toán cho đơn hàng này.", 404, false);
+                }
+
+                // If already paid, return immediately
+                if (payment.Status == "PAID")
+                {
+                    return new BaseAPIResponse
+                    {
+                        IsSuccess = true,
+                        StatusCode = 200,
+                        Message = "Thanh toán đã được xác nhận trước đó.",
+                        Data = new PaymentResponse
+                        {
+                            PaymentId = payment.Id,
+                            OrderId = payment.OrderId,
+                            PaymentLink = payment.PaymentLink,
+                            PayOSCode = payment.PayOSCode,
+                            Status = payment.Status,
+                            Amount = payment.Amount,
+                            CreatedAt = payment.CreatedAt,
                             PaidAt = payment.PaidAt
                         }
                     };
                 }
 
-                return new BaseAPIResponse("Thanh toán chưa hoàn tất.", 400, false);
+                // Call PayOS API to verify payment using PayOSCode (orderCode)
+                _httpClient.DefaultRequestHeaders.Clear();
+                _httpClient.DefaultRequestHeaders.Add("x-client-id", _payOSSettings.ClientId);
+                _httpClient.DefaultRequestHeaders.Add("x-api-key", _payOSSettings.ApiKey);
+
+                var payOSCode = payment.PayOSCode;
+                if (string.IsNullOrEmpty(payOSCode))
+                {
+                    return new BaseAPIResponse("Không tìm thấy PayOS Code.", 404, false);
+                }
+
+                Console.WriteLine($"🔍 Verifying payment by OrderId {orderId} with PayOS API: orderCode={payOSCode}");
+
+                // PayOS API endpoint requires /v2 prefix
+                var verifyEndpoint = $"{_payOSSettings.BaseUrl}/v2/payment-requests/{payOSCode}";
+                var response = await _httpClient.GetAsync(verifyEndpoint);
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                Console.WriteLine($"PayOS Verify Response Status: {response.StatusCode}");
+                Console.WriteLine($"PayOS Verify Response Body: {responseContent}");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"⚠️ PayOS API verification failed: {response.StatusCode} - {responseContent}");
+                    // Return current status even if API call fails
+                    return new BaseAPIResponse
+                    {
+                        IsSuccess = true,
+                        StatusCode = 200,
+                        Message = payment.Status == "PAID" ? "Thanh toán thành công." : "Thanh toán chưa hoàn tất.",
+                        Data = new PaymentResponse
+                        {
+                            PaymentId = payment.Id,
+                            OrderId = payment.OrderId,
+                            PaymentLink = payment.PaymentLink,
+                            PayOSCode = payment.PayOSCode,
+                            Status = payment.Status,
+                            Amount = payment.Amount,
+                            CreatedAt = payment.CreatedAt,
+                            PaidAt = payment.PaidAt
+                        }
+                    };
+                }
+
+                var verifyResponse = JsonConvert.DeserializeObject<PayOSPaymentLinkResponse>(responseContent);
+
+                // Check if PayOS returned an error
+                if (verifyResponse != null && !string.IsNullOrEmpty(verifyResponse.code) && verifyResponse.code != "00")
+                {
+                    Console.WriteLine($"⚠️ PayOS API returned error: Code={verifyResponse.code}, Desc={verifyResponse.desc}");
+                    // Return current status even if PayOS API returns error
+                    return new BaseAPIResponse
+                    {
+                        IsSuccess = true,
+                        StatusCode = 200,
+                        Message = payment.Status == "PAID" ? "Thanh toán thành công." : "Thanh toán chưa hoàn tất.",
+                        Data = new PaymentResponse
+                        {
+                            PaymentId = payment.Id,
+                            OrderId = payment.OrderId,
+                            PaymentLink = payment.PaymentLink,
+                            PayOSCode = payment.PayOSCode,
+                            Status = payment.Status,
+                            Amount = payment.Amount,
+                            CreatedAt = payment.CreatedAt,
+                            PaidAt = payment.PaidAt
+                        }
+                    };
+                }
+
+                // Check payment status and amountPaid
+                var payOSStatus = verifyResponse?.data?.status;
+                var payOSAmount = verifyResponse?.data?.amount ?? 0;
+                var payOSAmountPaid = verifyResponse?.data?.amountPaid ?? 0;
+
+                Console.WriteLine($"📊 PayOS Status: {payOSStatus}, Amount: {payOSAmount}, AmountPaid: {payOSAmountPaid}");
+
+                // Payment is successful if status is PAID OR amountPaid >= amount
+                bool isPaid = (payOSStatus == "PAID") || (payOSAmountPaid > 0 && payOSAmountPaid >= payOSAmount);
+
+                if (isPaid && payment.Status != "PAID")
+                {
+                    Console.WriteLine($"✅ Payment verified as PAID by PayOS API (Status: {payOSStatus}, AmountPaid: {payOSAmountPaid})");
+                    payment.Status = "PAID";
+                    payment.PaidAt = DateTime.UtcNow;
+
+                    // Update order status
+                    var order = await _orderRepo.GetOrderByIdAsync(payment.OrderId);
+                    if (order != null)
+                    {
+                        order.Status = "Đã thanh toán";
+                        Console.WriteLine($"✅ Order {payment.OrderId} status updated to 'Đã thanh toán'");
+                    }
+
+                    await _paymentRepo.UpdatePaymentAsync(payment);
+                    await _dbContext.SaveChangesAsync();
+                }
+                else if (payOSStatus == "CANCELLED" && payment.Status != "CANCELLED")
+                {
+                    Console.WriteLine($"❌ Payment was CANCELLED");
+                    payment.Status = "CANCELLED";
+                    await _paymentRepo.UpdatePaymentAsync(payment);
+                    await _dbContext.SaveChangesAsync();
+                }
+                else
+                {
+                    Console.WriteLine($"⏳ Payment still pending. Status: {payOSStatus}, AmountPaid: {payOSAmountPaid}/{payOSAmount}");
+                }
+
+                // Return current status (may have been updated by PayOS API check above)
+                return new BaseAPIResponse
+                {
+                    IsSuccess = true,
+                    StatusCode = 200,
+                    Message = payment.Status == "PAID" ? "Thanh toán thành công." : "Thanh toán chưa hoàn tất.",
+                    Data = new PaymentResponse
+                    {
+                        PaymentId = payment.Id,
+                        OrderId = payment.OrderId,
+                        PaymentLink = payment.PaymentLink,
+                        PayOSCode = payment.PayOSCode,
+                        Status = payment.Status,
+                        Amount = payment.Amount,
+                        CreatedAt = payment.CreatedAt,
+                        PaidAt = payment.PaidAt,
+                        QrCode = null // QR code không có trong payment record, chỉ có khi tạo payment
+                    }
+                };
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"❌ Error verifying payment by OrderId: {ex.Message}");
                 return new BaseAPIResponse($"Lỗi khi xác minh thanh toán: {ex.Message}", 500, false);
             }
         }
@@ -308,7 +514,8 @@ namespace Eatzie.Services
                     Status = payment.Status,
                     Amount = payment.Amount,
                     CreatedAt = payment.CreatedAt,
-                    PaidAt = payment.PaidAt
+                    PaidAt = payment.PaidAt,
+                    QrCode = null // QR code không có trong payment record, chỉ có khi tạo payment
                 }
             };
         }
@@ -324,10 +531,22 @@ namespace Eatzie.Services
 
     public class PayOSPaymentData
     {
-        public int? orderCode { get; set; }
+        // orderCode là Unix timestamp milliseconds (long), không phải int
+        // Ví dụ: 1762823855889 vượt quá giới hạn Int32 (2,147,483,647)
+        public long? orderCode { get; set; }
         public string? checkoutUrl { get; set; }
         public string? status { get; set; }
+        // amount có thể là long nếu số tiền lớn, nhưng thông thường int đủ dùng
+        // Giữ nguyên int vì số tiền VNĐ thông thường không quá 2 tỷ (Int32.MaxValue)
         public int? amount { get; set; }
+        public int? amountPaid { get; set; }
+        public int? amountRemaining { get; set; }
+        public string? createdAt { get; set; }
+        public string? canceledAt { get; set; }
+        public string? cancellationReason { get; set; }
+        // QR code dưới dạng base64 string từ PayOS API
+        // Format: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."
+        public string? qrCode { get; set; }
     }
 }
 

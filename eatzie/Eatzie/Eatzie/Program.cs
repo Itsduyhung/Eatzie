@@ -25,7 +25,7 @@ builder.Services.Configure<PayOSSettings>(
     builder.Configuration.GetSection("PayOSSettings"));
 
 // 2.PostgreSQL
-var connectionString = "Host=localhost;Port=5432;Database=eatzie;Username=postgres;Password=123123;";
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
