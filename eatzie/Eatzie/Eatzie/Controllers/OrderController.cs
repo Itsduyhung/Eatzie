@@ -36,7 +36,7 @@ namespace Eatzie.Controllers
                 return NotFound(new { message = "Không tìm thấy đơn hàng." });
             }
 
-            var allowedStatuses = new[] { "Đã nhận hàng", "Hủy", "Đang xử lí" };
+            var allowedStatuses = new[] { "Đã giao hàng", "Chờ xác nhận", "Đang xử lí" };
             if (!allowedStatuses.Contains(request.NewStatus))
             {
                 return BadRequest(new { message = "Trạng thái không hợp lệ." });
