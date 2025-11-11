@@ -38,4 +38,9 @@ public class RestaurantRepository : IRestaurantRepository
         _context.Restaurants.Remove(restaurant);
         return await _context.SaveChangesAsync() > 0;
     }
+
+    public async Task<bool> UserHasRestaurantAsync(int userId)
+    {
+        return await _context.Restaurants.AnyAsync(r => r.UserId == userId);
+    }
 }
