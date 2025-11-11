@@ -1,8 +1,8 @@
 import { AddCartItemInput, CartService } from "@/domain/service/CardService";
 import { OrderService, PriceAllFoods } from "@/domain/service/OrderService";
-import { PaymentService, CreatePaymentRequest } from "@/domain/service/PaymentService";
 import { useCartStore } from "@/stores/useCartStore";
 import { ToastAndroid } from "react-native";
+import { post } from "@/infrastructure/api/axiosClient";
 
 export const CartOrderService = {
   addCartItems: async () => {
@@ -43,20 +43,25 @@ export const CartOrderService = {
 
   createPayment: async (orderId: number, amount: number) => {
     try {
-      const paymentRequest: CreatePaymentRequest = {
-        orderId,
-        amount,
-        description: `Thanh toán đơn hàng #${orderId}`,
-        returnUrl: "eatzie://payment-success",
-        cancelUrl: "eatzie://payment-cancel",
-      };
+      // Call PayOSController to create payment link (returns checkoutUrl and qrCode from PayOS)
+      const response = await post<{
+        orderCode: number;
+        amount: number;
+        paymentLinkId?: string;
+        checkoutUrl: string;
+        qrCode?: string; // QR code dưới dạng base64 string từ PayOS API
+      }>("/PayOS/create-payment", { amount, orderId });
 
-      const response = await PaymentService.createPayment(paymentRequest);
-      
-      if (response.data?.paymentLink) {
-        return response.data;
+      if (response?.checkoutUrl) {
+        return {
+          paymentId: 0, // Not needed for PayOS flow
+          orderId,
+          paymentLink: response.checkoutUrl,
+          payOSCode: response.orderCode.toString(),
+          qrCode: response.qrCode, // QR code từ PayOS response
+        };
       }
-      
+
       throw new Error("Không thể tạo link thanh toán");
     } catch (err: any) {
       console.error("Failed to create payment", err);
@@ -109,7 +114,8 @@ export const CartOrderService = {
         orderId, 
         paymentCode: payment.payOSCode,
         paymentId: payment.paymentId,
-        paymentLink: payment.paymentLink
+        paymentLink: payment.paymentLink,
+        qrCode: payment.qrCode // QR code từ PayOS response
       };
     } catch (err: any) {
       console.error("Place order failed", err);

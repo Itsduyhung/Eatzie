@@ -8,6 +8,7 @@ namespace Eatzie.Interfaces.IService
     {
         Task<BaseAPIResponse> CreatePaymentLinkAsync(int userId, CreatePaymentRequest request);
         Task<BaseAPIResponse> VerifyPaymentAsync(string paymentCode);
+        Task<BaseAPIResponse> VerifyPaymentByOrderIdAsync(int orderId);
         Task<BaseAPIResponse> GetPaymentByOrderIdAsync(int orderId);
     }
 }

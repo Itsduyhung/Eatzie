@@ -6,4 +6,5 @@ public interface IRestaurantRepository
     Task AddRestaurantAsync(RestaurantEntity restaurant);
     Task<bool> UpdateRestaurantAsync(RestaurantEntity restaurant);
     Task<bool> DeleteRestaurantAsync(RestaurantEntity restaurant);
+    Task<bool> UserHasRestaurantAsync(int userId);
 }

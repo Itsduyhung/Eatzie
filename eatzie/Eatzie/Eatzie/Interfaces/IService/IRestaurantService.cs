@@ -9,4 +9,5 @@ public interface IRestaurantService
     Task<BaseAPIResponse> UpdateRestaurantAsync(int userId, int restaurantId, RestaurantRequest dto);
     Task<BaseAPIResponse> DeleteRestaurantAsync(int userId, int restaurantId);
     Task<BaseAPIResponse> GetAllFoodRestaurantsByIdAsync(int restaurantId);
+    Task<BaseAPIResponse> UserHasRestaurantAsync(int userId);
 }

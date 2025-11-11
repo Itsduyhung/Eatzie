@@ -96,8 +96,8 @@ const RootLayout = () => {
                           options={{ headerShown: false, freezeOnBlur: true }}
                         />
                         <Stack.Screen
-                          name="(tabs)/index"
-                          options={{ headerShown: false, freezeOnBlur: true }}
+                          name="(tabs)"
+                          options={{ headerShown: false }}
                         />
                         <Stack.Screen
                           name="(auth)/signup"
@@ -105,10 +105,6 @@ const RootLayout = () => {
                         />
                         <Stack.Screen
                           name="(auth)/verify"
-                          options={{ headerShown: false }}
-                        />
-                        <Stack.Screen
-                          name="(tabs)"
                           options={{ headerShown: false }}
                         />
                         <Stack.Screen
@@ -214,6 +210,9 @@ const RootLayout = () => {
       <View style={styles.errorContainer}>
         <Text style={styles.errorTitle}>⚠️ RootLayout Error</Text>
         <Text style={styles.errorMessage}>{error instanceof Error ? error.message : String(error)}</Text>
+        {error instanceof Error && error.stack && (
+          <Text style={styles.errorStack}>{error.stack.substring(0, 500)}</Text>
+        )}
       </View>
     );
   }

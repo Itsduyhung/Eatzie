@@ -20,6 +20,17 @@ public class RestaurantService : IRestaurantService
         _photoService = photoService;
     }
 
+    public async Task<BaseAPIResponse> UserHasRestaurantAsync(int userId)
+    {
+        var hasRestaurant = await _restaurantRepository.UserHasRestaurantAsync(userId);
+        return new BaseAPIResponse
+        {
+            IsSuccess = true,
+            StatusCode = (int)HttpStatusCode.OK,
+            Data = hasRestaurant
+        };
+    }
+
     private RestaurantResponse MapToResponseDto(RestaurantEntity restaurant)
     {
         return new RestaurantResponse

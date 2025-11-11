@@ -37,6 +37,13 @@ namespace Eatzie.Controllers
             return StatusCode(result.StatusCode, result);
         }
 
+        [HttpGet("verify-order/{orderId}")]
+        public async Task<IActionResult> VerifyPaymentByOrder(int orderId)
+        {
+            var result = await _paymentService.VerifyPaymentByOrderIdAsync(orderId);
+            return StatusCode(result.StatusCode, result);
+        }
+
         [HttpPost("webhook")]
         [AllowAnonymous]
         public async Task<IActionResult> PayOSWebhook([FromBody] object webhookData)

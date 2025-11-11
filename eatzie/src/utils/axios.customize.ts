@@ -6,6 +6,11 @@ const backend =
     ? process.env.EXPO_PUBLIC_ANDROID_API_URL
     : process.env.EXPO_PUBLIC_IOS_API_URL;
 
+console.log("🔗 Platform:", Platform.OS);
+console.log("🔗 Backend URL:", backend);
+console.log("🔗 EXPO_PUBLIC_ANDROID_API_URL:", process.env.EXPO_PUBLIC_ANDROID_API_URL);
+console.log("🔗 EXPO_PUBLIC_IOS_API_URL:", process.env.EXPO_PUBLIC_IOS_API_URL);
+
 const instance = axios.create({
   baseURL: backend,
 });

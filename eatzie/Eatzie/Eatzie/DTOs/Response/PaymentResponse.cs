@@ -10,9 +10,8 @@ namespace Eatzie.DTOs.Response
         public decimal Amount { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? PaidAt { get; set; }
+        // QR code dưới dạng base64 string từ PayOS API
+        // Format: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."
+        public string? QrCode { get; set; }
     }
 }
-
-
-
-
