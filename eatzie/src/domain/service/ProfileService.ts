@@ -3,6 +3,7 @@ import { ApiResponse } from "@/types/axios";
 import { UserDietService } from "./UserDietService";
 import { UserDiet } from "@/types/userDiet.types";
 import { guessMimeTypeFromUri } from "@/app/untils/file";
+import { storage } from "@/infrastructure/storage/tokenStorage";
 
 export interface Profile {
   id: number;
@@ -28,6 +29,33 @@ export const fieldLabels: Record<keyof Omit<Profile, "userDiet">, string> = {
   avatar: "Avatar",
   createdAt: "Created At",
 };
+
+// Helper function to make PUT request with FormData using fetch (workaround for React Native PUT + FormData issue)
+async function putFormDataWithFetch(
+  url: string,
+  formData: FormData
+): Promise<ApiResponse<any>> {
+  const baseURL = process.env.EXPO_PUBLIC_API_URL || "http://192.168.1.14:5237/api";
+  const fullUrl = `${baseURL}${url}`;
+  const token = await storage.getItem("token");
+
+  const response = await fetch(fullUrl, {
+    method: "PUT",
+    headers: {
+      Authorization: token ? `Bearer ${token}` : "",
+      // Don't set Content-Type - let browser/React Native set it with boundary
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`HTTP ${response.status}: ${errorText}`);
+  }
+
+  const data = await response.json();
+  return data;
+}
 
 export class ProfileService {
   static async getProfile(id: number): Promise<Profile | null> {
@@ -63,10 +91,14 @@ export class ProfileService {
 
     console.log("📸 Uploading avatar file:", fileObj);
 
-    const resp = await putRaw<any>(`/Profile/${id}`, formData);
-    console.log(" Upload response:", resp);
-
-    return resp;
+    try {
+      const resp = await putFormDataWithFetch(`/Profile/${id}`, formData);
+      console.log("✅ Upload response:", resp);
+      return resp;
+    } catch (error: any) {
+      console.error("❌ setProfileAvatar error:", error);
+      throw error;
+    }
   }
 
   static async uploadToSeparateEndpointThenSetProfile(
@@ -97,21 +129,33 @@ export class ProfileService {
     id: number,
     fullname: string
   ): Promise<ApiResponse<any>> {
+    // Use FormData as backend expects [FromForm]
     const formData = new FormData();
     formData.append("Fullname", fullname);
 
-    const resp = await putRaw<any>(`/Profile/${id}`, formData);
-    console.log("✅ Update fullname response:", resp);
-    return resp;
+    try {
+      // Use fetch API directly instead of axios for PUT + FormData (React Native workaround)
+      const resp = await putFormDataWithFetch(`/Profile/${id}`, formData);
+      console.log("✅ Update fullname response:", resp);
+      return resp;
+    } catch (error: any) {
+      console.error("❌ setFullname error:", error);
+      throw error;
+    }
   }
 
   static async setPhone(id: number, phone: string): Promise<ApiResponse<any>> {
     const formData = new FormData();
     formData.append("Phone", phone);
 
-    const resp = await putRaw<any>(`/Profile/${id}`, formData);
-    console.log("✅ Update fullname response:", resp);
-    return resp;
+    try {
+      const resp = await putFormDataWithFetch(`/Profile/${id}`, formData);
+      console.log("✅ Update phone response:", resp);
+      return resp;
+    } catch (error: any) {
+      console.error("❌ setPhone error:", error);
+      throw error;
+    }
   }
 
   static async updateProfile(
@@ -126,9 +170,15 @@ export class ProfileService {
         formData.append(fieldLabels[key], String(value));
       }
     });
-    const resp = await putRaw<any>(`/Profile/${id}`, formData);
-    console.log(" Update profile response:", resp);
-    return resp;
+    
+    try {
+      const resp = await putFormDataWithFetch(`/Profile/${id}`, formData);
+      console.log("✅ Update profile response:", resp);
+      return resp;
+    } catch (error: any) {
+      console.error("❌ updateProfile error:", error);
+      throw error;
+    }
   }
 
   // Methods for UserDiet management
