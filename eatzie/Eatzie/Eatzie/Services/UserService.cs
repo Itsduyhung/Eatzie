@@ -2,6 +2,8 @@
 using Eatzie.DTOs.Response;
 using Eatzie.Interfaces.IRepository;
 using Eatzie.DTOs.Request;
+using Eatzie.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Eatzie.Services
 {
@@ -10,12 +12,14 @@ namespace Eatzie.Services
         private readonly IUserRepository _userRepository;
         private readonly IPhotoService _photoService;
         private readonly INotificationService _notificationService;
+        private readonly IHubContext<NotificationHub> _hubContext;
 
-        public UserService(IUserRepository userRepository, IPhotoService photoService, INotificationService notificationService)
+        public UserService(IUserRepository userRepository, IPhotoService photoService, INotificationService notificationService, IHubContext<NotificationHub> hubContext)
         {
             _userRepository = userRepository;
             _photoService = photoService;
             _notificationService = notificationService;
+            _hubContext = hubContext;
         }
 
         public async Task<ProfileResponse?> GetProfileAsync(int id)
@@ -57,20 +61,26 @@ namespace Eatzie.Services
 
             await _userRepository.UpdateAsync(user);
 
-            // Create notification after successful profile update
+            // Create and send notification after successful profile update
             try
             {
-                await _notificationService.CreateNotificationAsync(
+                var userName = string.IsNullOrWhiteSpace(user.Fullname) ? "Bạn" : user.Fullname;
+                
+                var notification = await _notificationService.CreateNotificationAsync(
                     userId: user.Id,
                     title: "Cập nhật hồ sơ thành công",
-                    content: ($"{(string.IsNullOrWhiteSpace(user.Fullname) ? "Bạn" : user.Fullname)} vừa cập nhật thông tin hồ sơ của mình."),
+                    content: $"{userName} vừa cập nhật thông tin hồ sơ của mình.",
                     type: "success",
                     avatarUrl: user.Avatar
                 );
+
+                // Send real-time notification via SignalR
+                await _hubContext.Clients.Group($"user_{user.Id}").SendAsync("ReceiveNotification", notification);
             }
-            catch
+            catch (Exception ex)
             {
-                // swallow to not block profile update
+                // Log error but don't fail the update
+                Console.WriteLine($"Error sending notification: {ex.Message}");
             }
 
             return true;
