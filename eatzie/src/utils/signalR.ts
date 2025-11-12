@@ -1,41 +1,35 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useNotificationStore } from "@/stores/notificationStore";
+import { signalRService } from "./signalRConnection";
 
-// Use polling to fetch notifications periodically
-// This is simpler and more reliable than WebSocket in React Native
-export const useNotificationPolling = (
+// Use SignalR for realtime notifications instead of polling
+export const useSignalRNotifications = (
   userId: number | null,
-  enabled: boolean = true,
-  interval: number = 10000
+  enabled: boolean = true
 ) => {
-  const { fetchUnreadCount, fetchNotifications } = useNotificationStore();
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const { fetchAllNotifications } = useNotificationStore();
 
   useEffect(() => {
     if (!userId || !enabled) {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
+      // Disconnect when disabled
+      signalRService.stopConnection();
       return;
     }
 
-    // Initial fetch
-    fetchNotifications(userId);
-    fetchUnreadCount(userId);
+    // Initial fetch to get existing notifications
+    fetchAllNotifications(userId);
 
-    // Set up polling
-    intervalRef.current = setInterval(() => {
-      fetchNotifications(userId);
-      fetchUnreadCount(userId);
-    }, interval);
+    // Connect to SignalR for realtime updates
+    signalRService.startConnection(userId).catch((error) => {
+      console.error("❌ Failed to start SignalR connection:", error);
+      // Fallback: fetch notifications once if SignalR fails
+      fetchAllNotifications(userId);
+    });
 
+    // Cleanup: disconnect when component unmounts or userId changes
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
+      signalRService.stopConnection();
     };
-  }, [userId, enabled, interval, fetchNotifications, fetchUnreadCount]);
+  }, [userId, enabled, fetchAllNotifications]);
 };
 
