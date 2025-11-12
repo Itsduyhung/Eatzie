@@ -154,7 +154,7 @@ namespace Eatzie.Services
         /// <param name="userId"></param>
         /// <returns></returns>
 
-        public async Task<UserDietEntity> UpdateUserDietAsync(UserDietRequest request)
+        public async Task<UserDietResponse> UpdateUserDietAsync(UserDietRequest request)
         {
             var existing = await _userDietRepository.GetByUserIdAsync(request.UserId) ?? throw new Exception("UserDiet not found");
             existing.Allergic_food = request.AllergicFood ?? existing.Allergic_food;
@@ -188,7 +188,17 @@ namespace Eatzie.Services
                 Console.WriteLine($"Error sending notification: {ex.Message}");
             }
 
-            return updated;
+            // Return DTO instead of Entity to avoid circular reference
+            return new UserDietResponse
+            {
+                UserDietId = updated.Id,
+                UserId = updated.UserId,
+                Allergic_food = updated.Allergic_food,
+                Favorite_food = updated.Favorite_food,
+                Min_spending = updated.Min_spending,
+                Max_spending = updated.Max_spending,
+                Diet_type = (int)updated.Diet_type
+            };
         }
     }
 }

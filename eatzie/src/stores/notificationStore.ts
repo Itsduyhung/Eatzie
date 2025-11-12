@@ -2,41 +2,30 @@ import { NotificationService, NotificationResponse } from "@/domain/service/Noti
 import { create } from "zustand";
 
 interface NotificationState {
-  notifications: NotificationResponse[];
+  readNotifications: NotificationResponse[];
   unreadNotifications: NotificationResponse[];
-  unreadCount: number;
   loading: boolean;
   error: string | null;
 
-  fetchNotifications: (userId: number) => Promise<void>;
+  fetchReadNotifications: (userId: number) => Promise<void>;
   fetchUnreadNotifications: (userId: number) => Promise<void>;
-  fetchUnreadCount: (userId: number) => Promise<void>;
-  markAsRead: (notificationId: number) => Promise<void>;
-  markAllAsRead: (userId: number) => Promise<void>;
+  fetchAllNotifications: (userId: number) => Promise<void>;
   addNotification: (notification: NotificationResponse) => void;
-  updateNotification: (notification: NotificationResponse) => void;
+  markAsRead: (notificationId: number) => void;
 }
 
 export const useNotificationStore = create<NotificationState>((set, get) => ({
-  notifications: [],
+  readNotifications: [],
   unreadNotifications: [],
-  unreadCount: 0,
   loading: false,
   error: null,
 
-  fetchNotifications: async (userId: number) => {
-    set({ loading: true, error: null });
+  fetchReadNotifications: async (userId: number) => {
     try {
-      const notifications = await NotificationService.getNotifications(userId);
-      set({
-        notifications,
-        loading: false,
-      });
+      const readNotifications = await NotificationService.getReadNotifications(userId);
+      set({ readNotifications });
     } catch (error: any) {
-      set({
-        error: error.message || "Failed to fetch notifications",
-        loading: false,
-      });
+      set({ error: error.message || "Failed to fetch read notifications" });
     }
   },
 
@@ -49,67 +38,59 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     }
   },
 
-  fetchUnreadCount: async (userId: number) => {
+  fetchAllNotifications: async (userId: number) => {
+    set({ loading: true, error: null });
     try {
-      const count = await NotificationService.getUnreadCount(userId);
-      set({ unreadCount: count });
+      await Promise.all([
+        get().fetchReadNotifications(userId),
+        get().fetchUnreadNotifications(userId),
+      ]);
+      set({ loading: false });
     } catch (error: any) {
-      set({ error: error.message || "Failed to fetch unread count" });
-    }
-  },
-
-  markAsRead: async (notificationId: number) => {
-    try {
-      await NotificationService.markAsRead(notificationId);
-      set((state) => ({
-        notifications: state.notifications.map((n) =>
-          n.id === notificationId ? { ...n, isRead: true } : n
-        ),
-        unreadNotifications: state.unreadNotifications.filter((n) => n.id !== notificationId),
-        unreadCount: Math.max(0, state.unreadCount - 1),
-      }));
-    } catch (error: any) {
-      set({ error: error.message || "Failed to mark as read" });
-    }
-  },
-
-  markAllAsRead: async (userId: number) => {
-    try {
-      await NotificationService.markAllAsRead(userId);
-      set((state) => ({
-        notifications: state.notifications.map((n) => ({ ...n, isRead: true })),
-        unreadNotifications: [],
-        unreadCount: 0,
-      }));
-    } catch (error: any) {
-      set({ error: error.message || "Failed to mark all as read" });
+      set({
+        error: error.message || "Failed to fetch notifications",
+        loading: false,
+      });
     }
   },
 
   addNotification: (notification: NotificationResponse) => {
     set((state) => {
-      const exists = state.notifications.some((n) => n.id === notification.id);
-      if (exists) return state;
+      // Check if notification already exists
+      const existsInRead = state.readNotifications.some((n) => n.id === notification.id);
+      const existsInUnread = state.unreadNotifications.some((n) => n.id === notification.id);
+      
+      if (existsInRead || existsInUnread) return state;
 
-      return {
-        notifications: [notification, ...state.notifications],
-        unreadNotifications: notification.isRead
-          ? state.unreadNotifications
-          : [notification, ...state.unreadNotifications],
-        unreadCount: notification.isRead ? state.unreadCount : state.unreadCount + 1,
-      };
+      // Add to appropriate list based on isRead status
+      if (notification.isRead) {
+        return {
+          readNotifications: [notification, ...state.readNotifications],
+        };
+      } else {
+        return {
+          unreadNotifications: [notification, ...state.unreadNotifications],
+        };
+      }
     });
   },
 
-  updateNotification: (notification: NotificationResponse) => {
-    set((state) => ({
-      notifications: state.notifications.map((n) =>
-        n.id === notification.id ? notification : n
-      ),
-      unreadNotifications: state.unreadNotifications.map((n) =>
-        n.id === notification.id ? notification : n
-      ),
-    }));
+  markAsRead: (notificationId: number) => {
+    set((state) => {
+      // Find notification in unread list
+      const notification = state.unreadNotifications.find((n) => n.id === notificationId);
+      
+      if (!notification) return state; // Not found in unread, do nothing
+
+      // Mark as read
+      const updatedNotification = { ...notification, isRead: true };
+
+      // Remove from unread and add to read
+      return {
+        unreadNotifications: state.unreadNotifications.filter((n) => n.id !== notificationId),
+        readNotifications: [updatedNotification, ...state.readNotifications],
+      };
+    });
   },
 }));
 

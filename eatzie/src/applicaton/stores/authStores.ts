@@ -4,6 +4,7 @@ import { setLogoutCallback } from "@/infrastructure/api/axiosClient";
 import { storage } from "@/infrastructure/storage/tokenStorage";
 import { LoginResponse } from "@/types/login/login";
 import { getUserFromPayload, getValidPayLoad } from "@/utils/jwt";
+import { signalRService } from "@/utils/signalRConnection";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { create } from "zustand";
@@ -67,6 +68,9 @@ export const useAuthStore = create<AuthState>()(
       },
 
       logout: async () => {
+        // Disconnect SignalR when logging out
+        await signalRService.stopConnection();
+        
         await storage.removeItem("token");
         // await storage.remove('refreshToken');
         set({

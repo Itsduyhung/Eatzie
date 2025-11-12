@@ -11,6 +11,6 @@ namespace Eatzie.Interfaces.IService
         Task<UserDietEntity> UpdateFavoriteFoodAsync(FavoriteFoodRequest request);
         Task<UserDietEntity> UpdateSpendingAsync(SpendingRequest request);
         Task<UserDietResponse?> GetUserDietByUserIdAsync(int userId);
-        Task<UserDietEntity> UpdateUserDietAsync(UserDietRequest request);
+        Task<UserDietResponse> UpdateUserDietAsync(UserDietRequest request);
     }
 }
