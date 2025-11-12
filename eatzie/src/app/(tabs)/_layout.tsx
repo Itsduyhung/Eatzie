@@ -66,6 +66,20 @@ export default function TabLayout() {
           />
           <Tabs.Screen name="notification" options={{ title: "Notifications" }} />
           <Tabs.Screen name="account" options={{ title: "Me" }} />
+          <Tabs.Screen 
+            name="BXH" 
+            options={{ 
+              title: "BXH",
+              href: null
+            }} 
+          />
+          <Tabs.Screen 
+            name="test" 
+            options={{ 
+              title: "test",
+              href: null
+            }} 
+          />
         </Tabs>
       </>
     );
